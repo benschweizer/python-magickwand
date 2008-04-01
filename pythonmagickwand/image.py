@@ -401,6 +401,28 @@ class Image(object):
         else:
             self._check_wand_error(api.MagickCompositeImage(self._wand, image._wand, operator, offset[0], offset[1]))
 
+    def quantize(self, colors, colorspace=None, tree_depth=1, dither=False, measure_error=False):
+        ''' Limit the colours present in an image to a fixed amount.
+
+            colors - The number of colors in the new image.
+            colorspace - Perform color reduction in this colorspace, defaults to the image's colorspace.
+            tree_depth - Default is to choose an optimal tree depth of
+                         Log4(colors).  A tree of this depth generally allows
+                         the best representation of the reference image with
+                         the least amount of memory and the fastest
+                         computational speed. In some cases, such as an image
+                         with low color dispersion (a few number of colors), a
+                         value other than Log4(number_colors) is required. To
+                         expand the color tree completely, use a value of 8.
+            dither - If True, the image is dithered.  Defaults to False.
+            measure_error - If True, measures the difference between the
+                            original and quantized images as an error.
+                            Defaults to False.'''
+
+        if not colorspace:
+            colorspace = self.colorspace
+
+        self._check_wand_error(api.MagickQuantizeImage(self._wand, colors, colorspace, tree_depth, dither, measure_error))
 
     format = property(_get_format, _set_format, None, 'The image format as a string, eg. "PNG".')
     units = property(_get_units, _set_units, None, 'The units of resolution for this image, ie. None, PIXELS_PER_INCH, PIXELS_PER_CENTIMETER.')
