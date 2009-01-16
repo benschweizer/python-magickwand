@@ -518,6 +518,16 @@ class Image(object):
 
         self._check_wand_error(api.MagickUnsharpMaskImage(self._wand, radius, sigma, amount, threshold))
 
+    def opaque_paint(self, target, fill, fuzz=0, invert=False):
+        ''' Change any pixel which matches the target to the fill.
+
+            target  - target color to match.
+            fill    - replacement color for target.
+            fuzz    - Target color tolerance. Defaults to 0.
+            invert  - Paint anything which doesn't match the target. Defaults to False.'''
+
+        self._check_wand_error(api.MagickPaintOpaqueImage(self._wand, target._wand, fill._wand, fuzz, invert))
+
     format = property(_get_format, _set_format, None, 'The image format as a string, eg. "PNG".')
     units = property(_get_units, _set_units, None, 'The units of resolution for this image, ie. None, PIXELS_PER_INCH, PIXELS_PER_CENTIMETER.')
     resolution = property(_get_resolution, _set_resolution, None, 'A tuple containing the image resolution as expressed in image_units.')
