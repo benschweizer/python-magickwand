@@ -86,6 +86,20 @@ COPY_COMPOSITE_OP = api.CopyCompositeOp
 DISPLACE_COMPOSITE_OP = api.DisplaceCompositeOp
 OVER_COMPOSITE_OP = api.OverCompositeOp
 
+# Evaluate operators
+MAX_OPERATOR = api.MaxEvaluateOperator
+MIN_OPERATOR = api.MinEvaluateOperator
+MULTIPLY_OPERATOR = api.MultiplyEvaluateOperator
+SET_OPERATOR = api.SetEvaluateOperator
+XOR_OPERATOR = api.XorEvaluateOperator
+AND_OPERATOR = api.AndEvaluateOperator
+ADD_OPERATOR = api.AddEvaluateOperator
+LEFT_SHIFT_OPERATOR = api.LeftShiftEvaluateOperator
+RIGHT_SHIFT_OPERATOR = api.RightShiftEvaluateOperator
+SUBTRACT_OPERATOR = api.SubtractEvaluateOperator
+OR_OPERATOR = api.OrEvaluateOperator
+DIVIDE_OPERATOR = api.DivideEvaluateOperator
+
 def _check_wand_error(wand, func):
     if not func:
         severity = api.ExceptionType()

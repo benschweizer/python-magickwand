@@ -305,7 +305,7 @@ class Image(object):
             color to span the entire range of colors available.'''
         self._check_wand_error(api.MagickNormalizeImage(self._wand))
 
-    def modulate(self, brightness, saturation, hue):
+    def modulate(self, brightness=0, saturation=0, hue=0):
         ''' Lets you control the brightness, saturation, and hue of an image.
             Hue is the percentage of absolute rotation from the current position.
             For example 50 results in a counter-clockwise rotation of 90 degrees,
@@ -478,16 +478,22 @@ class Image(object):
 
         self._check_wand_error(api.MagickMedianFilterImage(self._wand, radius))
         
-    def evaluate(self, EvaluateOperator, value, channel=None):
+    def evaluate(self, operator, value, channel=None):
         ''' Applies an arithmetic, relational, or logical expression to an
             image.  Use these operators to lighten or darken an image, to
             increase or decrease contrast in an image, or to produce the
-            "negative" of an image.'''
+            "negative" of an image.
+            
+            operator - one of: MAX_OPERATOR, MIN_OPERATOR, MULTIPLY_OPERATOR,
+                       SET_OPERATOR, XOR_OPERATOR, AND_OPERATOR, ADD_OPERATOR,
+                       LEFT_SHIFT_OPERATOR, RIGHT_SHIFT_OPERATOR,
+                       SUBTRACT_OPERATOR, OR_OPERATOR, DIVIDE_OPERATOR.
+            '''
 
         if channel:
-            self._check_wand_error(api.MagickEvaluateImageChannel(self._wand, channel, EvaluateOperator, value))
+            self._check_wand_error(api.MagickEvaluateImageChannel(self._wand, channel, operator, value))
         else:
-            self._check_wand_error(api.MagickEvaluateImage(self._wand, EvaluateOperator, value))
+            self._check_wand_error(api.MagickEvaluateImage(self._wand, operator, value))
 
     def unsharp_mask(self, radius, sigma, amount, threshold):
         ''' Sharpens an image. We convolve the image with a Gaussian operator
