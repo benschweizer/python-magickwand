@@ -404,10 +404,12 @@ class Image(object):
         if not operator:
             operator = wand.OVER_COMPOSITE_OP
 
+        _x, _y = int(offset[0]), int(offset[1])
+
         if channel:
-            self._check_wand_error(api.MagickCompositeImageChannel(self._wand, channel, image._wand, operator, offset[0], offset[1]))
+            self._check_wand_error(api.MagickCompositeImageChannel(self._wand, channel, image._wand, operator, _x, _y))
         else:
-            self._check_wand_error(api.MagickCompositeImage(self._wand, image._wand, operator, offset[0], offset[1]))
+            self._check_wand_error(api.MagickCompositeImage(self._wand, image._wand, operator, _x, _y))
 
     def quantize(self, colors, colorspace=None, tree_depth=1, dither=False, measure_error=False):
         ''' Limit the colours present in an image to a fixed amount.
