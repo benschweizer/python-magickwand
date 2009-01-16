@@ -424,6 +424,94 @@ class Image(object):
 
         self._check_wand_error(api.MagickQuantizeImage(self._wand, colors, colorspace, tree_depth, dither, measure_error))
 
+    def border(self, color, width, height):
+        ''' Surraunds an image with a color defined by color.Color(color_str).'''
+
+        self._check_wand_error(api.MagickBorderImage(self._wand, color._wand, width, height))
+    
+    def sepia_tone(self, threshold):
+        ''' Applies a special effect to the image, similar to the effect
+            achieved in a photo darkroom by sepia toning.  Threshold ranges from 0 to
+            QuantumRange and is a measure of the extent of the sepia toning.  A threshold
+            of 80 is a good starting point for a reasonable tone. '''
+
+        self._check_wand_error(api.MagickSepiaToneImage(self._wand, threshold))
+        
+    def reduce_noise(self, radius=0):
+        ''' Smooths the contours of an image while still preserving edge information. 
+
+            The algorithm works by replacing each pixel with its neighbor
+            closest in value.  A neighbor is defined by radius. Use a radius of 0 and
+            reduce_noise selects a suitable radius for you.'''
+
+        self._check_wand_error(api.MagickReduceNoiseImage(self._wand, radius))
+        
+    def add_noise(self, noise_type):
+        ''' Adds random noise to the image.
+
+            noise_type: UniformNoise, GaussianNoise, MultiplicativeNoise,
+                        ImpulseNoise, LaplacianNoise, or PoissonNoise.'''
+
+        self._check_wand_error(api.MagickAddNoiseImage(self._wand, noise_type))
+
+    def contrast_stretch(self, black_point, white_point):
+        ''' Enhances the contrast of a color image by adjusting the pixels
+            color to span the entire range of colors available. '''
+
+        self._check_wand_error(api.MagickContrastStretchImage(self._wand, black_point, white_point))
+        
+    def sigmoidal_contrast(self, sharpen, contrast, mid_point):
+        ''' Adjusts the contrast of an image with a non-linear sigmoidal
+            contrast algorithm.  Increase the contrast of the image using a sigmoidal
+            transfer function without saturating highlights or shadows.  Contrast indicates
+            how much to increase the contrast (0 is none; 3 is typical; 20 is pushing it);
+            mid_point indicates where midtones fall in the resultant image (0 is white; 50
+            is middle-gray; 100 is black).  Set sharpen to True to increase the image
+            contrast otherwise setting it to False the contrast is reduced. '''
+
+        self._check_wand_error(api.MagickSigmoidalContrastImage(self._wand, sharpen, contrast, mid_point))
+        
+    def median_filter(self, radius):
+        ''' Applies a digital filter that improves the quality of a noisy image. 
+            Each pixel is replaced by the median in a set of neighboring pixels
+            as defined by radius.'''
+
+        self._check_wand_error(api.MagickMedianFilterImage(self._wand, radius))
+        
+    def evaluate(self, EvaluateOperator, value, channel=None):
+        ''' Applies an arithmetic, relational, or logical expression to an
+            image.  Use these operators to lighten or darken an image, to
+            increase or decrease contrast in an image, or to produce the
+            "negative" of an image.'''
+
+        if channel:
+            self._check_wand_error(api.MagickEvaluateImageChannel(self._wand, channel, EvaluateOperator, value))
+        else:
+            self._check_wand_error(api.MagickEvaluateImage(self._wand, EvaluateOperator, value))
+
+    def unsharp_mask(self, radius, sigma, amount, threshold):
+        ''' Sharpens an image. We convolve the image with a Gaussian operator
+            of the given radius and standard deviation (sigma). For reasonable
+            results, radius should be larger than sigma. Use a radius of 0 and
+            UnsharpMaskImage() selects a suitable radius for you.
+
+            radius
+                    The radius of the Gaussian, in pixels, not counting the
+                    center pixel.
+
+            sigma
+                    The standard deviation of the Gaussian, in pixels.
+
+            amount
+                    The percentage of the difference between the original and
+                    the blur image that is added back into the original.
+
+            threshold
+                    The threshold in pixels needed to apply the diffence
+                    amount.'''
+
+        self._check_wand_error(api.MagickUnsharpMaskImage(self._wand, radius, sigma, amount, threshold))
+
     format = property(_get_format, _set_format, None, 'The image format as a string, eg. "PNG".')
     units = property(_get_units, _set_units, None, 'The units of resolution for this image, ie. None, PIXELS_PER_INCH, PIXELS_PER_CENTIMETER.')
     resolution = property(_get_resolution, _set_resolution, None, 'A tuple containing the image resolution as expressed in image_units.')
@@ -431,7 +519,7 @@ class Image(object):
     colorspace = property(_get_colorspace, _set_colorspace, None, 'The image colorspace.')
     background_color = property(_get_background_color, _set_background_color, None, 'The background color of the image.')
     border_color = property(_get_border_color, _set_border_color, None, 'The border color of the image.')
-    compression = property(_get_compression, _set_compression, None, 
+    compression = property(_get_compression, _set_compression, None,
         'The image compression to use, ie. None, BZIP_COMPRESSION,\
         FAX_COMPRESSION, GROUP4_COMPRESSION, JPEG_COMPRESSION,\
         LOSSLESS_JPEG_COMPRESSION, LZW_COMPRESSION, RLE_COMPRESSION and\
