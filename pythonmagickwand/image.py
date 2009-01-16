@@ -12,6 +12,8 @@ class Image(object):
             self._check_wand_error(api.MagickReadImageBlob(self._wand, c, len(c)))
         elif image:
             self._check_wand_error(api.MagickReadImage(self._wand, image))
+        else:
+            self._check_wand_error(api.MagickNewImage(self._wand, 100, 100, color.TRANSPARENT._wand))
 
     def __del__(self):
         if self._wand:
