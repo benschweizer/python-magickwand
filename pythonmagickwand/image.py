@@ -313,7 +313,7 @@ class Image(object):
             color to span the entire range of colors available.'''
         self._check_wand_error(api.MagickNormalizeImage(self._wand))
 
-    def modulate(self, brightness=0, saturation=0, hue=0):
+    def modulate(self, brightness=100, saturation=100, hue=100):
         ''' Lets you control the brightness, saturation, and hue of an image.
             Hue is the percentage of absolute rotation from the current position.
             For example 50 results in a counter-clockwise rotation of 90 degrees,
