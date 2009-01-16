@@ -19,6 +19,12 @@ class Image(object):
         if self._wand:
             self._wand = api.DestroyMagickWand(self._wand)
 
+    def __copy__(self):
+        c = Image()
+        if self._wand:
+            c._wand = api.CloneMagickWand(self._wand)
+        return c
+
     def _check_wand_error(self, func):
         wand._check_wand_error(self._wand, func)
 
