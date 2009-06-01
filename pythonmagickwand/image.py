@@ -4,8 +4,11 @@ from pythonmagickwand import api, wand, color
 class Image(object):
     ''' Represents a single image, supported by a MagickWand.'''
 
-    def __init__(self, image=None):
+    def __init__(self, image=None, type=None):
         self._wand = api.NewMagickWand()
+
+        if type:
+            api.MagickSetFilename(self._wand, 'buffer.%s' % type)  # hint image type
 
         if hasattr(image, 'read'):
             c = image.read()
@@ -123,6 +126,24 @@ class Image(object):
         else:
             self._check_wand_error(api.MagickWriteImage(self._wand, file))
 
+    def dump(self, type=None):
+        ''' Save the image to a buffer, if no type is specified, original type is used.
+
+            returns image'''
+
+        if type:
+            api.MagickSetFilename(self._wand, 'buffer.%s' % type)  # hint image type
+
+        result = ''
+        size = api.size_t()
+        b = api.MagickGetImageBlob(self._wand, size)
+        try:
+            result = ''.join([chr(b[i]) for i in range(0, size.value + 1)])
+        finally:
+            api.MagickRelinquishMemory(b)
+
+        return result
+
     def alpha(self, alpha_on):
         ''' Activates alpha channel/matte for further operations.
 
@@ -141,12 +162,12 @@ class Image(object):
         api.MagickResetIterator(self._wand)
         loop = True
         while loop:
-            _width = self._check_wand_error(api.MagickGetImageWidth(self._wand))
-            _height = self._check_wand_error(api.MagickGetImageHeight(self._wand))
+            _width = api.MagickGetImageWidth(self._wand)
+            _height = api.MagickGetImageHeight(self._wand)
             if _width == width and _height == height:
                 return True
 
-            loop = self._check_wand_error(api.MagickNextImage(self._wand))
+            loop = api.MagickNextImage(self._wand)
 
         api.MagickResetIterator(self._wand)
         return False
@@ -251,7 +272,7 @@ class Image(object):
         ''' Enhances the edges within the image, using a convolution filter of
             the given radius.  If no radius is given, a suitable one is
             automatically chosen.
-            
+
             radius = The radius of the pixel neighborhood.'''
 
         self._check_wand_error(api.MagickEdgeImage(self._wand, radius))
@@ -378,7 +399,7 @@ class Image(object):
     def increase_contrast(self):
         ''' Increase the differences between lighter and darker elements of the image.'''
         self._check_wand_error(api.MagickContrastImage(self._wand, 1))
-        
+
     def decrease_contrast(self):
         ''' Decrease the differences between lighter and darker elements of the image.'''
         self._check_wand_error(api.MagickContrastImage(self._wand, 0))
@@ -466,7 +487,7 @@ class Image(object):
         ''' Surraunds an image with a color defined by color.Color(color_str).'''
 
         self._check_wand_error(api.MagickBorderImage(self._wand, color._wand, width, height))
-    
+
     def sepia_tone(self, threshold):
         ''' Applies a special effect to the image, similar to the effect
             achieved in a photo darkroom by sepia toning.  Threshold ranges from 0 to
@@ -474,7 +495,7 @@ class Image(object):
             of 80 is a good starting point for a reasonable tone. '''
 
         self._check_wand_error(api.MagickSepiaToneImage(self._wand, threshold))
-        
+
     def reduce_noise(self, radius=0):
         ''' Smooths the contours of an image while still preserving edge information. 
 
@@ -483,7 +504,7 @@ class Image(object):
             reduce_noise selects a suitable radius for you.'''
 
         self._check_wand_error(api.MagickReduceNoiseImage(self._wand, radius))
-        
+
     def add_noise(self, noise_type):
         ''' Adds random noise to the image.
 
@@ -497,7 +518,7 @@ class Image(object):
             color to span the entire range of colors available. '''
 
         self._check_wand_error(api.MagickContrastStretchImage(self._wand, black_point, white_point))
-        
+
     def sigmoidal_contrast(self, sharpen, contrast, mid_point):
         ''' Adjusts the contrast of an image with a non-linear sigmoidal
             contrast algorithm.  Increase the contrast of the image using a sigmoidal
@@ -508,20 +529,20 @@ class Image(object):
             contrast otherwise setting it to False the contrast is reduced. '''
 
         self._check_wand_error(api.MagickSigmoidalContrastImage(self._wand, sharpen, contrast, mid_point))
-        
+
     def median_filter(self, radius):
         ''' Applies a digital filter that improves the quality of a noisy image. 
             Each pixel is replaced by the median in a set of neighboring pixels
             as defined by radius.'''
 
         self._check_wand_error(api.MagickMedianFilterImage(self._wand, radius))
-        
+
     def evaluate(self, operator, value, channel=None):
         ''' Applies an arithmetic, relational, or logical expression to an
             image.  Use these operators to lighten or darken an image, to
             increase or decrease contrast in an image, or to produce the
             "negative" of an image.
-            
+
             operator - one of: MAX_OPERATOR, MIN_OPERATOR, MULTIPLY_OPERATOR,
                        SET_OPERATOR, XOR_OPERATOR, AND_OPERATOR, ADD_OPERATOR,
                        LEFT_SHIFT_OPERATOR, RIGHT_SHIFT_OPERATOR,
