@@ -123,6 +123,34 @@ class Image(object):
         else:
             self._check_wand_error(api.MagickWriteImage(self._wand, file))
 
+    def alpha(self, alpha_on):
+        ''' Activates alpha channel/matte for further operations.
+
+            alpha_on - Boolean'''
+
+        api.MagickSetImageAlphaChannel(self._wand, alpha_on)
+
+    def select(self, size):
+        ''' Selects image of given size if multiple image are available in container.
+
+            size - A tuple containing the size of the scaled image.
+
+            returns True on success.'''
+
+        width, height = size
+        api.MagickResetIterator(self._wand)
+        loop = True
+        while loop:
+            _width = self._check_wand_error(api.MagickGetImageWidth(self._wand))
+            _height = self._check_wand_error(api.MagickGetImageHeight(self._wand))
+            if _width == width and _height == height:
+                return True
+
+            loop = self._check_wand_error(api.MagickNextImage(self._wand))
+
+        api.MagickResetIterator(self._wand)
+        return False
+
     def scale(self, size):
         ''' Scales the size of image to the given dimensions.
 
