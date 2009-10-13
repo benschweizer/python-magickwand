@@ -1,6 +1,6 @@
 import ctypes
-from pythonmagickwand import api
-from pythonmagickwand.color import Color
+from magickwand import api
+from magickwand.color import Color
 
 def test_init_with_color():
     c = Color('#0000ff')

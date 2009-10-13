@@ -1,7 +1,7 @@
 import ctypes
 from StringIO import StringIO
-from pythonmagickwand.wand import MagickWand
-from pythonmagickwand import api
+from magickwand.wand import MagickWand
+from magickwand import api
 
 def test_set_size():
     w = MagickWand()

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from pythonmagickwand.image import Image
+from magickwand.image import Image
 
 def convert(source_fh, source_type, dest_type, dest_size):
     """somewhat like convert(1)"""

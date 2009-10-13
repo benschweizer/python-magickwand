@@ -1,8 +1,8 @@
 import ctypes
 from StringIO import StringIO
-from pythonmagickwand.wand import PIXELS_PER_INCH, PIXELS_PER_CENTIMETER, CMYK_COLORSPACE, BZIP_COMPRESSION
-from pythonmagickwand.image import Image
-from pythonmagickwand import api, color
+from magickwand.wand import PIXELS_PER_INCH, PIXELS_PER_CENTIMETER, CMYK_COLORSPACE, BZIP_COMPRESSION
+from magickwand.image import Image
+from magickwand import api, color
 
 GIF = '''\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\xf0\x00\x00\xf0\xe6\x8c\x00\x00\x00\x21\xf9\x04\x00\x00\x00\x00\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3b\x00'''
 EPS = '''%!PS-Adobe-3.0 EPSF-3.0
