@@ -39,4 +39,10 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 NOT YET AVAILABLE
 
+Todo
+~~~~
+- we should add exhaustive unit tests
+- implement new features from MagickWand 6.5
+- figure out how to support deprecated features (see magick/deprecate.c)
+
 # eof.
