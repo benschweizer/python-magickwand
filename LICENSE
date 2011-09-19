@@ -1,16 +1,4 @@
-Abstract
-~~~~~~~~
-These are Python bindings for the ImageMagick MagickWand C-API.
-
-Authors
-~~~~~~~
-- Ian Stevens, http://crazedmonkey.com/
-- Victor Ng, http://www.monkeybeanonline.com/
-- Benjamin Schweizer, http://benjamin-schweizer.de/contact
-
-License
-~~~~~~~
-Copyright (c) 2009 Ian Stevens and others. All rights reserved.
+Copyright (c) 2009-2011 Ian Stevens and others.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -38,11 +26,3 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 NOT YET AVAILABLE
-
-Todo
-~~~~
-- we should add exhaustive unit tests
-- implement new features from MagickWand 6.5
-- figure out how to support deprecated features (see magick/deprecate.c)
-
-# eof.

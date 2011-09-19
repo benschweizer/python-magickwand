@@ -172,6 +172,34 @@ class Image(object):
         api.MagickResetIterator(self._wand)
         return False
 
+    def convert(self, size=(8,8), depth=8):
+        '''convert image to given size/depth'''
+        width, height = size
+        # exact matching
+        api.MagickResetIterator(self._wand)
+        has_image= True
+        while has_image:
+            _width = api.MagickGetImageWidth(self._wand)
+            _height = api.MagickGetImageHeight(self._wand)
+            _depth = api.MagickGetImageChannelDepth(self._wand, api.AlphaChannel)
+            if _width == width and _height == height and _depth == depth:
+                return
+            has_image = api.MagickNextImage(self._wand)
+
+        # rough matching
+        api.MagickResetIterator(self._wand)
+        has_image= True
+        while has_image:
+            _width = api.MagickGetImageWidth(self._wand)
+            _height = api.MagickGetImageHeight(self._wand)
+            if _width == width and _height == height:
+                return
+            has_image = api.MagickNextImage(self._wand)
+
+        # fallback: scaling
+        self._check_wand_error(api.MagickScaleImage(self._wand, width, height))
+        return
+
     def scale(self, size):
         ''' Scales the size of image to the given dimensions.
 

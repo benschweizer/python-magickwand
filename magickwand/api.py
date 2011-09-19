@@ -4,19 +4,8 @@ from ctypes.util import find_library
 
 STRING = c_char_p
 
-def find_wand(path):
-    try:
-        return find_library(path)
-    except:
-        pass
-
 # Mac OS user may have installed ImageMagick via Fink
-wand_lib = None
-for path in ['Wand', 'MagickWand', '/usr/local/lib/libWand', '/sw/lib/libWand', '/opt/local/lib/libWand']:
-    wand_lib = find_library(path)
-    if wand_lib:
-        break
-
+wand_lib = find_library('MagickWand') or '/usr/lib/libMagickWand.so.3'
 if not wand_lib:
     raise ImportError('Cannot find ImageMagick MagickWand library.')
 
@@ -762,34 +751,13 @@ PixelPacket = _PixelPacket
 GetCacheViewPixels = _lib.GetCacheViewPixels
 GetCacheViewPixels.restype = POINTER(PixelPacket)
 GetCacheViewPixels.argtypes = [POINTER(ViewInfo), c_long, c_long, c_ulong, c_ulong]
-#SetCacheView = _lib.SetCacheView
-#SetCacheView.restype = POINTER(PixelPacket)
-#SetCacheView.argtypes = [POINTER(ViewInfo), c_long, c_long, c_ulong, c_ulong]
 CloseCacheView = _lib.CloseCacheView
 CloseCacheView.restype = POINTER(ViewInfo)
 CloseCacheView.argtypes = [POINTER(ViewInfo)]
 OpenCacheView = _lib.OpenCacheView
 OpenCacheView.restype = POINTER(ViewInfo)
 OpenCacheView.argtypes = [POINTER(Image)]
-#AcquireCacheNexus = _lib.AcquireCacheNexus
-#AcquireCacheNexus.restype = POINTER(PixelPacket)
-#AcquireCacheNexus.argtypes = [POINTER(Image), VirtualPixelMethod, c_long, c_long, c_ulong, c_ulong, c_ulong, POINTER(ExceptionInfo)]
-#GetPixelCacheArea = _lib.GetPixelCacheArea
-#GetPixelCacheArea.restype = MagickSizeType
-#GetPixelCacheArea.argtypes = [POINTER(Image)]
 MagickOffsetType = c_longlong
-#PersistCache = _lib.PersistCache
-#PersistCache.restype = MagickBooleanType
-#PersistCache.argtypes = [POINTER(Image), STRING, MagickBooleanType, POINTER(MagickOffsetType), POINTER(ExceptionInfo)]
-#SyncCacheNexus = _lib.SyncCacheNexus
-#SyncCacheNexus.restype = MagickBooleanType
-#SyncCacheNexus.argtypes = [POINTER(Image), c_ulong]
-#GetCacheNexus = _lib.GetCacheNexus
-#GetCacheNexus.restype = POINTER(PixelPacket)
-#GetCacheNexus.argtypes = [POINTER(Image), c_long, c_long, c_ulong, c_ulong, c_ulong]
-#SetCacheNexus = _lib.SetCacheNexus
-#SetCacheNexus.restype = POINTER(PixelPacket)
-#SetCacheNexus.argtypes = [POINTER(Image), c_long, c_long, c_ulong, c_ulong, c_ulong]
 GetClientPath = _lib.GetClientPath
 GetClientPath.restype = STRING
 GetClientPath.argtypes = []
@@ -826,9 +794,6 @@ GetCoderInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
 ListCoderInfo = _lib.ListCoderInfo
 ListCoderInfo.restype = MagickBooleanType
 ListCoderInfo.argtypes = [POINTER(FILE), POINTER(ExceptionInfo)]
-#DestroyCoderList = _lib.DestroyCoderList
-#DestroyCoderList.restype = None
-#DestroyCoderList.argtypes = []
 
 # values for enumeration 'ComplianceType'
 ComplianceType = c_int # enum
@@ -934,9 +899,6 @@ QueryMagickColor.argtypes = [STRING, POINTER(MagickPixelPacket), POINTER(Excepti
 GetNumberColors = _lib.GetNumberColors
 GetNumberColors.restype = c_ulong
 GetNumberColors.argtypes = [POINTER(Image), POINTER(FILE), POINTER(ExceptionInfo)]
-#DestroyColorList = _lib.DestroyColorList
-#DestroyColorList.restype = None
-#DestroyColorList.argtypes = []
 GetColorTuple = _lib.GetColorTuple
 GetColorTuple.restype = None
 GetColorTuple.argtypes = [POINTER(MagickPixelPacket), MagickBooleanType, STRING]
@@ -990,9 +952,6 @@ HuffmanDecodeImage.argtypes = [POINTER(Image)]
 HuffmanEncodeImage = _lib.HuffmanEncodeImage
 HuffmanEncodeImage.restype = MagickBooleanType
 HuffmanEncodeImage.argtypes = [POINTER(ImageInfo), POINTER(Image)]
-#Huffman2DEncodeImage = _lib.Huffman2DEncodeImage
-#Huffman2DEncodeImage.restype = MagickBooleanType
-#Huffman2DEncodeImage.argtypes = [POINTER(ImageInfo), POINTER(Image)]
 LZWEncodeImage = _lib.LZWEncodeImage
 LZWEncodeImage.restype = MagickBooleanType
 LZWEncodeImage.argtypes = [POINTER(Image), size_t, POINTER(c_ubyte)]
@@ -1038,9 +997,9 @@ GetConfigureInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo
 class _LinkedListInfo(Structure):
     pass
 LinkedListInfo = _LinkedListInfo
-#DestroyConfigureOptions = _lib.DestroyConfigureOptions
-#DestroyConfigureOptions.restype = POINTER(LinkedListInfo)
-#DestroyConfigureOptions.argtypes = [POINTER(LinkedListInfo)]
+DestroyConfigureOptions = _lib.DestroyConfigureOptions
+DestroyConfigureOptions.restype = POINTER(LinkedListInfo)
+DestroyConfigureOptions.argtypes = [POINTER(LinkedListInfo)]
 GetConfigurePaths = _lib.GetConfigurePaths
 GetConfigurePaths.restype = POINTER(LinkedListInfo)
 GetConfigurePaths.argtypes = [STRING, POINTER(ExceptionInfo)]
@@ -1050,9 +1009,6 @@ GetConfigureOptions.argtypes = [STRING, POINTER(ExceptionInfo)]
 ListConfigureInfo = _lib.ListConfigureInfo
 ListConfigureInfo.restype = MagickBooleanType
 ListConfigureInfo.argtypes = [POINTER(FILE), POINTER(ExceptionInfo)]
-#DestroyConfigureList = _lib.DestroyConfigureList
-#DestroyConfigureList.restype = None
-#DestroyConfigureList.argtypes = []
 
 # values for enumeration 'StorageType'
 StorageType = c_int # enum
@@ -1074,9 +1030,6 @@ WriteImage.argtypes = [POINTER(ImageInfo), POINTER(Image)]
 WriteImages = _lib.WriteImages
 WriteImages.restype = MagickBooleanType
 WriteImages.argtypes = [POINTER(ImageInfo), POINTER(Image), STRING, POINTER(ExceptionInfo)]
-#DestroyConstitute = _lib.DestroyConstitute
-#DestroyConstitute.restype = None
-#DestroyConstitute.argtypes = []
 class _FrameInfo(Structure):
     pass
 _FrameInfo._fields_ = [
@@ -1140,9 +1093,6 @@ InvokeDelegate.argtypes = [POINTER(ImageInfo), POINTER(Image), STRING, STRING, P
 ListDelegateInfo = _lib.ListDelegateInfo
 ListDelegateInfo.restype = MagickBooleanType
 ListDelegateInfo.argtypes = [POINTER(FILE), POINTER(ExceptionInfo)]
-#DestroyDelegateList = _lib.DestroyDelegateList
-#DestroyDelegateList.restype = None
-#DestroyDelegateList.argtypes = []
 class _DoublePixelPacket(Structure):
     pass
 _DoublePixelPacket._pack_ = 4
@@ -2510,18 +2460,15 @@ GetLocaleInfo_.argtypes = [STRING, POINTER(ExceptionInfo)]
 GetLocaleInfoList = _lib.GetLocaleInfoList
 GetLocaleInfoList.restype = POINTER(POINTER(LocaleInfo))
 GetLocaleInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
-#DestroyLocaleOptions = _lib.DestroyLocaleOptions
-#DestroyLocaleOptions.restype = POINTER(LinkedListInfo)
-#DestroyLocaleOptions.argtypes = [POINTER(LinkedListInfo)]
+DestroyLocaleOptions = _lib.DestroyLocaleOptions
+DestroyLocaleOptions.restype = POINTER(LinkedListInfo)
+DestroyLocaleOptions.argtypes = [POINTER(LinkedListInfo)]
 GetLocaleOptions = _lib.GetLocaleOptions
 GetLocaleOptions.restype = POINTER(LinkedListInfo)
 GetLocaleOptions.argtypes = [STRING, POINTER(ExceptionInfo)]
 ListLocaleInfo = _lib.ListLocaleInfo
 ListLocaleInfo.restype = MagickBooleanType
 ListLocaleInfo.argtypes = [POINTER(FILE), POINTER(ExceptionInfo)]
-#DestroyLocaleList = _lib.DestroyLocaleList
-#DestroyLocaleList.restype = None
-#DestroyLocaleList.argtypes = []
 
 # values for enumeration 'LogEventType'
 LogEventType = c_int # enum
@@ -2533,12 +2480,9 @@ LogInfo = _LogInfo
 GetLogList = _lib.GetLogList
 GetLogList.restype = POINTER(STRING)
 GetLogList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
-#GetLogInfo = _lib.GetLogInfo
-#GetLogInfo.restype = POINTER(LogInfo)
-#GetLogInfo.argtypes = [STRING, POINTER(ExceptionInfo)]
-#GetLogInfoList = _lib.GetLogInfoList
-#GetLogInfoList.restype = POINTER(POINTER(LogInfo))
-#GetLogInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetLogInfoList = _lib.GetLogInfoList
+GetLogInfoList.restype = POINTER(POINTER(LogInfo))
+GetLogInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
 SetLogEventMask = _lib.SetLogEventMask
 SetLogEventMask.restype = LogEventType
 SetLogEventMask.argtypes = [STRING]
@@ -2554,9 +2498,6 @@ LogMagickEvent.argtypes = [LogEventType, STRING, STRING, c_ulong, STRING]
 LogMagickEventList = _lib.LogMagickEventList
 LogMagickEventList.restype = MagickBooleanType
 LogMagickEventList.argtypes = [LogEventType, STRING, STRING, c_ulong, STRING, va_list]
-#DestroyLogList = _lib.DestroyLogList
-#DestroyLogList.restype = None
-#DestroyLogList.argtypes = []
 SetLogFormat = _lib.SetLogFormat
 SetLogFormat.restype = None
 SetLogFormat.argtypes = [STRING]
@@ -2591,9 +2532,6 @@ GetMagicInfo.argtypes = [POINTER(c_ubyte), size_t, POINTER(ExceptionInfo)]
 GetMagicInfoList = _lib.GetMagicInfoList
 GetMagicInfoList.restype = POINTER(POINTER(MagicInfo))
 GetMagicInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
-#DestroyMagicList = _lib.DestroyMagicList
-#DestroyMagicList.restype = None
-#DestroyMagicList.argtypes = []
 QuantumAny = c_ulong
 _BlobInfo._fields_ = [
 ]
@@ -2670,9 +2608,6 @@ SetMagickInfo.argtypes = [STRING]
 GetMagickThreadSupport = _lib.GetMagickThreadSupport
 GetMagickThreadSupport.restype = MagickStatusType
 GetMagickThreadSupport.argtypes = [POINTER(MagickInfo)]
-#DestroyMagickList = _lib.DestroyMagickList
-#DestroyMagickList.restype = None
-#DestroyMagickList.argtypes = []
 AcquireMagickMemory = _lib.AcquireMagickMemory
 AcquireMagickMemory.restype = c_void_p
 AcquireMagickMemory.argtypes = [size_t]
@@ -2965,12 +2900,6 @@ ImportQuantumPixels.argtypes = [POINTER(Image), POINTER(QuantumInfo), QuantumTyp
 GetRandomValue = _lib.GetRandomValue
 GetRandomValue.restype = c_double
 GetRandomValue.argtypes = []
-#DestroyRandomReservoir = _lib.DestroyRandomReservoir
-#DestroyRandomReservoir.restype = None
-#DestroyRandomReservoir.argtypes = []
-#DistillRandomEvent = _lib.DistillRandomEvent
-#DistillRandomEvent.restype = None
-#DistillRandomEvent.argtypes = [POINTER(c_ubyte), size_t]
 GetRandomKey = _lib.GetRandomKey
 GetRandomKey.restype = None
 GetRandomKey.argtypes = [POINTER(c_ubyte), size_t]
@@ -3024,15 +2953,6 @@ GetMagickResource.argtypes = [ResourceType]
 GetMagickResourceLimit = _lib.GetMagickResourceLimit
 GetMagickResourceLimit.restype = MagickSizeType
 GetMagickResourceLimit.argtypes = [ResourceType]
-#AsynchronousDestroyMagickResources = _lib.AsynchronousDestroyMagickResources
-#AsynchronousDestroyMagickResources.restype = None
-#AsynchronousDestroyMagickResources.argtypes = []
-#DestroyMagickResources = _lib.DestroyMagickResources
-#DestroyMagickResources.restype = None
-#DestroyMagickResources.argtypes = []
-#InitializeMagickResources = _lib.InitializeMagickResources
-#InitializeMagickResources.restype = None
-#InitializeMagickResources.argtypes = []
 RelinquishMagickResource = _lib.RelinquishMagickResource
 RelinquishMagickResource.restype = None
 RelinquishMagickResource.argtypes = [ResourceType, MagickSizeType]
@@ -3059,12 +2979,6 @@ DestroySemaphoreInfo.argtypes = [POINTER(SemaphoreInfo)]
 AcquireSemaphoreInfo = _lib.AcquireSemaphoreInfo
 AcquireSemaphoreInfo.restype = None
 AcquireSemaphoreInfo.argtypes = [POINTER(POINTER(SemaphoreInfo))]
-#DestroySemaphore = _lib.DestroySemaphore
-#DestroySemaphore.restype = None
-#DestroySemaphore.argtypes = []
-#InitializeSemaphore = _lib.InitializeSemaphore
-#InitializeSemaphore.restype = None
-#InitializeSemaphore.argtypes = []
 RelinquishSemaphoreInfo = _lib.RelinquishSemaphoreInfo
 RelinquishSemaphoreInfo.restype = None
 RelinquishSemaphoreInfo.argtypes = [POINTER(SemaphoreInfo)]
@@ -3218,9 +3132,6 @@ StringToArgv.argtypes = [STRING, POINTER(c_int)]
 StringToList = _lib.StringToList
 StringToList.restype = POINTER(STRING)
 StringToList.argtypes = [STRING]
-StringToDouble = _lib.StringToDouble
-StringToDouble.restype = c_double
-StringToDouble.argtypes = [STRING, c_double]
 FormatMagickString = _lib.FormatMagickString
 FormatMagickString.restype = c_long
 FormatMagickString.argtypes = [STRING, size_t, STRING]
@@ -3430,9 +3341,6 @@ GetTypeInfoByFamily.argtypes = [STRING, StyleType, StretchType, c_ulong, POINTER
 GetTypeInfoList = _lib.GetTypeInfoList
 GetTypeInfoList.restype = POINTER(POINTER(TypeInfo))
 GetTypeInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
-#DestroyTypeList = _lib.DestroyTypeList
-#DestroyTypeList.restype = None
-#DestroyTypeList.argtypes = []
 
 # values for enumeration 'PathType'
 PathType = c_int # enum
@@ -3454,9 +3362,6 @@ ExpandFilenames.argtypes = [POINTER(c_int), POINTER(POINTER(STRING))]
 GetExecutionPath = _lib.GetExecutionPath
 GetExecutionPath.restype = MagickBooleanType
 GetExecutionPath.argtypes = [STRING, size_t]
-#IsAccessible = _lib.IsAccessible
-#IsAccessible.restype = MagickBooleanType
-#IsAccessible.argtypes = [STRING]
 Base64Decode = _lib.Base64Decode
 Base64Decode.restype = POINTER(c_ubyte)
 Base64Decode.argtypes = [STRING, POINTER(size_t)]
@@ -4733,7 +4638,7 @@ MagickSetImageProfile.restype = MagickBooleanType
 MagickSetImageProfile.argtypes = [POINTER(MagickWand), STRING, c_void_p, size_t]
 MagickSetImageAlphaChannel = _lib.MagickSetImageAlphaChannel
 MagickSetImageAlphaChannel.restype = MagickBooleanType
-MagickSetImageAlphaChannel.argtypes = [POINTER(MagickWand), MagickBooleanType]
+MagickSetImageAlphaChannel.argtypes = [POINTER(MagickWand), AlphaChannelType]
 MagickSetInterlaceScheme = _lib.MagickSetInterlaceScheme
 MagickSetInterlaceScheme.restype = MagickBooleanType
 MagickSetInterlaceScheme.argtypes = [POINTER(MagickWand), InterlaceType]
