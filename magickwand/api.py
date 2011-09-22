@@ -5,7 +5,7 @@ from ctypes.util import find_library
 STRING = c_char_p
 
 # Mac OS user may have installed ImageMagick via Fink
-wand_lib = find_library('MagickWand') or '/usr/lib/libMagickWand.so.3'
+wand_lib = find_library('MagickWand')
 if not wand_lib:
     raise ImportError('Cannot find ImageMagick MagickWand library.')
 
