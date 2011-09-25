@@ -29,12 +29,13 @@ API Versions
 ------------
 The MagickWand API is available in various versions:
 
-ImageMagick | MagickWand | Status
-------------+------------+-----------
-6.4         | 1          | unknown
-6.5         | 2          | supported
-6.6         | 3          | incomplete
-6.7         | 4          | incomplete
+<table>
+<tr><td>ImageMagick</td><td>MagickWand</td><td>Status</td></tr>
+<tr><td>6.4</td><td>1</td><td>unknown</td></tr>
+<tr><td>6.5</td><td>2</td><td>supported</td></tr>
+<tr><td>6.6</td><td>3</td><td>incomplete</td></tr>
+<tr><td>6.7</td><td>4</td><td>incomplete</td></tr>
+</table>
 
 GraphicsMagick
 --------------
