@@ -1,4 +1,4 @@
-# ImageMagick MagickWand 3 API Wrapper, generated and edited
+# ImageMagick MagickWand 4 API Wrapper, generated and edited
 #
 from ctypes import *
 from ctypes.util import find_library
@@ -8,7 +8,7 @@ if not wand_lib:
     raise ImportError('MagickWand library cannot be found.')
 
 _lib = CDLL(wand_lib)
-wand_version = 3
+wand_version = 4
 # end of edit
 
 STRING = c_char_p
@@ -23,38 +23,6 @@ class _Image(Structure):
 Image = _Image
 class KernelInfo(Structure):
     pass
-
-# values for enumeration 'KernelInfoType'
-UndefinedKernel = 0
-GaussianKernel = 1
-BlurKernel = 2
-CometKernel = 3
-LaplacianKernel = 4
-LOGKernel = 5
-DOGKernel = 6
-RectangleKernel = 7
-SquareKernel = 8
-DiamondKernel = 9
-DiskKernel = 10
-PlusKernel = 11
-ChebyshevKernel = 12
-ManhattenKernel = 13
-EuclideanKernel = 14
-UserDefinedKernel = 15
-KernelInfoType = c_int # enum
-KernelInfo._fields_ = [
-    ('type', KernelInfoType),
-    ('width', c_ulong),
-    ('height', c_ulong),
-    ('x', c_long),
-    ('y', c_long),
-    ('values', POINTER(c_double)),
-    ('minimum', c_double),
-    ('maximum', c_double),
-    ('negative_range', c_double),
-    ('positive_range', c_double),
-    ('signature', c_ulong),
-]
 class _ExceptionInfo(Structure):
     pass
 ExceptionInfo = _ExceptionInfo
@@ -67,24 +35,32 @@ ImageInfo = _ImageInfo
 AnimateImages = _lib.AnimateImages
 AnimateImages.restype = MagickBooleanType
 AnimateImages.argtypes = [POINTER(ImageInfo), POINTER(Image)]
+AnnotateComponentGenesis = _lib.AnnotateComponentGenesis
+AnnotateComponentGenesis.restype = MagickBooleanType
+AnnotateComponentGenesis.argtypes = []
 class _DrawInfo(Structure):
     pass
 DrawInfo = _DrawInfo
-class _TypeMetric(Structure):
-    pass
-TypeMetric = _TypeMetric
-FormatMagickCaption = _lib.FormatMagickCaption
-FormatMagickCaption.restype = c_long
-FormatMagickCaption.argtypes = [POINTER(Image), POINTER(DrawInfo), POINTER(TypeMetric), POINTER(STRING)]
 AnnotateImage = _lib.AnnotateImage
 AnnotateImage.restype = MagickBooleanType
 AnnotateImage.argtypes = [POINTER(Image), POINTER(DrawInfo)]
+class _TypeMetric(Structure):
+    pass
+TypeMetric = _TypeMetric
 GetMultilineTypeMetrics = _lib.GetMultilineTypeMetrics
 GetMultilineTypeMetrics.restype = MagickBooleanType
 GetMultilineTypeMetrics.argtypes = [POINTER(Image), POINTER(DrawInfo), POINTER(TypeMetric)]
 GetTypeMetrics = _lib.GetTypeMetrics
 GetTypeMetrics.restype = MagickBooleanType
 GetTypeMetrics.argtypes = [POINTER(Image), POINTER(DrawInfo), POINTER(TypeMetric)]
+__ssize_t = c_long
+ssize_t = __ssize_t
+FormatMagickCaption = _lib.FormatMagickCaption
+FormatMagickCaption.restype = ssize_t
+FormatMagickCaption.argtypes = [POINTER(Image), POINTER(DrawInfo), MagickBooleanType, POINTER(TypeMetric), POINTER(STRING)]
+AnnotateComponentTerminus = _lib.AnnotateComponentTerminus
+AnnotateComponentTerminus.restype = None
+AnnotateComponentTerminus.argtypes = []
 GetNextImageArtifact = _lib.GetNextImageArtifact
 GetNextImageArtifact.restype = STRING
 GetNextImageArtifact.argtypes = [POINTER(Image)]
@@ -154,19 +130,21 @@ OpacityChannel = 8
 MatteChannel = 8
 BlackChannel = 32
 IndexChannel = 32
-AllChannels = 47
+CompositeChannels = 47
+AllChannels = -1
 TrueAlphaChannel = 64
 RGBChannels = 128
 GrayChannels = 128
 SyncChannels = 256
-DefaultChannels = 295
+DefaultChannels = -9
 ChannelType = c_int # enum
+size_t = c_ulong
 SetImageChannelDepth = _lib.SetImageChannelDepth
 SetImageChannelDepth.restype = MagickBooleanType
-SetImageChannelDepth.argtypes = [POINTER(Image), ChannelType, c_ulong]
+SetImageChannelDepth.argtypes = [POINTER(Image), ChannelType, size_t]
 SetImageDepth = _lib.SetImageDepth
 SetImageDepth.restype = MagickBooleanType
-SetImageDepth.argtypes = [POINTER(Image), c_ulong]
+SetImageDepth.argtypes = [POINTER(Image), size_t]
 class _RectangleInfo(Structure):
     pass
 RectangleInfo = _RectangleInfo
@@ -174,13 +152,13 @@ GetImageBoundingBox = _lib.GetImageBoundingBox
 GetImageBoundingBox.restype = RectangleInfo
 GetImageBoundingBox.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
 GetImageChannelDepth = _lib.GetImageChannelDepth
-GetImageChannelDepth.restype = c_ulong
+GetImageChannelDepth.restype = size_t
 GetImageChannelDepth.argtypes = [POINTER(Image), ChannelType, POINTER(ExceptionInfo)]
 GetImageDepth = _lib.GetImageDepth
-GetImageDepth.restype = c_ulong
+GetImageDepth.restype = size_t
 GetImageDepth.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
 GetImageQuantumDepth = _lib.GetImageQuantumDepth
-GetImageQuantumDepth.restype = c_ulong
+GetImageQuantumDepth.restype = size_t
 GetImageQuantumDepth.argtypes = [POINTER(Image), MagickBooleanType]
 class _IO_FILE(Structure):
     pass
@@ -188,7 +166,6 @@ FILE = _IO_FILE
 GetBlobFileHandle = _lib.GetBlobFileHandle
 GetBlobFileHandle.restype = POINTER(FILE)
 GetBlobFileHandle.argtypes = [POINTER(Image)]
-size_t = c_ulong
 BlobToImage = _lib.BlobToImage
 BlobToImage.restype = POINTER(Image)
 BlobToImage.argtypes = [POINTER(ImageInfo), c_void_p, size_t, POINTER(ExceptionInfo)]
@@ -248,15 +225,24 @@ DuplicateBlob.argtypes = [POINTER(Image), POINTER(Image)]
 SetBlobExempt = _lib.SetBlobExempt
 SetBlobExempt.restype = None
 SetBlobExempt.argtypes = [POINTER(Image), MagickBooleanType]
+class _CacheView(Structure):
+    pass
+CacheView = _CacheView
+AcquireCacheView = _lib.AcquireCacheView
+AcquireCacheView.restype = POINTER(CacheView)
+AcquireCacheView.argtypes = [POINTER(Image)]
+CloneCacheView = _lib.CloneCacheView
+CloneCacheView.restype = POINTER(CacheView)
+CloneCacheView.argtypes = [POINTER(CacheView)]
+DestroyCacheView = _lib.DestroyCacheView
+DestroyCacheView.restype = POINTER(CacheView)
+DestroyCacheView.argtypes = [POINTER(CacheView)]
 
 # values for enumeration 'ClassType'
 UndefinedClass = 0
 DirectClass = 1
 PseudoClass = 2
 ClassType = c_int # enum
-class _CacheView(Structure):
-    pass
-CacheView = _CacheView
 GetCacheViewStorageClass = _lib.GetCacheViewStorageClass
 GetCacheViewStorageClass.restype = ClassType
 GetCacheViewStorageClass.argtypes = [POINTER(CacheView)]
@@ -299,7 +285,7 @@ class _PixelPacket(Structure):
 PixelPacket = _PixelPacket
 GetCacheViewVirtualPixels = _lib.GetCacheViewVirtualPixels
 GetCacheViewVirtualPixels.restype = POINTER(PixelPacket)
-GetCacheViewVirtualPixels.argtypes = [POINTER(CacheView), c_long, c_long, c_ulong, c_ulong, POINTER(ExceptionInfo)]
+GetCacheViewVirtualPixels.argtypes = [POINTER(CacheView), ssize_t, ssize_t, size_t, size_t, POINTER(ExceptionInfo)]
 GetCacheViewVirtualPixelQueue = _lib.GetCacheViewVirtualPixelQueue
 GetCacheViewVirtualPixelQueue.restype = POINTER(PixelPacket)
 GetCacheViewVirtualPixelQueue.argtypes = [POINTER(CacheView)]
@@ -311,7 +297,7 @@ GetCacheViewAuthenticIndexQueue.restype = POINTER(IndexPacket)
 GetCacheViewAuthenticIndexQueue.argtypes = [POINTER(CacheView)]
 GetOneCacheViewVirtualPixel = _lib.GetOneCacheViewVirtualPixel
 GetOneCacheViewVirtualPixel.restype = MagickBooleanType
-GetOneCacheViewVirtualPixel.argtypes = [POINTER(CacheView), c_long, c_long, POINTER(PixelPacket), POINTER(ExceptionInfo)]
+GetOneCacheViewVirtualPixel.argtypes = [POINTER(CacheView), ssize_t, ssize_t, POINTER(PixelPacket), POINTER(ExceptionInfo)]
 
 # values for enumeration 'VirtualPixelMethod'
 UndefinedVirtualPixelMethod = 0
@@ -335,10 +321,10 @@ CheckerTileVirtualPixelMethod = 17
 VirtualPixelMethod = c_int # enum
 GetOneCacheViewVirtualMethodPixel = _lib.GetOneCacheViewVirtualMethodPixel
 GetOneCacheViewVirtualMethodPixel.restype = MagickBooleanType
-GetOneCacheViewVirtualMethodPixel.argtypes = [POINTER(CacheView), VirtualPixelMethod, c_long, c_long, POINTER(PixelPacket), POINTER(ExceptionInfo)]
+GetOneCacheViewVirtualMethodPixel.argtypes = [POINTER(CacheView), VirtualPixelMethod, ssize_t, ssize_t, POINTER(PixelPacket), POINTER(ExceptionInfo)]
 GetOneCacheViewAuthenticPixel = _lib.GetOneCacheViewAuthenticPixel
 GetOneCacheViewAuthenticPixel.restype = MagickBooleanType
-GetOneCacheViewAuthenticPixel.argtypes = [POINTER(CacheView), c_long, c_long, POINTER(PixelPacket), POINTER(ExceptionInfo)]
+GetOneCacheViewAuthenticPixel.argtypes = [POINTER(CacheView), ssize_t, ssize_t, POINTER(PixelPacket), POINTER(ExceptionInfo)]
 SetCacheViewStorageClass = _lib.SetCacheViewStorageClass
 SetCacheViewStorageClass.restype = MagickBooleanType
 SetCacheViewStorageClass.argtypes = [POINTER(CacheView), ClassType]
@@ -351,30 +337,24 @@ SyncCacheViewAuthenticPixels.argtypes = [POINTER(CacheView), POINTER(ExceptionIn
 GetCacheViewExtent = _lib.GetCacheViewExtent
 GetCacheViewExtent.restype = MagickSizeType
 GetCacheViewExtent.argtypes = [POINTER(CacheView)]
+GetCacheViewChannels = _lib.GetCacheViewChannels
+GetCacheViewChannels.restype = size_t
+GetCacheViewChannels.argtypes = [POINTER(CacheView)]
 GetCacheViewAuthenticPixelQueue = _lib.GetCacheViewAuthenticPixelQueue
 GetCacheViewAuthenticPixelQueue.restype = POINTER(PixelPacket)
 GetCacheViewAuthenticPixelQueue.argtypes = [POINTER(CacheView)]
 GetCacheViewAuthenticPixels = _lib.GetCacheViewAuthenticPixels
 GetCacheViewAuthenticPixels.restype = POINTER(PixelPacket)
-GetCacheViewAuthenticPixels.argtypes = [POINTER(CacheView), c_long, c_long, c_ulong, c_ulong, POINTER(ExceptionInfo)]
+GetCacheViewAuthenticPixels.argtypes = [POINTER(CacheView), ssize_t, ssize_t, size_t, size_t, POINTER(ExceptionInfo)]
 QueueCacheViewAuthenticPixels = _lib.QueueCacheViewAuthenticPixels
 QueueCacheViewAuthenticPixels.restype = POINTER(PixelPacket)
-QueueCacheViewAuthenticPixels.argtypes = [POINTER(CacheView), c_long, c_long, c_ulong, c_ulong, POINTER(ExceptionInfo)]
-AcquireCacheView = _lib.AcquireCacheView
-AcquireCacheView.restype = POINTER(CacheView)
-AcquireCacheView.argtypes = [POINTER(Image)]
-CloneCacheView = _lib.CloneCacheView
-CloneCacheView.restype = POINTER(CacheView)
-CloneCacheView.argtypes = [POINTER(CacheView)]
-DestroyCacheView = _lib.DestroyCacheView
-DestroyCacheView.restype = POINTER(CacheView)
-DestroyCacheView.argtypes = [POINTER(CacheView)]
+QueueCacheViewAuthenticPixels.argtypes = [POINTER(CacheView), ssize_t, ssize_t, size_t, size_t, POINTER(ExceptionInfo)]
 GetVirtualIndexQueue = _lib.GetVirtualIndexQueue
 GetVirtualIndexQueue.restype = POINTER(IndexPacket)
 GetVirtualIndexQueue.argtypes = [POINTER(Image)]
 GetVirtualPixels = _lib.GetVirtualPixels
 GetVirtualPixels.restype = POINTER(PixelPacket)
-GetVirtualPixels.argtypes = [POINTER(Image), c_long, c_long, c_ulong, c_ulong, POINTER(ExceptionInfo)]
+GetVirtualPixels.argtypes = [POINTER(Image), ssize_t, ssize_t, size_t, size_t, POINTER(ExceptionInfo)]
 GetVirtualPixelQueue = _lib.GetVirtualPixelQueue
 GetVirtualPixelQueue.restype = POINTER(PixelPacket)
 GetVirtualPixelQueue.argtypes = [POINTER(Image)]
@@ -392,16 +372,16 @@ class _MagickPixelPacket(Structure):
 MagickPixelPacket = _MagickPixelPacket
 GetOneVirtualMagickPixel = _lib.GetOneVirtualMagickPixel
 GetOneVirtualMagickPixel.restype = MagickBooleanType
-GetOneVirtualMagickPixel.argtypes = [POINTER(Image), c_long, c_long, POINTER(MagickPixelPacket), POINTER(ExceptionInfo)]
+GetOneVirtualMagickPixel.argtypes = [POINTER(Image), ssize_t, ssize_t, POINTER(MagickPixelPacket), POINTER(ExceptionInfo)]
 GetOneVirtualPixel = _lib.GetOneVirtualPixel
 GetOneVirtualPixel.restype = MagickBooleanType
-GetOneVirtualPixel.argtypes = [POINTER(Image), c_long, c_long, POINTER(PixelPacket), POINTER(ExceptionInfo)]
+GetOneVirtualPixel.argtypes = [POINTER(Image), ssize_t, ssize_t, POINTER(PixelPacket), POINTER(ExceptionInfo)]
 GetOneVirtualMethodPixel = _lib.GetOneVirtualMethodPixel
 GetOneVirtualMethodPixel.restype = MagickBooleanType
-GetOneVirtualMethodPixel.argtypes = [POINTER(Image), VirtualPixelMethod, c_long, c_long, POINTER(PixelPacket), POINTER(ExceptionInfo)]
+GetOneVirtualMethodPixel.argtypes = [POINTER(Image), VirtualPixelMethod, ssize_t, ssize_t, POINTER(PixelPacket), POINTER(ExceptionInfo)]
 GetOneAuthenticPixel = _lib.GetOneAuthenticPixel
 GetOneAuthenticPixel.restype = MagickBooleanType
-GetOneAuthenticPixel.argtypes = [POINTER(Image), c_long, c_long, POINTER(PixelPacket), POINTER(ExceptionInfo)]
+GetOneAuthenticPixel.argtypes = [POINTER(Image), ssize_t, ssize_t, POINTER(PixelPacket), POINTER(ExceptionInfo)]
 MagickOffsetType = c_longlong
 PersistPixelCache = _lib.PersistPixelCache
 PersistPixelCache.restype = MagickBooleanType
@@ -414,13 +394,13 @@ GetImageExtent.restype = MagickSizeType
 GetImageExtent.argtypes = [POINTER(Image)]
 GetAuthenticPixels = _lib.GetAuthenticPixels
 GetAuthenticPixels.restype = POINTER(PixelPacket)
-GetAuthenticPixels.argtypes = [POINTER(Image), c_long, c_long, c_ulong, c_ulong, POINTER(ExceptionInfo)]
+GetAuthenticPixels.argtypes = [POINTER(Image), ssize_t, ssize_t, size_t, size_t, POINTER(ExceptionInfo)]
 GetAuthenticPixelQueue = _lib.GetAuthenticPixelQueue
 GetAuthenticPixelQueue.restype = POINTER(PixelPacket)
 GetAuthenticPixelQueue.argtypes = [POINTER(Image)]
 QueueAuthenticPixels = _lib.QueueAuthenticPixels
 QueueAuthenticPixels.restype = POINTER(PixelPacket)
-QueueAuthenticPixels.argtypes = [POINTER(Image), c_long, c_long, c_ulong, c_ulong, POINTER(ExceptionInfo)]
+QueueAuthenticPixels.argtypes = [POINTER(Image), ssize_t, ssize_t, size_t, size_t, POINTER(ExceptionInfo)]
 GetPixelCacheVirtualMethod = _lib.GetPixelCacheVirtualMethod
 GetPixelCacheVirtualMethod.restype = VirtualPixelMethod
 GetPixelCacheVirtualMethod.argtypes = [POINTER(Image)]
@@ -462,7 +442,7 @@ SetClientPath.restype = STRING
 SetClientPath.argtypes = [STRING]
 GetCoderList = _lib.GetCoderList
 GetCoderList.restype = POINTER(STRING)
-GetCoderList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetCoderList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 class _CoderInfo(Structure):
     pass
 CoderInfo = _CoderInfo
@@ -471,7 +451,7 @@ GetCoderInfo.restype = POINTER(CoderInfo)
 GetCoderInfo.argtypes = [STRING, POINTER(ExceptionInfo)]
 GetCoderInfoList = _lib.GetCoderInfoList
 GetCoderInfoList.restype = POINTER(POINTER(CoderInfo))
-GetCoderInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetCoderInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 CoderComponentGenesis = _lib.CoderComponentGenesis
 CoderComponentGenesis.restype = MagickBooleanType
 CoderComponentGenesis.argtypes = []
@@ -483,7 +463,7 @@ CoderComponentTerminus.restype = None
 CoderComponentTerminus.argtypes = []
 GetColorList = _lib.GetColorList
 GetColorList.restype = POINTER(STRING)
-GetColorList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetColorList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 class _ColorInfo(Structure):
     pass
 ColorInfo = _ColorInfo
@@ -492,7 +472,7 @@ GetColorInfo.restype = POINTER(ColorInfo)
 GetColorInfo.argtypes = [STRING, POINTER(ExceptionInfo)]
 GetColorInfoList = _lib.GetColorInfoList
 GetColorInfoList.restype = POINTER(POINTER(ColorInfo))
-GetColorInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetColorInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 ColorComponentGenesis = _lib.ColorComponentGenesis
 ColorComponentGenesis.restype = MagickBooleanType
 ColorComponentGenesis.argtypes = []
@@ -501,7 +481,7 @@ IsColorSimilar.restype = MagickBooleanType
 IsColorSimilar.argtypes = [POINTER(Image), POINTER(PixelPacket), POINTER(PixelPacket)]
 IsImageSimilar = _lib.IsImageSimilar
 IsImageSimilar.restype = MagickBooleanType
-IsImageSimilar.argtypes = [POINTER(Image), POINTER(Image), POINTER(c_long), POINTER(c_long), POINTER(ExceptionInfo)]
+IsImageSimilar.argtypes = [POINTER(Image), POINTER(Image), POINTER(ssize_t), POINTER(ssize_t), POINTER(ExceptionInfo)]
 IsMagickColorSimilar = _lib.IsMagickColorSimilar
 IsMagickColorSimilar.restype = MagickBooleanType
 IsMagickColorSimilar.argtypes = [POINTER(MagickPixelPacket), POINTER(MagickPixelPacket)]
@@ -511,9 +491,6 @@ IsOpacitySimilar.argtypes = [POINTER(Image), POINTER(PixelPacket), POINTER(Pixel
 ListColorInfo = _lib.ListColorInfo
 ListColorInfo.restype = MagickBooleanType
 ListColorInfo.argtypes = [POINTER(FILE), POINTER(ExceptionInfo)]
-QueryColorDatabase = _lib.QueryColorDatabase
-QueryColorDatabase.restype = MagickBooleanType
-QueryColorDatabase.argtypes = [STRING, POINTER(PixelPacket), POINTER(ExceptionInfo)]
 
 # values for enumeration 'ComplianceType'
 UndefinedCompliance = 0
@@ -523,9 +500,18 @@ X11Compliance = 2
 XPMCompliance = 4
 AllCompliance = 2147483647
 ComplianceType = c_int # enum
+QueryColorCompliance = _lib.QueryColorCompliance
+QueryColorCompliance.restype = MagickBooleanType
+QueryColorCompliance.argtypes = [STRING, ComplianceType, POINTER(PixelPacket), POINTER(ExceptionInfo)]
+QueryColorDatabase = _lib.QueryColorDatabase
+QueryColorDatabase.restype = MagickBooleanType
+QueryColorDatabase.argtypes = [STRING, POINTER(PixelPacket), POINTER(ExceptionInfo)]
 QueryColorname = _lib.QueryColorname
 QueryColorname.restype = MagickBooleanType
 QueryColorname.argtypes = [POINTER(Image), POINTER(PixelPacket), ComplianceType, STRING, POINTER(ExceptionInfo)]
+QueryMagickColorCompliance = _lib.QueryMagickColorCompliance
+QueryMagickColorCompliance.restype = MagickBooleanType
+QueryMagickColorCompliance.argtypes = [STRING, ComplianceType, POINTER(MagickPixelPacket), POINTER(ExceptionInfo)]
 QueryMagickColor = _lib.QueryMagickColor
 QueryMagickColor.restype = MagickBooleanType
 QueryMagickColor.argtypes = [STRING, POINTER(MagickPixelPacket), POINTER(ExceptionInfo)]
@@ -541,9 +527,12 @@ ConcatenateColorComponent.argtypes = [POINTER(MagickPixelPacket), ChannelType, C
 GetColorTuple = _lib.GetColorTuple
 GetColorTuple.restype = None
 GetColorTuple.argtypes = [POINTER(MagickPixelPacket), MagickBooleanType, STRING]
+AcquireImageColormap = _lib.AcquireImageColormap
+AcquireImageColormap.restype = MagickBooleanType
+AcquireImageColormap.argtypes = [POINTER(Image), size_t]
 CycleColormapImage = _lib.CycleColormapImage
 CycleColormapImage.restype = MagickBooleanType
-CycleColormapImage.argtypes = [POINTER(Image), c_long]
+CycleColormapImage.argtypes = [POINTER(Image), ssize_t]
 SortColormapByIntensity = _lib.SortColormapByIntensity
 SortColormapByIntensity.restype = MagickBooleanType
 SortColormapByIntensity.argtypes = [POINTER(Image)]
@@ -569,6 +558,8 @@ MeanSquaredErrorMetric = 4
 PeakAbsoluteErrorMetric = 5
 PeakSignalToNoiseRatioMetric = 6
 RootMeanSquaredErrorMetric = 7
+NormalizedCrossCorrelationErrorMetric = 8
+FuzzErrorMetric = 9
 MetricType = c_int # enum
 GetImageChannelDistortions = _lib.GetImageChannelDistortions
 GetImageChannelDistortions.restype = POINTER(c_double)
@@ -595,7 +586,7 @@ IsImagesEqual.argtypes = [POINTER(Image), POINTER(Image)]
 # values for enumeration 'CompositeOperator'
 UndefinedCompositeOp = 0
 NoCompositeOp = 1
-AddCompositeOp = 2
+ModulusAddCompositeOp = 2
 AtopCompositeOp = 3
 BlendCompositeOp = 4
 BumpmapCompositeOp = 5
@@ -629,7 +620,7 @@ InCompositeOp = 32
 LightenCompositeOp = 33
 LinearLightCompositeOp = 34
 LuminizeCompositeOp = 35
-MinusCompositeOp = 36
+MinusDstCompositeOp = 36
 ModulateCompositeOp = 37
 MultiplyCompositeOp = 38
 OutCompositeOp = 39
@@ -645,10 +636,10 @@ SrcCompositeOp = 48
 SrcInCompositeOp = 49
 SrcOutCompositeOp = 50
 SrcOverCompositeOp = 51
-SubtractCompositeOp = 52
+ModulusSubtractCompositeOp = 52
 ThresholdCompositeOp = 53
 XorCompositeOp = 54
-DivideCompositeOp = 55
+DivideDstCompositeOp = 55
 DistortCompositeOp = 56
 BlurCompositeOp = 57
 PegtopLightCompositeOp = 58
@@ -657,13 +648,17 @@ PinLightCompositeOp = 60
 LinearDodgeCompositeOp = 61
 LinearBurnCompositeOp = 62
 MathematicsCompositeOp = 63
+DivideSrcCompositeOp = 64
+MinusSrcCompositeOp = 65
+DarkenIntensityCompositeOp = 66
+LightenIntensityCompositeOp = 67
 CompositeOperator = c_int # enum
 CompositeImage = _lib.CompositeImage
 CompositeImage.restype = MagickBooleanType
-CompositeImage.argtypes = [POINTER(Image), CompositeOperator, POINTER(Image), c_long, c_long]
+CompositeImage.argtypes = [POINTER(Image), CompositeOperator, POINTER(Image), ssize_t, ssize_t]
 CompositeImageChannel = _lib.CompositeImageChannel
 CompositeImageChannel.restype = MagickBooleanType
-CompositeImageChannel.argtypes = [POINTER(Image), ChannelType, CompositeOperator, POINTER(Image), c_long, c_long]
+CompositeImageChannel.argtypes = [POINTER(Image), ChannelType, CompositeOperator, POINTER(Image), ssize_t, ssize_t]
 TextureImage = _lib.TextureImage
 TextureImage.restype = MagickBooleanType
 TextureImage.argtypes = [POINTER(Image), POINTER(Image)]
@@ -693,7 +688,7 @@ Ascii85Initialize.restype = None
 Ascii85Initialize.argtypes = [POINTER(Image)]
 GetConfigureList = _lib.GetConfigureList
 GetConfigureList.restype = POINTER(STRING)
-GetConfigureList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetConfigureList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 GetConfigureOption = _lib.GetConfigureOption
 GetConfigureOption.restype = STRING
 GetConfigureOption.argtypes = [STRING]
@@ -708,7 +703,7 @@ GetConfigureInfo.restype = POINTER(ConfigureInfo)
 GetConfigureInfo.argtypes = [STRING, POINTER(ExceptionInfo)]
 GetConfigureInfoList = _lib.GetConfigureInfoList
 GetConfigureInfoList.restype = POINTER(POINTER(ConfigureInfo))
-GetConfigureInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetConfigureInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 class _LinkedListInfo(Structure):
     pass
 LinkedListInfo = _LinkedListInfo
@@ -743,7 +738,7 @@ ShortPixel = 7
 StorageType = c_int # enum
 ConstituteImage = _lib.ConstituteImage
 ConstituteImage.restype = POINTER(Image)
-ConstituteImage.argtypes = [c_ulong, c_ulong, STRING, StorageType, c_void_p, POINTER(ExceptionInfo)]
+ConstituteImage.argtypes = [size_t, size_t, STRING, StorageType, c_void_p, POINTER(ExceptionInfo)]
 PingImage = _lib.PingImage
 PingImage.restype = POINTER(Image)
 PingImage.argtypes = [POINTER(ImageInfo), POINTER(ExceptionInfo)]
@@ -788,7 +783,7 @@ GetDelegateCommand.restype = STRING
 GetDelegateCommand.argtypes = [POINTER(ImageInfo), POINTER(Image), STRING, STRING, POINTER(ExceptionInfo)]
 GetDelegateList = _lib.GetDelegateList
 GetDelegateList.restype = POINTER(STRING)
-GetDelegateList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetDelegateList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 class _DelegateInfo(Structure):
     pass
 DelegateInfo = _DelegateInfo
@@ -800,9 +795,9 @@ GetDelegateInfo.restype = POINTER(DelegateInfo)
 GetDelegateInfo.argtypes = [STRING, STRING, POINTER(ExceptionInfo)]
 GetDelegateInfoList = _lib.GetDelegateInfoList
 GetDelegateInfoList.restype = POINTER(POINTER(DelegateInfo))
-GetDelegateInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetDelegateInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 GetDelegateMode = _lib.GetDelegateMode
-GetDelegateMode.restype = c_long
+GetDelegateMode.restype = ssize_t
 GetDelegateMode.argtypes = [POINTER(DelegateInfo)]
 DelegateComponentGenesis = _lib.DelegateComponentGenesis
 DelegateComponentGenesis.restype = MagickBooleanType
@@ -819,6 +814,12 @@ ListDelegateInfo.argtypes = [POINTER(FILE), POINTER(ExceptionInfo)]
 DelegateComponentTerminus = _lib.DelegateComponentTerminus
 DelegateComponentTerminus.restype = None
 DelegateComponentTerminus.argtypes = []
+CloseCacheView = _lib.CloseCacheView
+CloseCacheView.restype = POINTER(CacheView)
+CloseCacheView.argtypes = [POINTER(CacheView)]
+OpenCacheView = _lib.OpenCacheView
+OpenCacheView.restype = POINTER(CacheView)
+OpenCacheView.argtypes = [POINTER(Image)]
 AllocateString = _lib.AllocateString
 AllocateString.restype = STRING
 AllocateString.argtypes = [STRING]
@@ -831,15 +832,6 @@ PostscriptGeometry.argtypes = [STRING]
 TranslateText = _lib.TranslateText
 TranslateText.restype = STRING
 TranslateText.argtypes = [POINTER(ImageInfo), POINTER(Image), STRING]
-AverageImages = _lib.AverageImages
-AverageImages.restype = POINTER(Image)
-AverageImages.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
-MaximumImages = _lib.MaximumImages
-MaximumImages.restype = POINTER(Image)
-MaximumImages.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
-MinimumImages = _lib.MinimumImages
-MinimumImages.restype = POINTER(Image)
-MinimumImages.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
 class _ImageAttribute(Structure):
     pass
 ImageAttribute = _ImageAttribute
@@ -863,22 +855,25 @@ AcquirePixels.restype = POINTER(PixelPacket)
 AcquirePixels.argtypes = [POINTER(Image)]
 AcquireCacheViewPixels = _lib.AcquireCacheViewPixels
 AcquireCacheViewPixels.restype = POINTER(PixelPacket)
-AcquireCacheViewPixels.argtypes = [POINTER(CacheView), c_long, c_long, c_ulong, c_ulong, POINTER(ExceptionInfo)]
+AcquireCacheViewPixels.argtypes = [POINTER(CacheView), ssize_t, ssize_t, size_t, size_t, POINTER(ExceptionInfo)]
 AcquireImagePixels = _lib.AcquireImagePixels
 AcquireImagePixels.restype = POINTER(PixelPacket)
-AcquireImagePixels.argtypes = [POINTER(Image), c_long, c_long, c_ulong, c_ulong, POINTER(ExceptionInfo)]
+AcquireImagePixels.argtypes = [POINTER(Image), ssize_t, ssize_t, size_t, size_t, POINTER(ExceptionInfo)]
 AllocateImage = _lib.AllocateImage
 AllocateImage.restype = POINTER(Image)
 AllocateImage.argtypes = [POINTER(ImageInfo)]
+AverageImages = _lib.AverageImages
+AverageImages.restype = POINTER(Image)
+AverageImages.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
 ExtractSubimageFromImage = _lib.ExtractSubimageFromImage
 ExtractSubimageFromImage.restype = POINTER(Image)
 ExtractSubimageFromImage.argtypes = [POINTER(Image), POINTER(Image), POINTER(ExceptionInfo)]
 GetImageFromMagickRegistry = _lib.GetImageFromMagickRegistry
 GetImageFromMagickRegistry.restype = POINTER(Image)
-GetImageFromMagickRegistry.argtypes = [STRING, POINTER(c_long), POINTER(ExceptionInfo)]
+GetImageFromMagickRegistry.argtypes = [STRING, POINTER(ssize_t), POINTER(ExceptionInfo)]
 GetImageList = _lib.GetImageList
 GetImageList.restype = POINTER(Image)
-GetImageList.argtypes = [POINTER(Image), c_long, POINTER(ExceptionInfo)]
+GetImageList.argtypes = [POINTER(Image), ssize_t, POINTER(ExceptionInfo)]
 GetNextImage = _lib.GetNextImage
 GetNextImage.restype = POINTER(Image)
 GetNextImage.argtypes = [POINTER(Image)]
@@ -888,18 +883,39 @@ GetPreviousImage.argtypes = [POINTER(Image)]
 FlattenImages = _lib.FlattenImages
 FlattenImages.restype = POINTER(Image)
 FlattenImages.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
+MaximumImages = _lib.MaximumImages
+MaximumImages.restype = POINTER(Image)
+MaximumImages.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
+MedianFilterImage = _lib.MedianFilterImage
+MedianFilterImage.restype = POINTER(Image)
+MedianFilterImage.argtypes = [POINTER(Image), c_double, POINTER(ExceptionInfo)]
+ModeImage = _lib.ModeImage
+ModeImage.restype = POINTER(Image)
+ModeImage.argtypes = [POINTER(Image), c_double, POINTER(ExceptionInfo)]
+MinimumImages = _lib.MinimumImages
+MinimumImages.restype = POINTER(Image)
+MinimumImages.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
 MosaicImages = _lib.MosaicImages
 MosaicImages.restype = POINTER(Image)
 MosaicImages.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
 PopImageList = _lib.PopImageList
 PopImageList.restype = POINTER(Image)
 PopImageList.argtypes = [POINTER(POINTER(Image))]
+RecolorImage = _lib.RecolorImage
+RecolorImage.restype = POINTER(Image)
+RecolorImage.argtypes = [POINTER(Image), size_t, POINTER(c_double), POINTER(ExceptionInfo)]
+ReduceNoiseImage = _lib.ReduceNoiseImage
+ReduceNoiseImage.restype = POINTER(Image)
+ReduceNoiseImage.argtypes = [POINTER(Image), c_double, POINTER(ExceptionInfo)]
 ShiftImageList = _lib.ShiftImageList
 ShiftImageList.restype = POINTER(Image)
 ShiftImageList.argtypes = [POINTER(POINTER(Image))]
 SpliceImageList = _lib.SpliceImageList
 SpliceImageList.restype = POINTER(Image)
-SpliceImageList.argtypes = [POINTER(Image), c_long, c_ulong, POINTER(Image), POINTER(ExceptionInfo)]
+SpliceImageList.argtypes = [POINTER(Image), ssize_t, size_t, POINTER(Image), POINTER(ExceptionInfo)]
+ZoomImage = _lib.ZoomImage
+ZoomImage.restype = POINTER(Image)
+ZoomImage.argtypes = [POINTER(Image), size_t, size_t, POINTER(ExceptionInfo)]
 GetCacheViewIndexes = _lib.GetCacheViewIndexes
 GetCacheViewIndexes.restype = POINTER(IndexPacket)
 GetCacheViewIndexes.argtypes = [POINTER(CacheView)]
@@ -908,15 +924,15 @@ GetIndexes.restype = POINTER(IndexPacket)
 GetIndexes.argtypes = [POINTER(Image)]
 ValidateColormapIndex = _lib.ValidateColormapIndex
 ValidateColormapIndex.restype = IndexPacket
-ValidateColormapIndex.argtypes = [POINTER(Image), c_ulong]
+ValidateColormapIndex.argtypes = [POINTER(Image), size_t]
 GetImageGeometry = _lib.GetImageGeometry
 GetImageGeometry.restype = c_int
 GetImageGeometry.argtypes = [POINTER(Image), STRING, c_uint, POINTER(RectangleInfo)]
 ParseImageGeometry = _lib.ParseImageGeometry
 ParseImageGeometry.restype = c_int
-ParseImageGeometry.argtypes = [STRING, POINTER(c_long), POINTER(c_long), POINTER(c_ulong), POINTER(c_ulong)]
+ParseImageGeometry.argtypes = [STRING, POINTER(ssize_t), POINTER(ssize_t), POINTER(size_t), POINTER(size_t)]
 GetImageListIndex = _lib.GetImageListIndex
-GetImageListIndex.restype = c_long
+GetImageListIndex.restype = ssize_t
 GetImageListIndex.argtypes = [POINTER(Image)]
 
 # values for enumeration 'RegistryType'
@@ -926,14 +942,14 @@ ImageInfoRegistryType = 2
 StringRegistryType = 3
 RegistryType = c_int # enum
 SetMagickRegistry = _lib.SetMagickRegistry
-SetMagickRegistry.restype = c_long
+SetMagickRegistry.restype = ssize_t
 SetMagickRegistry.argtypes = [RegistryType, c_void_p, size_t, POINTER(ExceptionInfo)]
 AcquireOneCacheViewPixel = _lib.AcquireOneCacheViewPixel
 AcquireOneCacheViewPixel.restype = MagickBooleanType
-AcquireOneCacheViewPixel.argtypes = [POINTER(CacheView), c_long, c_long, POINTER(PixelPacket), POINTER(ExceptionInfo)]
+AcquireOneCacheViewPixel.argtypes = [POINTER(CacheView), ssize_t, ssize_t, POINTER(PixelPacket), POINTER(ExceptionInfo)]
 AcquireOneCacheViewVirtualPixel = _lib.AcquireOneCacheViewVirtualPixel
 AcquireOneCacheViewVirtualPixel.restype = MagickBooleanType
-AcquireOneCacheViewVirtualPixel.argtypes = [POINTER(CacheView), VirtualPixelMethod, c_long, c_long, POINTER(PixelPacket), POINTER(ExceptionInfo)]
+AcquireOneCacheViewVirtualPixel.argtypes = [POINTER(CacheView), VirtualPixelMethod, ssize_t, ssize_t, POINTER(PixelPacket), POINTER(ExceptionInfo)]
 class _QuantizeInfo(Structure):
     pass
 QuantizeInfo = _QuantizeInfo
@@ -945,7 +961,7 @@ AffinityImages.restype = MagickBooleanType
 AffinityImages.argtypes = [POINTER(QuantizeInfo), POINTER(Image), POINTER(Image)]
 AllocateImageColormap = _lib.AllocateImageColormap
 AllocateImageColormap.restype = MagickBooleanType
-AllocateImageColormap.argtypes = [POINTER(Image), c_ulong]
+AllocateImageColormap.argtypes = [POINTER(Image), size_t]
 ClipPathImage = _lib.ClipPathImage
 ClipPathImage.restype = MagickBooleanType
 ClipPathImage.argtypes = [POINTER(Image), STRING, MagickBooleanType]
@@ -963,13 +979,13 @@ ResetMethod = 5
 PaintMethod = c_int # enum
 ColorFloodfillImage = _lib.ColorFloodfillImage
 ColorFloodfillImage.restype = MagickBooleanType
-ColorFloodfillImage.argtypes = [POINTER(Image), POINTER(DrawInfo), PixelPacket, c_long, c_long, PaintMethod]
+ColorFloodfillImage.argtypes = [POINTER(Image), POINTER(DrawInfo), PixelPacket, ssize_t, ssize_t, PaintMethod]
 DeleteImageAttribute = _lib.DeleteImageAttribute
 DeleteImageAttribute.restype = MagickBooleanType
 DeleteImageAttribute.argtypes = [POINTER(Image), STRING]
 DeleteMagickRegistry = _lib.DeleteMagickRegistry
 DeleteMagickRegistry.restype = MagickBooleanType
-DeleteMagickRegistry.argtypes = [c_long]
+DeleteMagickRegistry.argtypes = [ssize_t]
 DescribeImage = _lib.DescribeImage
 DescribeImage.restype = MagickBooleanType
 DescribeImage.argtypes = [POINTER(Image), POINTER(FILE), MagickBooleanType]
@@ -1001,13 +1017,13 @@ MapImages.restype = MagickBooleanType
 MapImages.argtypes = [POINTER(Image), POINTER(Image), MagickBooleanType]
 MatteFloodfillImage = _lib.MatteFloodfillImage
 MatteFloodfillImage.restype = MagickBooleanType
-MatteFloodfillImage.argtypes = [POINTER(Image), PixelPacket, Quantum, c_long, c_long, PaintMethod]
+MatteFloodfillImage.argtypes = [POINTER(Image), PixelPacket, Quantum, ssize_t, ssize_t, PaintMethod]
 OpaqueImage = _lib.OpaqueImage
 OpaqueImage.restype = MagickBooleanType
 OpaqueImage.argtypes = [POINTER(Image), PixelPacket, PixelPacket]
 PaintFloodfillImage = _lib.PaintFloodfillImage
 PaintFloodfillImage.restype = MagickBooleanType
-PaintFloodfillImage.argtypes = [POINTER(Image), ChannelType, POINTER(MagickPixelPacket), c_long, c_long, POINTER(DrawInfo), PaintMethod]
+PaintFloodfillImage.argtypes = [POINTER(Image), ChannelType, POINTER(MagickPixelPacket), ssize_t, ssize_t, POINTER(DrawInfo), PaintMethod]
 PaintOpaqueImage = _lib.PaintOpaqueImage
 PaintOpaqueImage.restype = MagickBooleanType
 PaintOpaqueImage.argtypes = [POINTER(Image), POINTER(MagickPixelPacket), POINTER(MagickPixelPacket)]
@@ -1107,7 +1123,7 @@ TransparentImage.restype = MagickBooleanType
 TransparentImage.argtypes = [POINTER(Image), PixelPacket, Quantum]
 AcquireOneMagickPixel = _lib.AcquireOneMagickPixel
 AcquireOneMagickPixel.restype = MagickPixelPacket
-AcquireOneMagickPixel.argtypes = [POINTER(Image), c_long, c_long, POINTER(ExceptionInfo)]
+AcquireOneMagickPixel.argtypes = [POINTER(Image), ssize_t, ssize_t, POINTER(ExceptionInfo)]
 MonitorHandler = CFUNCTYPE(MagickBooleanType, STRING, MagickOffsetType, MagickSizeType, POINTER(ExceptionInfo))
 GetMonitorHandler = _lib.GetMonitorHandler
 GetMonitorHandler.restype = MonitorHandler
@@ -1139,31 +1155,34 @@ ParseSizeGeometry.restype = MagickStatusType
 ParseSizeGeometry.argtypes = [POINTER(Image), STRING, POINTER(RectangleInfo)]
 AcquireOnePixel = _lib.AcquireOnePixel
 AcquireOnePixel.restype = PixelPacket
-AcquireOnePixel.argtypes = [POINTER(Image), c_long, c_long, POINTER(ExceptionInfo)]
+AcquireOnePixel.argtypes = [POINTER(Image), ssize_t, ssize_t, POINTER(ExceptionInfo)]
 AcquireOneVirtualPixel = _lib.AcquireOneVirtualPixel
 AcquireOneVirtualPixel.restype = PixelPacket
-AcquireOneVirtualPixel.argtypes = [POINTER(Image), VirtualPixelMethod, c_long, c_long, POINTER(ExceptionInfo)]
+AcquireOneVirtualPixel.argtypes = [POINTER(Image), VirtualPixelMethod, ssize_t, ssize_t, POINTER(ExceptionInfo)]
 GetCacheView = _lib.GetCacheView
 GetCacheView.restype = POINTER(PixelPacket)
-GetCacheView.argtypes = [POINTER(CacheView), c_long, c_long, c_ulong, c_ulong]
+GetCacheView.argtypes = [POINTER(CacheView), ssize_t, ssize_t, size_t, size_t]
 GetCacheViewPixels = _lib.GetCacheViewPixels
 GetCacheViewPixels.restype = POINTER(PixelPacket)
-GetCacheViewPixels.argtypes = [POINTER(CacheView), c_long, c_long, c_ulong, c_ulong]
+GetCacheViewPixels.argtypes = [POINTER(CacheView), ssize_t, ssize_t, size_t, size_t]
 GetImagePixels = _lib.GetImagePixels
 GetImagePixels.restype = POINTER(PixelPacket)
-GetImagePixels.argtypes = [POINTER(Image), c_long, c_long, c_ulong, c_ulong]
+GetImagePixels.argtypes = [POINTER(Image), ssize_t, ssize_t, size_t, size_t]
 GetOnePixel = _lib.GetOnePixel
 GetOnePixel.restype = PixelPacket
-GetOnePixel.argtypes = [POINTER(Image), c_long, c_long]
+GetOnePixel.argtypes = [POINTER(Image), ssize_t, ssize_t]
 GetPixels = _lib.GetPixels
 GetPixels.restype = POINTER(PixelPacket)
 GetPixels.argtypes = [POINTER(Image)]
 SetCacheViewPixels = _lib.SetCacheViewPixels
 SetCacheViewPixels.restype = POINTER(PixelPacket)
-SetCacheViewPixels.argtypes = [POINTER(CacheView), c_long, c_long, c_ulong, c_ulong]
+SetCacheViewPixels.argtypes = [POINTER(CacheView), ssize_t, ssize_t, size_t, size_t]
 SetImagePixels = _lib.SetImagePixels
 SetImagePixels.restype = POINTER(PixelPacket)
-SetImagePixels.argtypes = [POINTER(Image), c_long, c_long, c_ulong, c_ulong]
+SetImagePixels.argtypes = [POINTER(Image), ssize_t, ssize_t, size_t, size_t]
+GetImageListSize = _lib.GetImageListSize
+GetImageListSize.restype = size_t
+GetImageListSize.argtypes = [POINTER(Image)]
 
 # values for enumeration 'QuantumType'
 UndefinedQuantum = 0
@@ -1192,6 +1211,8 @@ CbYCrYQuantum = 22
 CbYCrQuantum = 23
 CbYCrAQuantum = 24
 CMYKOQuantum = 25
+BGRQuantum = 26
+BGROQuantum = 27
 QuantumType = c_int # enum
 PopImagePixels = _lib.PopImagePixels
 PopImagePixels.restype = size_t
@@ -1207,7 +1228,7 @@ ChannelThresholdImage.restype = c_uint
 ChannelThresholdImage.argtypes = [POINTER(Image), STRING]
 DispatchImage = _lib.DispatchImage
 DispatchImage.restype = c_uint
-DispatchImage.argtypes = [POINTER(Image), c_long, c_long, c_ulong, c_ulong, STRING, StorageType, c_void_p, POINTER(ExceptionInfo)]
+DispatchImage.argtypes = [POINTER(Image), ssize_t, ssize_t, size_t, size_t, STRING, StorageType, c_void_p, POINTER(ExceptionInfo)]
 FuzzyColorMatch = _lib.FuzzyColorMatch
 FuzzyColorMatch.restype = c_uint
 FuzzyColorMatch.argtypes = [POINTER(PixelPacket), POINTER(PixelPacket), c_double]
@@ -1216,7 +1237,7 @@ GetNumberScenes.restype = c_uint
 GetNumberScenes.argtypes = [POINTER(Image)]
 GetMagickGeometry = _lib.GetMagickGeometry
 GetMagickGeometry.restype = c_uint
-GetMagickGeometry.argtypes = [STRING, POINTER(c_long), POINTER(c_long), POINTER(c_ulong), POINTER(c_ulong)]
+GetMagickGeometry.argtypes = [STRING, POINTER(ssize_t), POINTER(ssize_t), POINTER(size_t), POINTER(size_t)]
 IsSubimage = _lib.IsSubimage
 IsSubimage.restype = c_uint
 IsSubimage.argtypes = [STRING, c_uint]
@@ -1231,7 +1252,7 @@ RandomChannelThresholdImage.restype = c_uint
 RandomChannelThresholdImage.argtypes = [POINTER(Image), STRING, STRING, POINTER(ExceptionInfo)]
 SetImageList = _lib.SetImageList
 SetImageList.restype = c_uint
-SetImageList.argtypes = [POINTER(POINTER(Image)), POINTER(Image), c_long, POINTER(ExceptionInfo)]
+SetImageList.argtypes = [POINTER(POINTER(Image)), POINTER(Image), ssize_t, POINTER(ExceptionInfo)]
 TransformColorspace = _lib.TransformColorspace
 TransformColorspace.restype = c_uint
 TransformColorspace.argtypes = [POINTER(Image), ColorspaceType]
@@ -1244,15 +1265,6 @@ ThresholdImageChannel.argtypes = [POINTER(Image), STRING]
 UnshiftImageList = _lib.UnshiftImageList
 UnshiftImageList.restype = c_uint
 UnshiftImageList.argtypes = [POINTER(POINTER(Image)), POINTER(Image), POINTER(ExceptionInfo)]
-GetImageListSize = _lib.GetImageListSize
-GetImageListSize.restype = c_ulong
-GetImageListSize.argtypes = [POINTER(Image)]
-CloseCacheView = _lib.CloseCacheView
-CloseCacheView.restype = POINTER(CacheView)
-CloseCacheView.argtypes = [POINTER(CacheView)]
-OpenCacheView = _lib.OpenCacheView
-OpenCacheView.restype = POINTER(CacheView)
-OpenCacheView.argtypes = [POINTER(Image)]
 AcquireMemory = _lib.AcquireMemory
 AcquireMemory.restype = c_void_p
 AcquireMemory.argtypes = [size_t]
@@ -1262,6 +1274,9 @@ AllocateNextImage.argtypes = [POINTER(ImageInfo), POINTER(Image)]
 CloneMemory = _lib.CloneMemory
 CloneMemory.restype = c_void_p
 CloneMemory.argtypes = [c_void_p, c_void_p, size_t]
+DestroyConstitute = _lib.DestroyConstitute
+DestroyConstitute.restype = None
+DestroyConstitute.argtypes = []
 DestroyImageAttributes = _lib.DestroyImageAttributes
 DestroyImageAttributes.restype = None
 DestroyImageAttributes.argtypes = [POINTER(Image)]
@@ -1279,7 +1294,7 @@ GetConfigureBlob.restype = c_void_p
 GetConfigureBlob.argtypes = [STRING, STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 GetMagickRegistry = _lib.GetMagickRegistry
 GetMagickRegistry.restype = c_void_p
-GetMagickRegistry.argtypes = [c_long, POINTER(RegistryType), POINTER(size_t), POINTER(ExceptionInfo)]
+GetMagickRegistry.argtypes = [ssize_t, POINTER(RegistryType), POINTER(size_t), POINTER(ExceptionInfo)]
 class _AffineMatrix(Structure):
     pass
 AffineMatrix = _AffineMatrix
@@ -1317,7 +1332,7 @@ ResetImageAttributeIterator.restype = None
 ResetImageAttributeIterator.argtypes = [POINTER(Image)]
 SetCacheThreshold = _lib.SetCacheThreshold
 SetCacheThreshold.restype = None
-SetCacheThreshold.argtypes = [c_ulong]
+SetCacheThreshold.argtypes = [size_t]
 SetImage = _lib.SetImage
 SetImage.restype = None
 SetImage.argtypes = [POINTER(Image), Quantum]
@@ -1354,11 +1369,15 @@ DePolarDistortion = 11
 BarrelDistortion = 12
 BarrelInverseDistortion = 13
 ShepardsDistortion = 14
-SentinelDistortion = 15
+ResizeDistortion = 15
+SentinelDistortion = 16
 DistortImageMethod = c_int # enum
 DistortImage = _lib.DistortImage
 DistortImage.restype = POINTER(Image)
-DistortImage.argtypes = [POINTER(Image), DistortImageMethod, c_ulong, POINTER(c_double), MagickBooleanType, POINTER(ExceptionInfo)]
+DistortImage.argtypes = [POINTER(Image), DistortImageMethod, size_t, POINTER(c_double), MagickBooleanType, POINTER(ExceptionInfo)]
+DistortResizeImage = _lib.DistortResizeImage
+DistortResizeImage.restype = POINTER(Image)
+DistortResizeImage.argtypes = [POINTER(Image), size_t, size_t, POINTER(ExceptionInfo)]
 
 # values for enumeration 'SparseColorMethod'
 UndefinedColorInterpolate = 0
@@ -1366,11 +1385,12 @@ BarycentricColorInterpolate = 1
 BilinearColorInterpolate = 7
 PolynomialColorInterpolate = 8
 ShepardsColorInterpolate = 14
-VoronoiColorInterpolate = 15
+VoronoiColorInterpolate = 16
+InverseColorInterpolate = 17
 SparseColorMethod = c_int # enum
 SparseColorImage = _lib.SparseColorImage
 SparseColorImage.restype = POINTER(Image)
-SparseColorImage.argtypes = [POINTER(Image), ChannelType, SparseColorMethod, c_ulong, POINTER(c_double), POINTER(ExceptionInfo)]
+SparseColorImage.argtypes = [POINTER(Image), ChannelType, SparseColorMethod, size_t, POINTER(c_double), POINTER(ExceptionInfo)]
 AcquireDrawInfo = _lib.AcquireDrawInfo
 AcquireDrawInfo.restype = POINTER(DrawInfo)
 AcquireDrawInfo.argtypes = []
@@ -1427,10 +1447,10 @@ BlurImageChannel.restype = POINTER(Image)
 BlurImageChannel.argtypes = [POINTER(Image), ChannelType, c_double, c_double, POINTER(ExceptionInfo)]
 ConvolveImage = _lib.ConvolveImage
 ConvolveImage.restype = POINTER(Image)
-ConvolveImage.argtypes = [POINTER(Image), c_ulong, POINTER(c_double), POINTER(ExceptionInfo)]
+ConvolveImage.argtypes = [POINTER(Image), size_t, POINTER(c_double), POINTER(ExceptionInfo)]
 ConvolveImageChannel = _lib.ConvolveImageChannel
 ConvolveImageChannel.restype = POINTER(Image)
-ConvolveImageChannel.argtypes = [POINTER(Image), ChannelType, c_ulong, POINTER(c_double), POINTER(ExceptionInfo)]
+ConvolveImageChannel.argtypes = [POINTER(Image), ChannelType, size_t, POINTER(c_double), POINTER(ExceptionInfo)]
 DespeckleImage = _lib.DespeckleImage
 DespeckleImage.restype = POINTER(Image)
 DespeckleImage.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
@@ -1452,9 +1472,6 @@ GaussianBlurImage.argtypes = [POINTER(Image), c_double, c_double, POINTER(Except
 GaussianBlurImageChannel = _lib.GaussianBlurImageChannel
 GaussianBlurImageChannel.restype = POINTER(Image)
 GaussianBlurImageChannel.argtypes = [POINTER(Image), ChannelType, c_double, c_double, POINTER(ExceptionInfo)]
-MedianFilterImage = _lib.MedianFilterImage
-MedianFilterImage.restype = POINTER(Image)
-MedianFilterImage.argtypes = [POINTER(Image), c_double, POINTER(ExceptionInfo)]
 MotionBlurImage = _lib.MotionBlurImage
 MotionBlurImage.restype = POINTER(Image)
 MotionBlurImage.argtypes = [POINTER(Image), c_double, c_double, c_double, POINTER(ExceptionInfo)]
@@ -1503,9 +1520,6 @@ RadialBlurImage.argtypes = [POINTER(Image), c_double, POINTER(ExceptionInfo)]
 RadialBlurImageChannel = _lib.RadialBlurImageChannel
 RadialBlurImageChannel.restype = POINTER(Image)
 RadialBlurImageChannel.argtypes = [POINTER(Image), ChannelType, c_double, POINTER(ExceptionInfo)]
-ReduceNoiseImage = _lib.ReduceNoiseImage
-ReduceNoiseImage.restype = POINTER(Image)
-ReduceNoiseImage.argtypes = [POINTER(Image), c_double, POINTER(ExceptionInfo)]
 SelectiveBlurImage = _lib.SelectiveBlurImage
 SelectiveBlurImage.restype = POINTER(Image)
 SelectiveBlurImage.argtypes = [POINTER(Image), c_double, c_double, c_double, POINTER(ExceptionInfo)]
@@ -1524,6 +1538,24 @@ SharpenImageChannel.argtypes = [POINTER(Image), ChannelType, c_double, c_double,
 SpreadImage = _lib.SpreadImage
 SpreadImage.restype = POINTER(Image)
 SpreadImage.argtypes = [POINTER(Image), c_double, POINTER(ExceptionInfo)]
+
+# values for enumeration 'StatisticType'
+UndefinedStatistic = 0
+GradientStatistic = 1
+MaximumStatistic = 2
+MeanStatistic = 3
+MedianStatistic = 4
+MinimumStatistic = 5
+ModeStatistic = 6
+NonpeakStatistic = 7
+StandardDeviationStatistic = 8
+StatisticType = c_int # enum
+StatisticImage = _lib.StatisticImage
+StatisticImage.restype = POINTER(Image)
+StatisticImage.argtypes = [POINTER(Image), StatisticType, size_t, size_t, POINTER(ExceptionInfo)]
+StatisticImageChannel = _lib.StatisticImageChannel
+StatisticImageChannel.restype = POINTER(Image)
+StatisticImageChannel.argtypes = [POINTER(Image), ChannelType, StatisticType, size_t, size_t, POINTER(ExceptionInfo)]
 UnsharpMaskImage = _lib.UnsharpMaskImage
 UnsharpMaskImage.restype = POINTER(Image)
 UnsharpMaskImage.argtypes = [POINTER(Image), c_double, c_double, c_double, c_double, POINTER(ExceptionInfo)]
@@ -1654,10 +1686,10 @@ ThrowException.restype = MagickBooleanType
 ThrowException.argtypes = [POINTER(ExceptionInfo), ExceptionType, STRING, STRING]
 ThrowMagickException = _lib.ThrowMagickException
 ThrowMagickException.restype = MagickBooleanType
-ThrowMagickException.argtypes = [POINTER(ExceptionInfo), STRING, STRING, c_ulong, ExceptionType, STRING, STRING]
+ThrowMagickException.argtypes = [POINTER(ExceptionInfo), STRING, STRING, size_t, ExceptionType, STRING, STRING]
 ThrowMagickExceptionList = _lib.ThrowMagickExceptionList
 ThrowMagickExceptionList.restype = MagickBooleanType
-ThrowMagickExceptionList.argtypes = [POINTER(ExceptionInfo), STRING, STRING, c_ulong, ExceptionType, STRING, STRING, POINTER(__va_list_tag)]
+ThrowMagickExceptionList.argtypes = [POINTER(ExceptionInfo), STRING, STRING, size_t, ExceptionType, STRING, STRING, POINTER(__va_list_tag)]
 CatchException = _lib.CatchException
 CatchException.restype = None
 CatchException.argtypes = [POINTER(ExceptionInfo)]
@@ -1688,7 +1720,7 @@ class _ChannelFeatures(Structure):
 ChannelFeatures = _ChannelFeatures
 GetImageChannelFeatures = _lib.GetImageChannelFeatures
 GetImageChannelFeatures.restype = POINTER(ChannelFeatures)
-GetImageChannelFeatures.argtypes = [POINTER(Image), c_ulong, POINTER(ExceptionInfo)]
+GetImageChannelFeatures.argtypes = [POINTER(Image), size_t, POINTER(ExceptionInfo)]
 ForwardFourierTransformImage = _lib.ForwardFourierTransformImage
 ForwardFourierTransformImage.restype = POINTER(Image)
 ForwardFourierTransformImage.argtypes = [POINTER(Image), MagickBooleanType, POINTER(ExceptionInfo)]
@@ -1721,6 +1753,9 @@ CharcoalImage.argtypes = [POINTER(Image), c_double, c_double, POINTER(ExceptionI
 ColorizeImage = _lib.ColorizeImage
 ColorizeImage.restype = POINTER(Image)
 ColorizeImage.argtypes = [POINTER(Image), STRING, PixelPacket, POINTER(ExceptionInfo)]
+ColorMatrixImage = _lib.ColorMatrixImage
+ColorMatrixImage.restype = POINTER(Image)
+ColorMatrixImage.argtypes = [POINTER(Image), POINTER(KernelInfo), POINTER(ExceptionInfo)]
 FxImage = _lib.FxImage
 FxImage.restype = POINTER(Image)
 FxImage.argtypes = [POINTER(Image), STRING, POINTER(ExceptionInfo)]
@@ -1732,19 +1767,16 @@ ImplodeImage.restype = POINTER(Image)
 ImplodeImage.argtypes = [POINTER(Image), c_double, POINTER(ExceptionInfo)]
 MorphImages = _lib.MorphImages
 MorphImages.restype = POINTER(Image)
-MorphImages.argtypes = [POINTER(Image), c_ulong, POINTER(ExceptionInfo)]
+MorphImages.argtypes = [POINTER(Image), size_t, POINTER(ExceptionInfo)]
 PolaroidImage = _lib.PolaroidImage
 PolaroidImage.restype = POINTER(Image)
 PolaroidImage.argtypes = [POINTER(Image), POINTER(DrawInfo), c_double, POINTER(ExceptionInfo)]
-RecolorImage = _lib.RecolorImage
-RecolorImage.restype = POINTER(Image)
-RecolorImage.argtypes = [POINTER(Image), c_ulong, POINTER(c_double), POINTER(ExceptionInfo)]
 SepiaToneImage = _lib.SepiaToneImage
 SepiaToneImage.restype = POINTER(Image)
 SepiaToneImage.argtypes = [POINTER(Image), c_double, POINTER(ExceptionInfo)]
 ShadowImage = _lib.ShadowImage
 ShadowImage.restype = POINTER(Image)
-ShadowImage.argtypes = [POINTER(Image), c_double, c_double, c_long, c_long, POINTER(ExceptionInfo)]
+ShadowImage.argtypes = [POINTER(Image), c_double, c_double, ssize_t, ssize_t, POINTER(ExceptionInfo)]
 SketchImage = _lib.SketchImage
 SketchImage.restype = POINTER(Image)
 SketchImage.argtypes = [POINTER(Image), c_double, c_double, c_double, POINTER(ExceptionInfo)]
@@ -1756,7 +1788,7 @@ StereoImage.restype = POINTER(Image)
 StereoImage.argtypes = [POINTER(Image), POINTER(Image), POINTER(ExceptionInfo)]
 StereoAnaglyphImage = _lib.StereoAnaglyphImage
 StereoAnaglyphImage.restype = POINTER(Image)
-StereoAnaglyphImage.argtypes = [POINTER(Image), POINTER(Image), c_long, c_long, POINTER(ExceptionInfo)]
+StereoAnaglyphImage.argtypes = [POINTER(Image), POINTER(Image), ssize_t, ssize_t, POINTER(ExceptionInfo)]
 SwirlImage = _lib.SwirlImage
 SwirlImage.restype = POINTER(Image)
 SwirlImage.argtypes = [POINTER(Image), c_double, POINTER(ExceptionInfo)]
@@ -1765,7 +1797,7 @@ TintImage.restype = POINTER(Image)
 TintImage.argtypes = [POINTER(Image), STRING, PixelPacket, POINTER(ExceptionInfo)]
 VignetteImage = _lib.VignetteImage
 VignetteImage.restype = POINTER(Image)
-VignetteImage.argtypes = [POINTER(Image), c_double, c_double, c_long, c_long, POINTER(ExceptionInfo)]
+VignetteImage.argtypes = [POINTER(Image), c_double, c_double, ssize_t, ssize_t, POINTER(ExceptionInfo)]
 WaveImage = _lib.WaveImage
 WaveImage.restype = POINTER(Image)
 WaveImage.argtypes = [POINTER(Image), c_double, c_double, POINTER(ExceptionInfo)]
@@ -1774,7 +1806,7 @@ class _SegmentInfo(Structure):
 SegmentInfo = _SegmentInfo
 PlasmaImage = _lib.PlasmaImage
 PlasmaImage.restype = MagickBooleanType
-PlasmaImage.argtypes = [POINTER(Image), POINTER(SegmentInfo), c_ulong, c_ulong]
+PlasmaImage.argtypes = [POINTER(Image), POINTER(SegmentInfo), size_t, size_t]
 SolarizeImage = _lib.SolarizeImage
 SolarizeImage.restype = MagickBooleanType
 SolarizeImage.argtypes = [POINTER(Image), c_double]
@@ -1789,13 +1821,13 @@ GenerateDifferentialNoise = _lib.GenerateDifferentialNoise
 GenerateDifferentialNoise.restype = c_double
 GenerateDifferentialNoise.argtypes = [POINTER(RandomInfo), Quantum, NoiseType, MagickRealType]
 GetOptimalKernelWidth = _lib.GetOptimalKernelWidth
-GetOptimalKernelWidth.restype = c_ulong
+GetOptimalKernelWidth.restype = size_t
 GetOptimalKernelWidth.argtypes = [c_double, c_double]
 GetOptimalKernelWidth1D = _lib.GetOptimalKernelWidth1D
-GetOptimalKernelWidth1D.restype = c_ulong
+GetOptimalKernelWidth1D.restype = size_t
 GetOptimalKernelWidth1D.argtypes = [c_double, c_double]
 GetOptimalKernelWidth2D = _lib.GetOptimalKernelWidth2D
-GetOptimalKernelWidth2D.restype = c_ulong
+GetOptimalKernelWidth2D.restype = size_t
 GetOptimalKernelWidth2D.argtypes = [c_double, c_double]
 ConvertHSBToRGB = _lib.ConvertHSBToRGB
 ConvertHSBToRGB.restype = None
@@ -1826,7 +1858,7 @@ IsSceneGeometry.restype = MagickBooleanType
 IsSceneGeometry.argtypes = [STRING, MagickBooleanType]
 GetGeometry = _lib.GetGeometry
 GetGeometry.restype = MagickStatusType
-GetGeometry.argtypes = [STRING, POINTER(c_long), POINTER(c_long), POINTER(c_ulong), POINTER(c_ulong)]
+GetGeometry.argtypes = [STRING, POINTER(ssize_t), POINTER(ssize_t), POINTER(size_t), POINTER(size_t)]
 ParseAbsoluteGeometry = _lib.ParseAbsoluteGeometry
 ParseAbsoluteGeometry.restype = MagickStatusType
 ParseAbsoluteGeometry.argtypes = [STRING, POINTER(RectangleInfo)]
@@ -1844,7 +1876,7 @@ ParseGravityGeometry.restype = MagickStatusType
 ParseGravityGeometry.argtypes = [POINTER(Image), STRING, POINTER(RectangleInfo), POINTER(ExceptionInfo)]
 ParseMetaGeometry = _lib.ParseMetaGeometry
 ParseMetaGeometry.restype = MagickStatusType
-ParseMetaGeometry.argtypes = [STRING, POINTER(c_long), POINTER(c_long), POINTER(c_ulong), POINTER(c_ulong)]
+ParseMetaGeometry.argtypes = [STRING, POINTER(ssize_t), POINTER(ssize_t), POINTER(size_t), POINTER(size_t)]
 ParsePageGeometry = _lib.ParsePageGeometry
 ParsePageGeometry.restype = MagickStatusType
 ParsePageGeometry.argtypes = [POINTER(Image), STRING, POINTER(RectangleInfo), POINTER(ExceptionInfo)]
@@ -1868,7 +1900,7 @@ StaticGravity = 10
 GravityType = c_int # enum
 GravityAdjustGeometry = _lib.GravityAdjustGeometry
 GravityAdjustGeometry.restype = None
-GravityAdjustGeometry.argtypes = [c_ulong, c_ulong, GravityType, POINTER(RectangleInfo)]
+GravityAdjustGeometry.argtypes = [size_t, size_t, GravityType, POINTER(RectangleInfo)]
 SetGeometry = _lib.SetGeometry
 SetGeometry.restype = None
 SetGeometry.argtypes = [POINTER(Image), POINTER(RectangleInfo)]
@@ -1883,13 +1915,13 @@ DestroyHashmap.restype = POINTER(HashmapInfo)
 DestroyHashmap.argtypes = [POINTER(HashmapInfo)]
 NewHashmap = _lib.NewHashmap
 NewHashmap.restype = POINTER(HashmapInfo)
-NewHashmap.argtypes = [c_ulong, CFUNCTYPE(size_t, c_void_p), CFUNCTYPE(MagickBooleanType, c_void_p, c_void_p), CFUNCTYPE(c_void_p, c_void_p), CFUNCTYPE(c_void_p, c_void_p)]
+NewHashmap.argtypes = [size_t, CFUNCTYPE(size_t, c_void_p), CFUNCTYPE(MagickBooleanType, c_void_p, c_void_p), CFUNCTYPE(c_void_p, c_void_p), CFUNCTYPE(c_void_p, c_void_p)]
 DestroyLinkedList = _lib.DestroyLinkedList
 DestroyLinkedList.restype = POINTER(LinkedListInfo)
 DestroyLinkedList.argtypes = [POINTER(LinkedListInfo), CFUNCTYPE(c_void_p, c_void_p)]
 NewLinkedList = _lib.NewLinkedList
 NewLinkedList.restype = POINTER(LinkedListInfo)
-NewLinkedList.argtypes = [c_ulong]
+NewLinkedList.argtypes = [size_t]
 AppendValueToLinkedList = _lib.AppendValueToLinkedList
 AppendValueToLinkedList.restype = MagickBooleanType
 AppendValueToLinkedList.argtypes = [POINTER(LinkedListInfo), c_void_p]
@@ -1901,7 +1933,7 @@ CompareHashmapStringInfo.restype = MagickBooleanType
 CompareHashmapStringInfo.argtypes = [c_void_p, c_void_p]
 InsertValueInLinkedList = _lib.InsertValueInLinkedList
 InsertValueInLinkedList.restype = MagickBooleanType
-InsertValueInLinkedList.argtypes = [POINTER(LinkedListInfo), c_ulong, c_void_p]
+InsertValueInLinkedList.argtypes = [POINTER(LinkedListInfo), size_t, c_void_p]
 InsertValueInSortedLinkedList = _lib.InsertValueInSortedLinkedList
 InsertValueInSortedLinkedList.restype = MagickBooleanType
 InsertValueInSortedLinkedList.argtypes = [POINTER(LinkedListInfo), CFUNCTYPE(c_int, c_void_p, c_void_p), POINTER(c_void_p), c_void_p]
@@ -1917,6 +1949,12 @@ LinkedListToArray.argtypes = [POINTER(LinkedListInfo), POINTER(c_void_p)]
 PutEntryInHashmap = _lib.PutEntryInHashmap
 PutEntryInHashmap.restype = MagickBooleanType
 PutEntryInHashmap.argtypes = [POINTER(HashmapInfo), c_void_p, c_void_p]
+GetNumberOfElementsInLinkedList = _lib.GetNumberOfElementsInLinkedList
+GetNumberOfElementsInLinkedList.restype = size_t
+GetNumberOfElementsInLinkedList.argtypes = [POINTER(LinkedListInfo)]
+GetNumberOfEntriesInHashmap = _lib.GetNumberOfEntriesInHashmap
+GetNumberOfEntriesInHashmap.restype = size_t
+GetNumberOfEntriesInHashmap.argtypes = [POINTER(HashmapInfo)]
 HashPointerType = _lib.HashPointerType
 HashPointerType.restype = size_t
 HashPointerType.argtypes = [c_void_p]
@@ -1926,12 +1964,6 @@ HashStringType.argtypes = [c_void_p]
 HashStringInfoType = _lib.HashStringInfoType
 HashStringInfoType.restype = size_t
 HashStringInfoType.argtypes = [c_void_p]
-GetNumberOfElementsInLinkedList = _lib.GetNumberOfElementsInLinkedList
-GetNumberOfElementsInLinkedList.restype = c_ulong
-GetNumberOfElementsInLinkedList.argtypes = [POINTER(LinkedListInfo)]
-GetNumberOfEntriesInHashmap = _lib.GetNumberOfEntriesInHashmap
-GetNumberOfEntriesInHashmap.restype = c_ulong
-GetNumberOfEntriesInHashmap.argtypes = [POINTER(HashmapInfo)]
 ClearLinkedList = _lib.ClearLinkedList
 ClearLinkedList.restype = None
 ClearLinkedList.argtypes = [POINTER(LinkedListInfo), CFUNCTYPE(c_void_p, c_void_p)]
@@ -1952,13 +1984,13 @@ GetValueFromHashmap.restype = c_void_p
 GetValueFromHashmap.argtypes = [POINTER(HashmapInfo), c_void_p]
 GetValueFromLinkedList = _lib.GetValueFromLinkedList
 GetValueFromLinkedList.restype = c_void_p
-GetValueFromLinkedList.argtypes = [POINTER(LinkedListInfo), c_ulong]
+GetValueFromLinkedList.argtypes = [POINTER(LinkedListInfo), size_t]
 RemoveElementByValueFromLinkedList = _lib.RemoveElementByValueFromLinkedList
 RemoveElementByValueFromLinkedList.restype = c_void_p
 RemoveElementByValueFromLinkedList.argtypes = [POINTER(LinkedListInfo), c_void_p]
 RemoveElementFromLinkedList = _lib.RemoveElementFromLinkedList
 RemoveElementFromLinkedList.restype = c_void_p
-RemoveElementFromLinkedList.argtypes = [POINTER(LinkedListInfo), c_ulong]
+RemoveElementFromLinkedList.argtypes = [POINTER(LinkedListInfo), size_t]
 RemoveEntryFromHashmap = _lib.RemoveEntryFromHashmap
 RemoveEntryFromHashmap.restype = c_void_p
 RemoveEntryFromHashmap.argtypes = [POINTER(HashmapInfo), c_void_p]
@@ -1976,7 +2008,7 @@ class _ColorPacket(Structure):
 ColorPacket = _ColorPacket
 GetImageHistogram = _lib.GetImageHistogram
 GetImageHistogram.restype = POINTER(ColorPacket)
-GetImageHistogram.argtypes = [POINTER(Image), POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetImageHistogram.argtypes = [POINTER(Image), POINTER(size_t), POINTER(ExceptionInfo)]
 UniqueImageColors = _lib.UniqueImageColors
 UniqueImageColors.restype = POINTER(Image)
 UniqueImageColors.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
@@ -1990,11 +2022,76 @@ MinMaxStretchImage = _lib.MinMaxStretchImage
 MinMaxStretchImage.restype = MagickBooleanType
 MinMaxStretchImage.argtypes = [POINTER(Image), ChannelType, c_double, c_double]
 GetNumberColors = _lib.GetNumberColors
-GetNumberColors.restype = c_ulong
+GetNumberColors.restype = size_t
 GetNumberColors.argtypes = [POINTER(Image), POINTER(FILE), POINTER(ExceptionInfo)]
 IdentifyImage = _lib.IdentifyImage
 IdentifyImage.restype = MagickBooleanType
 IdentifyImage.argtypes = [POINTER(Image), POINTER(FILE), MagickBooleanType]
+class _ImageView(Structure):
+    pass
+ImageView = _ImageView
+GetImageViewException = _lib.GetImageViewException
+GetImageViewException.restype = STRING
+GetImageViewException.argtypes = [POINTER(ImageView), POINTER(ExceptionType)]
+GetImageViewVirtualIndexes = _lib.GetImageViewVirtualIndexes
+GetImageViewVirtualIndexes.restype = POINTER(IndexPacket)
+GetImageViewVirtualIndexes.argtypes = [POINTER(ImageView)]
+GetImageViewVirtualPixels = _lib.GetImageViewVirtualPixels
+GetImageViewVirtualPixels.restype = POINTER(PixelPacket)
+GetImageViewVirtualPixels.argtypes = [POINTER(ImageView)]
+GetImageViewImage = _lib.GetImageViewImage
+GetImageViewImage.restype = POINTER(Image)
+GetImageViewImage.argtypes = [POINTER(ImageView)]
+CloneImageView = _lib.CloneImageView
+CloneImageView.restype = POINTER(ImageView)
+CloneImageView.argtypes = [POINTER(ImageView)]
+DestroyImageView = _lib.DestroyImageView
+DestroyImageView.restype = POINTER(ImageView)
+DestroyImageView.argtypes = [POINTER(ImageView)]
+NewImageView = _lib.NewImageView
+NewImageView.restype = POINTER(ImageView)
+NewImageView.argtypes = [POINTER(Image)]
+NewImageViewRegion = _lib.NewImageViewRegion
+NewImageViewRegion.restype = POINTER(ImageView)
+NewImageViewRegion.argtypes = [POINTER(Image), ssize_t, ssize_t, size_t, size_t]
+GetImageViewAuthenticIndexes = _lib.GetImageViewAuthenticIndexes
+GetImageViewAuthenticIndexes.restype = POINTER(IndexPacket)
+GetImageViewAuthenticIndexes.argtypes = [POINTER(ImageView)]
+DuplexTransferImageViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(ImageView), POINTER(ImageView), POINTER(ImageView), ssize_t, c_int, c_void_p)
+DuplexTransferImageViewIterator = _lib.DuplexTransferImageViewIterator
+DuplexTransferImageViewIterator.restype = MagickBooleanType
+DuplexTransferImageViewIterator.argtypes = [POINTER(ImageView), POINTER(ImageView), POINTER(ImageView), DuplexTransferImageViewMethod, c_void_p]
+GetImageViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(ImageView), ssize_t, c_int, c_void_p)
+GetImageViewIterator = _lib.GetImageViewIterator
+GetImageViewIterator.restype = MagickBooleanType
+GetImageViewIterator.argtypes = [POINTER(ImageView), GetImageViewMethod, c_void_p]
+IsImageView = _lib.IsImageView
+IsImageView.restype = MagickBooleanType
+IsImageView.argtypes = [POINTER(ImageView)]
+SetImageViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(ImageView), ssize_t, c_int, c_void_p)
+SetImageViewIterator = _lib.SetImageViewIterator
+SetImageViewIterator.restype = MagickBooleanType
+SetImageViewIterator.argtypes = [POINTER(ImageView), SetImageViewMethod, c_void_p]
+TransferImageViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(ImageView), POINTER(ImageView), ssize_t, c_int, c_void_p)
+TransferImageViewIterator = _lib.TransferImageViewIterator
+TransferImageViewIterator.restype = MagickBooleanType
+TransferImageViewIterator.argtypes = [POINTER(ImageView), POINTER(ImageView), TransferImageViewMethod, c_void_p]
+UpdateImageViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(ImageView), ssize_t, c_int, c_void_p)
+UpdateImageViewIterator = _lib.UpdateImageViewIterator
+UpdateImageViewIterator.restype = MagickBooleanType
+UpdateImageViewIterator.argtypes = [POINTER(ImageView), UpdateImageViewMethod, c_void_p]
+GetImageViewAuthenticPixels = _lib.GetImageViewAuthenticPixels
+GetImageViewAuthenticPixels.restype = POINTER(PixelPacket)
+GetImageViewAuthenticPixels.argtypes = [POINTER(ImageView)]
+GetImageViewExtent = _lib.GetImageViewExtent
+GetImageViewExtent.restype = RectangleInfo
+GetImageViewExtent.argtypes = [POINTER(ImageView)]
+SetImageViewDescription = _lib.SetImageViewDescription
+SetImageViewDescription.restype = None
+SetImageViewDescription.argtypes = [POINTER(ImageView), STRING]
+SetImageViewThreads = _lib.SetImageViewThreads
+SetImageViewThreads.restype = None
+SetImageViewThreads.argtypes = [POINTER(ImageView), size_t]
 CatchImageException = _lib.CatchImageException
 CatchImageException.restype = ExceptionType
 CatchImageException.argtypes = [POINTER(Image)]
@@ -2009,7 +2106,7 @@ AppendImages.restype = POINTER(Image)
 AppendImages.argtypes = [POINTER(Image), MagickBooleanType, POINTER(ExceptionInfo)]
 CloneImage = _lib.CloneImage
 CloneImage.restype = POINTER(Image)
-CloneImage.argtypes = [POINTER(Image), c_ulong, c_ulong, MagickBooleanType, POINTER(ExceptionInfo)]
+CloneImage.argtypes = [POINTER(Image), size_t, size_t, MagickBooleanType, POINTER(ExceptionInfo)]
 CombineImages = _lib.CombineImages
 CombineImages.restype = POINTER(Image)
 CombineImages.argtypes = [POINTER(Image), ChannelType, POINTER(ExceptionInfo)]
@@ -2024,13 +2121,16 @@ GetImageMask.restype = POINTER(Image)
 GetImageMask.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
 NewMagickImage = _lib.NewMagickImage
 NewMagickImage.restype = POINTER(Image)
-NewMagickImage.argtypes = [POINTER(ImageInfo), c_ulong, c_ulong, POINTER(MagickPixelPacket)]
+NewMagickImage.argtypes = [POINTER(ImageInfo), size_t, size_t, POINTER(MagickPixelPacket)]
 ReferenceImage = _lib.ReferenceImage
 ReferenceImage.restype = POINTER(Image)
 ReferenceImage.argtypes = [POINTER(Image)]
 SeparateImages = _lib.SeparateImages
 SeparateImages.restype = POINTER(Image)
 SeparateImages.argtypes = [POINTER(Image), ChannelType, POINTER(ExceptionInfo)]
+SmushImages = _lib.SmushImages
+SmushImages.restype = POINTER(Image)
+SmushImages.argtypes = [POINTER(Image), MagickBooleanType, ssize_t, POINTER(ExceptionInfo)]
 AcquireImageInfo = _lib.AcquireImageInfo
 AcquireImageInfo.restype = POINTER(ImageInfo)
 AcquireImageInfo.argtypes = []
@@ -2040,12 +2140,6 @@ CloneImageInfo.argtypes = [POINTER(ImageInfo)]
 DestroyImageInfo = _lib.DestroyImageInfo
 DestroyImageInfo.restype = POINTER(ImageInfo)
 DestroyImageInfo.argtypes = [POINTER(ImageInfo)]
-GetImageReferenceCount = _lib.GetImageReferenceCount
-GetImageReferenceCount.restype = c_long
-GetImageReferenceCount.argtypes = [POINTER(Image)]
-AcquireImageColormap = _lib.AcquireImageColormap
-AcquireImageColormap.restype = MagickBooleanType
-AcquireImageColormap.argtypes = [POINTER(Image), c_ulong]
 ClipImage = _lib.ClipImage
 ClipImage.restype = MagickBooleanType
 ClipImage.argtypes = [POINTER(Image)]
@@ -2102,9 +2196,12 @@ SetImageBackgroundColor.argtypes = [POINTER(Image)]
 SetImageClipMask = _lib.SetImageClipMask
 SetImageClipMask.restype = MagickBooleanType
 SetImageClipMask.argtypes = [POINTER(Image), POINTER(Image)]
+SetImageColor = _lib.SetImageColor
+SetImageColor.restype = MagickBooleanType
+SetImageColor.argtypes = [POINTER(Image), POINTER(MagickPixelPacket)]
 SetImageExtent = _lib.SetImageExtent
 SetImageExtent.restype = MagickBooleanType
-SetImageExtent.argtypes = [POINTER(Image), c_ulong, c_ulong]
+SetImageExtent.argtypes = [POINTER(Image), size_t, size_t]
 SetImageInfo = _lib.SetImageInfo
 SetImageInfo.restype = MagickBooleanType
 SetImageInfo.argtypes = [POINTER(ImageInfo), c_uint, POINTER(ExceptionInfo)]
@@ -2114,6 +2211,9 @@ SetImageMask.argtypes = [POINTER(Image), POINTER(Image)]
 SetImageOpacity = _lib.SetImageOpacity
 SetImageOpacity.restype = MagickBooleanType
 SetImageOpacity.argtypes = [POINTER(Image), Quantum]
+SetImageChannels = _lib.SetImageChannels
+SetImageChannels.restype = MagickBooleanType
+SetImageChannels.argtypes = [POINTER(Image), size_t]
 SetImageStorageClass = _lib.SetImageStorageClass
 SetImageStorageClass.restype = MagickBooleanType
 SetImageStorageClass.argtypes = [POINTER(Image), ClassType]
@@ -2135,6 +2235,12 @@ SyncImagesSettings.argtypes = [POINTER(ImageInfo), POINTER(Image)]
 InterpretImageFilename = _lib.InterpretImageFilename
 InterpretImageFilename.restype = size_t
 InterpretImageFilename.argtypes = [POINTER(ImageInfo), POINTER(Image), STRING, c_int, STRING]
+GetImageReferenceCount = _lib.GetImageReferenceCount
+GetImageReferenceCount.restype = ssize_t
+GetImageReferenceCount.argtypes = [POINTER(Image)]
+GetImageChannels = _lib.GetImageChannels
+GetImageChannels.restype = size_t
+GetImageChannels.argtypes = [POINTER(Image)]
 GetImageVirtualPixelMethod = _lib.GetImageVirtualPixelMethod
 GetImageVirtualPixelMethod.restype = VirtualPixelMethod
 GetImageVirtualPixelMethod.argtypes = [POINTER(Image)]
@@ -2205,7 +2311,7 @@ OptimizePlusImageLayers.restype = POINTER(Image)
 OptimizePlusImageLayers.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
 CompositeLayers = _lib.CompositeLayers
 CompositeLayers.restype = None
-CompositeLayers.argtypes = [POINTER(Image), CompositeOperator, POINTER(Image), c_long, c_long, POINTER(ExceptionInfo)]
+CompositeLayers.argtypes = [POINTER(Image), CompositeOperator, POINTER(Image), ssize_t, ssize_t, POINTER(ExceptionInfo)]
 OptimizeImageTransparency = _lib.OptimizeImageTransparency
 OptimizeImageTransparency.restype = None
 OptimizeImageTransparency.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
@@ -2224,12 +2330,15 @@ CloneImages.argtypes = [POINTER(Image), STRING, POINTER(ExceptionInfo)]
 DestroyImageList = _lib.DestroyImageList
 DestroyImageList.restype = POINTER(Image)
 DestroyImageList.argtypes = [POINTER(Image)]
+DuplicateImages = _lib.DuplicateImages
+DuplicateImages.restype = POINTER(Image)
+DuplicateImages.argtypes = [POINTER(Image), size_t, STRING, POINTER(ExceptionInfo)]
 GetFirstImageInList = _lib.GetFirstImageInList
 GetFirstImageInList.restype = POINTER(Image)
 GetFirstImageInList.argtypes = [POINTER(Image)]
 GetImageFromList = _lib.GetImageFromList
 GetImageFromList.restype = POINTER(Image)
-GetImageFromList.argtypes = [POINTER(Image), c_long]
+GetImageFromList.argtypes = [POINTER(Image), ssize_t]
 GetLastImageInList = _lib.GetLastImageInList
 GetLastImageInList.restype = POINTER(Image)
 GetLastImageInList.argtypes = [POINTER(Image)]
@@ -2256,19 +2365,19 @@ RemoveFirstImageFromList.restype = POINTER(Image)
 RemoveFirstImageFromList.argtypes = [POINTER(POINTER(Image))]
 SpliceImageIntoList = _lib.SpliceImageIntoList
 SpliceImageIntoList.restype = POINTER(Image)
-SpliceImageIntoList.argtypes = [POINTER(POINTER(Image)), c_ulong, POINTER(Image)]
+SpliceImageIntoList.argtypes = [POINTER(POINTER(Image)), size_t, POINTER(Image)]
 SplitImageList = _lib.SplitImageList
 SplitImageList.restype = POINTER(Image)
 SplitImageList.argtypes = [POINTER(Image)]
 SyncNextImageInList = _lib.SyncNextImageInList
 SyncNextImageInList.restype = POINTER(Image)
 SyncNextImageInList.argtypes = [POINTER(Image)]
-GetImageIndexInList = _lib.GetImageIndexInList
-GetImageIndexInList.restype = c_long
-GetImageIndexInList.argtypes = [POINTER(Image)]
 GetImageListLength = _lib.GetImageListLength
-GetImageListLength.restype = c_ulong
+GetImageListLength.restype = size_t
 GetImageListLength.argtypes = [POINTER(Image)]
+GetImageIndexInList = _lib.GetImageIndexInList
+GetImageIndexInList.restype = ssize_t
+GetImageIndexInList.argtypes = [POINTER(Image)]
 AppendImageToList = _lib.AppendImageToList
 AppendImageToList.restype = None
 AppendImageToList.argtypes = [POINTER(POINTER(Image)), POINTER(Image)]
@@ -2287,6 +2396,9 @@ PrependImageToList.argtypes = [POINTER(POINTER(Image)), POINTER(Image)]
 ReplaceImageInList = _lib.ReplaceImageInList
 ReplaceImageInList.restype = None
 ReplaceImageInList.argtypes = [POINTER(POINTER(Image)), POINTER(Image)]
+ReplaceImageInListReturnLast = _lib.ReplaceImageInListReturnLast
+ReplaceImageInListReturnLast.restype = None
+ReplaceImageInListReturnLast.argtypes = [POINTER(POINTER(Image)), POINTER(Image)]
 ReverseImageList = _lib.ReverseImageList
 ReverseImageList.restype = None
 ReverseImageList.argtypes = [POINTER(POINTER(Image))]
@@ -2295,7 +2407,7 @@ SyncImageList.restype = None
 SyncImageList.argtypes = [POINTER(Image)]
 GetLocaleList = _lib.GetLocaleList
 GetLocaleList.restype = POINTER(STRING)
-GetLocaleList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetLocaleList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 GetLocaleMessage = _lib.GetLocaleMessage
 GetLocaleMessage.restype = STRING
 GetLocaleMessage.argtypes = [STRING]
@@ -2307,7 +2419,7 @@ GetLocaleInfo_.restype = POINTER(LocaleInfo)
 GetLocaleInfo_.argtypes = [STRING, POINTER(ExceptionInfo)]
 GetLocaleInfoList = _lib.GetLocaleInfoList
 GetLocaleInfoList.restype = POINTER(POINTER(LocaleInfo))
-GetLocaleInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetLocaleInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 DestroyLocaleOptions = _lib.DestroyLocaleOptions
 DestroyLocaleOptions.restype = POINTER(LinkedListInfo)
 DestroyLocaleOptions.argtypes = [POINTER(LinkedListInfo)]
@@ -2325,7 +2437,7 @@ LocaleComponentTerminus.restype = None
 LocaleComponentTerminus.argtypes = []
 GetLogList = _lib.GetLogList
 GetLogList.restype = POINTER(STRING)
-GetLogList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetLogList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 GetLogName = _lib.GetLogName
 GetLogName.restype = STRING
 GetLogName.argtypes = []
@@ -2337,7 +2449,7 @@ class _LogInfo(Structure):
 LogInfo = _LogInfo
 GetLogInfoList = _lib.GetLogInfoList
 GetLogInfoList.restype = POINTER(POINTER(LogInfo))
-GetLogInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetLogInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 
 # values for enumeration 'LogEventType'
 UndefinedEvents = 0
@@ -2351,14 +2463,15 @@ ConfigureEvent = 32
 DeprecateEvent = 64
 DrawEvent = 128
 ExceptionEvent = 256
-LocaleEvent = 512
-ModuleEvent = 1024
-PolicyEvent = 2048
-ResourceEvent = 4096
-TransformEvent = 8192
-UserEvent = 16384
-WandEvent = 32768
-X11Event = 65536
+ImageEvent = 512
+LocaleEvent = 1024
+ModuleEvent = 2048
+PolicyEvent = 4096
+ResourceEvent = 8192
+TransformEvent = 16384
+UserEvent = 36864
+WandEvent = 65536
+X11Event = 131072
 AllEvents = 2147483647
 LogEventType = c_int # enum
 SetLogEventMask = _lib.SetLogEventMask
@@ -2375,10 +2488,10 @@ LogComponentGenesis.restype = MagickBooleanType
 LogComponentGenesis.argtypes = []
 LogMagickEvent = _lib.LogMagickEvent
 LogMagickEvent.restype = MagickBooleanType
-LogMagickEvent.argtypes = [LogEventType, STRING, STRING, c_ulong, STRING]
+LogMagickEvent.argtypes = [LogEventType, STRING, STRING, size_t, STRING]
 LogMagickEventList = _lib.LogMagickEventList
 LogMagickEventList.restype = MagickBooleanType
-LogMagickEventList.argtypes = [LogEventType, STRING, STRING, c_ulong, STRING, POINTER(__va_list_tag)]
+LogMagickEventList.argtypes = [LogEventType, STRING, STRING, size_t, STRING, POINTER(__va_list_tag)]
 CloseMagickLog = _lib.CloseMagickLog
 CloseMagickLog.restype = None
 CloseMagickLog.argtypes = []
@@ -2390,7 +2503,7 @@ SetLogFormat.restype = None
 SetLogFormat.argtypes = [STRING]
 GetMagicList = _lib.GetMagicList
 GetMagicList.restype = POINTER(STRING)
-GetMagicList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetMagicList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 class _MagicInfo(Structure):
     pass
 MagicInfo = _MagicInfo
@@ -2408,13 +2521,13 @@ GetMagicInfo.restype = POINTER(MagicInfo)
 GetMagicInfo.argtypes = [POINTER(c_ubyte), size_t, POINTER(ExceptionInfo)]
 GetMagicInfoList = _lib.GetMagicInfoList
 GetMagicInfoList.restype = POINTER(POINTER(MagicInfo))
-GetMagicInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetMagicInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 MagicComponentTerminus = _lib.MagicComponentTerminus
 MagicComponentTerminus.restype = None
 MagicComponentTerminus.argtypes = []
 GetMagickList = _lib.GetMagickList
 GetMagickList.restype = POINTER(STRING)
-GetMagickList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetMagickList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 class _MagickInfo(Structure):
     pass
 MagickInfo = _MagickInfo
@@ -2467,7 +2580,7 @@ GetMagickInfo.restype = POINTER(MagickInfo)
 GetMagickInfo.argtypes = [STRING, POINTER(ExceptionInfo)]
 GetMagickInfoList = _lib.GetMagickInfoList
 GetMagickInfoList.restype = POINTER(POINTER(MagickInfo))
-GetMagickInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetMagickInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 RegisterMagickInfo = _lib.RegisterMagickInfo
 RegisterMagickInfo.restype = POINTER(MagickInfo)
 RegisterMagickInfo.argtypes = [POINTER(MagickInfo)]
@@ -2488,16 +2601,16 @@ MagickCoreTerminus.restype = None
 MagickCoreTerminus.argtypes = []
 AcquireMagickMatrix = _lib.AcquireMagickMatrix
 AcquireMagickMatrix.restype = POINTER(POINTER(c_double))
-AcquireMagickMatrix.argtypes = [c_ulong, c_ulong]
+AcquireMagickMatrix.argtypes = [size_t, size_t]
 RelinquishMagickMatrix = _lib.RelinquishMagickMatrix
 RelinquishMagickMatrix.restype = POINTER(POINTER(c_double))
-RelinquishMagickMatrix.argtypes = [POINTER(POINTER(c_double)), c_ulong]
+RelinquishMagickMatrix.argtypes = [POINTER(POINTER(c_double)), size_t]
 GaussJordanElimination = _lib.GaussJordanElimination
 GaussJordanElimination.restype = MagickBooleanType
-GaussJordanElimination.argtypes = [POINTER(POINTER(c_double)), POINTER(POINTER(c_double)), c_ulong, c_ulong]
+GaussJordanElimination.argtypes = [POINTER(POINTER(c_double)), POINTER(POINTER(c_double)), size_t, size_t]
 LeastSquaresAddTerms = _lib.LeastSquaresAddTerms
 LeastSquaresAddTerms.restype = None
-LeastSquaresAddTerms.argtypes = [POINTER(POINTER(c_double)), POINTER(POINTER(c_double)), POINTER(c_double), POINTER(c_double), c_ulong, c_ulong]
+LeastSquaresAddTerms.argtypes = [POINTER(POINTER(c_double)), POINTER(POINTER(c_double)), POINTER(c_double), POINTER(c_double), size_t, size_t]
 AcquireAlignedMemory = _lib.AcquireAlignedMemory
 AcquireAlignedMemory.restype = c_void_p
 AcquireAlignedMemory.argtypes = [size_t, size_t]
@@ -2539,7 +2652,7 @@ SetMagickMemoryMethods.restype = None
 SetMagickMemoryMethods.argtypes = [AcquireMemoryHandler, ResizeMemoryHandler, DestroyMemoryHandler]
 GetMimeList = _lib.GetMimeList
 GetMimeList.restype = POINTER(STRING)
-GetMimeList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetMimeList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 MagickToMime = _lib.MagickToMime
 MagickToMime.restype = STRING
 MagickToMime.argtypes = [STRING]
@@ -2566,19 +2679,24 @@ GetMimeInfo.restype = POINTER(MimeInfo)
 GetMimeInfo.argtypes = [STRING, POINTER(c_ubyte), size_t, POINTER(ExceptionInfo)]
 GetMimeInfoList = _lib.GetMimeInfoList
 GetMimeInfoList.restype = POINTER(POINTER(MimeInfo))
-GetMimeInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetMimeInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 MimeComponentTerminus = _lib.MimeComponentTerminus
 MimeComponentTerminus.restype = None
 MimeComponentTerminus.argtypes = []
+
+# values for enumeration 'MagickModuleType'
+MagickImageCoderModule = 0
+MagickImageFilterModule = 1
+MagickModuleType = c_int # enum
 GetModuleList = _lib.GetModuleList
 GetModuleList.restype = POINTER(STRING)
-GetModuleList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetModuleList.argtypes = [STRING, MagickModuleType, POINTER(size_t), POINTER(ExceptionInfo)]
 class _ModuleInfo(Structure):
     pass
 ModuleInfo = _ModuleInfo
 GetModuleInfoList = _lib.GetModuleInfoList
 GetModuleInfoList.restype = POINTER(POINTER(ModuleInfo))
-GetModuleInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetModuleInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 InitializeModuleList = _lib.InitializeModuleList
 InitializeModuleList.restype = MagickBooleanType
 InitializeModuleList.argtypes = [POINTER(ExceptionInfo)]
@@ -2640,6 +2758,46 @@ GetMontageInfo.argtypes = [POINTER(ImageInfo), POINTER(MontageInfo)]
 AcquireKernelInfo = _lib.AcquireKernelInfo
 AcquireKernelInfo.restype = POINTER(KernelInfo)
 AcquireKernelInfo.argtypes = [STRING]
+
+# values for enumeration 'KernelInfoType'
+UndefinedKernel = 0
+UnityKernel = 1
+GaussianKernel = 2
+DoGKernel = 3
+LoGKernel = 4
+BlurKernel = 5
+CometKernel = 6
+LaplacianKernel = 7
+SobelKernel = 8
+FreiChenKernel = 9
+RobertsKernel = 10
+PrewittKernel = 11
+CompassKernel = 12
+KirschKernel = 13
+DiamondKernel = 14
+SquareKernel = 15
+RectangleKernel = 16
+OctagonKernel = 17
+DiskKernel = 18
+PlusKernel = 19
+CrossKernel = 20
+RingKernel = 21
+PeaksKernel = 22
+EdgesKernel = 23
+CornersKernel = 24
+DiagonalsKernel = 25
+LineEndsKernel = 26
+LineJunctionsKernel = 27
+RidgesKernel = 28
+ConvexHullKernel = 29
+ThinSEKernel = 30
+SkeletonKernel = 31
+ChebyshevKernel = 32
+ManhattanKernel = 33
+OctagonalKernel = 34
+EuclideanKernel = 35
+UserDefinedKernel = 36
+KernelInfoType = c_int # enum
 AcquireKernelBuiltIn = _lib.AcquireKernelBuiltIn
 AcquireKernelBuiltIn.restype = POINTER(KernelInfo)
 AcquireKernelBuiltIn.argtypes = [KernelInfoType, POINTER(GeometryInfo)]
@@ -2663,54 +2821,31 @@ OpenMorphology = 8
 CloseMorphology = 9
 OpenIntensityMorphology = 10
 CloseIntensityMorphology = 11
-EdgeInMorphology = 12
-EdgeOutMorphology = 13
-EdgeMorphology = 14
-TopHatMorphology = 15
-BottomHatMorphology = 16
+SmoothMorphology = 12
+EdgeInMorphology = 13
+EdgeOutMorphology = 14
+EdgeMorphology = 15
+TopHatMorphology = 16
+BottomHatMorphology = 17
+HitAndMissMorphology = 18
+ThinningMorphology = 19
+ThickenMorphology = 20
+VoronoiMorphology = 21
 MorphologyMethod = c_int # enum
 MorphologyImage = _lib.MorphologyImage
 MorphologyImage.restype = POINTER(Image)
-MorphologyImage.argtypes = [POINTER(Image), MorphologyMethod, c_long, POINTER(KernelInfo), POINTER(ExceptionInfo)]
+MorphologyImage.argtypes = [POINTER(Image), MorphologyMethod, ssize_t, POINTER(KernelInfo), POINTER(ExceptionInfo)]
 MorphologyImageChannel = _lib.MorphologyImageChannel
 MorphologyImageChannel.restype = POINTER(Image)
-MorphologyImageChannel.argtypes = [POINTER(Image), ChannelType, MorphologyMethod, c_long, POINTER(KernelInfo), POINTER(ExceptionInfo)]
-
-# values for enumeration 'GeometryFlags'
-NoValue = 0
-XValue = 1
-XiValue = 1
-YValue = 2
-PsiValue = 2
-WidthValue = 4
-RhoValue = 4
-HeightValue = 8
-SigmaValue = 8
-ChiValue = 16
-XiNegative = 32
-XNegative = 32
-PsiNegative = 64
-YNegative = 64
-ChiNegative = 128
-PercentValue = 4096
-AspectValue = 8192
-NormalizeValue = 8192
-LessValue = 16384
-GreaterValue = 32768
-MinimumValue = 65536
-CorrelateNormalizeValue = 65536
-AreaValue = 131072
-DecimalValue = 262144
-AllValues = 2147483647
-GeometryFlags = c_int # enum
-ScaleKernelInfo = _lib.ScaleKernelInfo
-ScaleKernelInfo.restype = None
-ScaleKernelInfo.argtypes = [POINTER(KernelInfo), c_double, GeometryFlags]
+MorphologyImageChannel.argtypes = [POINTER(Image), ChannelType, MorphologyMethod, ssize_t, POINTER(KernelInfo), POINTER(ExceptionInfo)]
+ScaleGeometryKernelInfo = _lib.ScaleGeometryKernelInfo
+ScaleGeometryKernelInfo.restype = None
+ScaleGeometryKernelInfo.argtypes = [POINTER(KernelInfo), STRING]
 ShowKernelInfo = _lib.ShowKernelInfo
 ShowKernelInfo.restype = None
 ShowKernelInfo.argtypes = [POINTER(KernelInfo)]
 
-# values for enumeration 'MagickOption'
+# values for enumeration 'CommandOption'
 MagickUndefinedOptions = -1
 MagickAlignOptions = 0
 MagickAlphaOptions = 1
@@ -2729,19 +2864,19 @@ MagickDataTypeOptions = 13
 MagickDebugOptions = 14
 MagickDecorateOptions = 15
 MagickDelegateOptions = 16
-MagickDisposeOptions = 17
-MagickDistortOptions = 18
-MagickDitherOptions = 19
-MagickEndianOptions = 20
-MagickEvaluateOptions = 21
-MagickFillRuleOptions = 22
-MagickFilterOptions = 23
-MagickFontOptions = 24
-MagickFontsOptions = 25
-MagickFormatOptions = 26
-MagickFunctionOptions = 27
-MagickGravityOptions = 28
-MagickImageListOptions = 29
+MagickDirectionOptions = 17
+MagickDisposeOptions = 18
+MagickDistortOptions = 19
+MagickDitherOptions = 20
+MagickEndianOptions = 21
+MagickEvaluateOptions = 22
+MagickFillRuleOptions = 23
+MagickFilterOptions = 24
+MagickFontOptions = 25
+MagickFontsOptions = 26
+MagickFormatOptions = 27
+MagickFunctionOptions = 28
+MagickGravityOptions = 29
 MagickIntentOptions = 30
 MagickInterlaceOptions = 31
 MagickInterpolateOptions = 32
@@ -2771,35 +2906,30 @@ MagickQuantumFormatOptions = 55
 MagickResolutionOptions = 56
 MagickResourceOptions = 57
 MagickSparseColorOptions = 58
-MagickStorageOptions = 59
-MagickStretchOptions = 60
-MagickStyleOptions = 61
-MagickThresholdOptions = 62
-MagickTypeOptions = 63
-MagickValidateOptions = 64
-MagickVirtualPixelOptions = 65
-MagickOption = c_int # enum
-GetMagickOptions = _lib.GetMagickOptions
-GetMagickOptions.restype = POINTER(STRING)
-GetMagickOptions.argtypes = [MagickOption]
+MagickStatisticOptions = 59
+MagickStorageOptions = 60
+MagickStretchOptions = 61
+MagickStyleOptions = 62
+MagickThresholdOptions = 63
+MagickTypeOptions = 64
+MagickValidateOptions = 65
+MagickVirtualPixelOptions = 66
+CommandOption = c_int # enum
+GetCommandOptions = _lib.GetCommandOptions
+GetCommandOptions.restype = POINTER(STRING)
+GetCommandOptions.argtypes = [CommandOption]
 GetNextImageOption = _lib.GetNextImageOption
 GetNextImageOption.restype = STRING
 GetNextImageOption.argtypes = [POINTER(ImageInfo)]
 RemoveImageOption = _lib.RemoveImageOption
 RemoveImageOption.restype = STRING
 RemoveImageOption.argtypes = [POINTER(ImageInfo), STRING]
+CommandOptionToMnemonic = _lib.CommandOptionToMnemonic
+CommandOptionToMnemonic.restype = STRING
+CommandOptionToMnemonic.argtypes = [CommandOption, ssize_t]
 GetImageOption = _lib.GetImageOption
 GetImageOption.restype = STRING
 GetImageOption.argtypes = [POINTER(ImageInfo), STRING]
-MagickOptionToMnemonic = _lib.MagickOptionToMnemonic
-MagickOptionToMnemonic.restype = STRING
-MagickOptionToMnemonic.argtypes = [MagickOption, c_long]
-ParseChannelOption = _lib.ParseChannelOption
-ParseChannelOption.restype = c_long
-ParseChannelOption.argtypes = [STRING]
-ParseMagickOption = _lib.ParseMagickOption
-ParseMagickOption.restype = c_long
-ParseMagickOption.argtypes = [MagickOption, MagickBooleanType, STRING]
 CloneImageOptions = _lib.CloneImageOptions
 CloneImageOptions.restype = MagickBooleanType
 CloneImageOptions.argtypes = [POINTER(ImageInfo), POINTER(ImageInfo)]
@@ -2809,15 +2939,24 @@ DefineImageOption.argtypes = [POINTER(ImageInfo), STRING]
 DeleteImageOption = _lib.DeleteImageOption
 DeleteImageOption.restype = MagickBooleanType
 DeleteImageOption.argtypes = [POINTER(ImageInfo), STRING]
-IsMagickOption = _lib.IsMagickOption
-IsMagickOption.restype = MagickBooleanType
-IsMagickOption.argtypes = [STRING]
-ListMagickOptions = _lib.ListMagickOptions
-ListMagickOptions.restype = MagickBooleanType
-ListMagickOptions.argtypes = [POINTER(FILE), MagickOption, POINTER(ExceptionInfo)]
+IsCommandOption = _lib.IsCommandOption
+IsCommandOption.restype = MagickBooleanType
+IsCommandOption.argtypes = [STRING]
+ListCommandOptions = _lib.ListCommandOptions
+ListCommandOptions.restype = MagickBooleanType
+ListCommandOptions.argtypes = [POINTER(FILE), CommandOption, POINTER(ExceptionInfo)]
 SetImageOption = _lib.SetImageOption
 SetImageOption.restype = MagickBooleanType
 SetImageOption.argtypes = [POINTER(ImageInfo), STRING, STRING]
+GetCommandOptionFlags = _lib.GetCommandOptionFlags
+GetCommandOptionFlags.restype = ssize_t
+GetCommandOptionFlags.argtypes = [CommandOption, MagickBooleanType, STRING]
+ParseChannelOption = _lib.ParseChannelOption
+ParseChannelOption.restype = ssize_t
+ParseChannelOption.argtypes = [STRING]
+ParseCommandOption = _lib.ParseCommandOption
+ParseCommandOption.restype = ssize_t
+ParseCommandOption.argtypes = [CommandOption, MagickBooleanType, STRING]
 DestroyImageOptions = _lib.DestroyImageOptions
 DestroyImageOptions.restype = None
 DestroyImageOptions.argtypes = [POINTER(ImageInfo)]
@@ -2832,7 +2971,7 @@ OilPaintImage.restype = POINTER(Image)
 OilPaintImage.argtypes = [POINTER(Image), c_double, POINTER(ExceptionInfo)]
 FloodfillPaintImage = _lib.FloodfillPaintImage
 FloodfillPaintImage.restype = MagickBooleanType
-FloodfillPaintImage.argtypes = [POINTER(Image), ChannelType, POINTER(DrawInfo), POINTER(MagickPixelPacket), c_long, c_long, MagickBooleanType]
+FloodfillPaintImage.argtypes = [POINTER(Image), ChannelType, POINTER(DrawInfo), POINTER(MagickPixelPacket), ssize_t, ssize_t, MagickBooleanType]
 
 # values for enumeration 'GradientType'
 UndefinedGradient = 0
@@ -2863,10 +3002,14 @@ TransparentPaintImageChroma.restype = MagickBooleanType
 TransparentPaintImageChroma.argtypes = [POINTER(Image), POINTER(MagickPixelPacket), POINTER(MagickPixelPacket), Quantum, MagickBooleanType]
 ExportImagePixels = _lib.ExportImagePixels
 ExportImagePixels.restype = MagickBooleanType
-ExportImagePixels.argtypes = [POINTER(Image), c_long, c_long, c_ulong, c_ulong, STRING, StorageType, c_void_p, POINTER(ExceptionInfo)]
+ExportImagePixels.argtypes = [POINTER(Image), ssize_t, ssize_t, size_t, size_t, STRING, StorageType, c_void_p, POINTER(ExceptionInfo)]
 ImportImagePixels = _lib.ImportImagePixels
 ImportImagePixels.restype = MagickBooleanType
-ImportImagePixels.argtypes = [POINTER(Image), c_long, c_long, c_ulong, c_ulong, STRING, StorageType, c_void_p]
+ImportImagePixels.argtypes = [POINTER(Image), ssize_t, ssize_t, size_t, size_t, STRING, StorageType, c_void_p]
+CacheView_ = _CacheView
+InterpolateMagickPixelPacket = _lib.InterpolateMagickPixelPacket
+InterpolateMagickPixelPacket.restype = MagickBooleanType
+InterpolateMagickPixelPacket.argtypes = [POINTER(Image), POINTER(CacheView_), InterpolatePixelMethod, c_double, c_double, POINTER(MagickPixelPacket), POINTER(ExceptionInfo)]
 GetMagickPixelPacket = _lib.GetMagickPixelPacket
 GetMagickPixelPacket.restype = None
 GetMagickPixelPacket.argtypes = [POINTER(Image), POINTER(MagickPixelPacket)]
@@ -2875,13 +3018,13 @@ GetPolicyValue.restype = STRING
 GetPolicyValue.argtypes = [STRING]
 GetPolicyList = _lib.GetPolicyList
 GetPolicyList.restype = POINTER(STRING)
-GetPolicyList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetPolicyList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 class _PolicyInfo(Structure):
     pass
 PolicyInfo = _PolicyInfo
 GetPolicyInfoList = _lib.GetPolicyInfoList
 GetPolicyInfoList.restype = POINTER(POINTER(PolicyInfo))
-GetPolicyInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetPolicyInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 
 # values for enumeration 'PolicyDomain'
 UndefinedPolicyDomain = 0
@@ -2992,7 +3135,10 @@ GetImageQuantizeError.restype = MagickBooleanType
 GetImageQuantizeError.argtypes = [POINTER(Image)]
 PosterizeImage = _lib.PosterizeImage
 PosterizeImage.restype = MagickBooleanType
-PosterizeImage.argtypes = [POINTER(Image), c_ulong, MagickBooleanType]
+PosterizeImage.argtypes = [POINTER(Image), size_t, MagickBooleanType]
+PosterizeImageChannel = _lib.PosterizeImageChannel
+PosterizeImageChannel.restype = MagickBooleanType
+PosterizeImageChannel.argtypes = [POINTER(Image), ChannelType, size_t, MagickBooleanType]
 QuantizeImage = _lib.QuantizeImage
 QuantizeImage.restype = MagickBooleanType
 QuantizeImage.argtypes = [POINTER(QuantizeInfo), POINTER(Image)]
@@ -3022,7 +3168,7 @@ class _QuantumInfo(Structure):
 QuantumInfo = _QuantumInfo
 SetQuantumDepth = _lib.SetQuantumDepth
 SetQuantumDepth.restype = MagickBooleanType
-SetQuantumDepth.argtypes = [POINTER(Image), POINTER(QuantumInfo), c_ulong]
+SetQuantumDepth.argtypes = [POINTER(Image), POINTER(QuantumInfo), size_t]
 
 # values for enumeration 'QuantumFormatType'
 UndefinedQuantumFormat = 0
@@ -3035,7 +3181,7 @@ SetQuantumFormat.restype = MagickBooleanType
 SetQuantumFormat.argtypes = [POINTER(Image), POINTER(QuantumInfo), QuantumFormatType]
 SetQuantumPad = _lib.SetQuantumPad
 SetQuantumPad.restype = MagickBooleanType
-SetQuantumPad.argtypes = [POINTER(Image), POINTER(QuantumInfo), c_ulong]
+SetQuantumPad.argtypes = [POINTER(Image), POINTER(QuantumInfo), size_t]
 AcquireQuantumInfo = _lib.AcquireQuantumInfo
 AcquireQuantumInfo.restype = POINTER(QuantumInfo)
 AcquireQuantumInfo.argtypes = [POINTER(ImageInfo), POINTER(Image)]
@@ -3080,7 +3226,7 @@ SetQuantumPack.restype = None
 SetQuantumPack.argtypes = [POINTER(QuantumInfo), MagickBooleanType]
 SetQuantumQuantum = _lib.SetQuantumQuantum
 SetQuantumQuantum.restype = None
-SetQuantumQuantum.argtypes = [POINTER(QuantumInfo), c_ulong]
+SetQuantumQuantum.argtypes = [POINTER(QuantumInfo), size_t]
 SetQuantumScale = _lib.SetQuantumScale
 SetQuantumScale.restype = None
 SetQuantumScale.argtypes = [POINTER(QuantumInfo), c_double]
@@ -3177,26 +3323,31 @@ QuadraticFilter = 9
 CubicFilter = 10
 CatromFilter = 11
 MitchellFilter = 12
-LanczosFilter = 13
-BesselFilter = 14
-SincFilter = 15
+JincFilter = 13
+SincFilter = 14
+SincFastFilter = 15
 KaiserFilter = 16
 WelshFilter = 17
 ParzenFilter = 18
-LagrangeFilter = 19
-BohmanFilter = 20
-BartlettFilter = 21
-SentinelFilter = 22
+BohmanFilter = 19
+BartlettFilter = 20
+LagrangeFilter = 21
+LanczosFilter = 22
+LanczosSharpFilter = 23
+Lanczos2Filter = 24
+Lanczos2SharpFilter = 25
+RobidouxFilter = 26
+SentinelFilter = 27
 FilterTypes = c_int # enum
 SetResampleFilter = _lib.SetResampleFilter
 SetResampleFilter.restype = None
 SetResampleFilter.argtypes = [POINTER(ResampleFilter), FilterTypes, c_double]
 AdaptiveResizeImage = _lib.AdaptiveResizeImage
 AdaptiveResizeImage.restype = POINTER(Image)
-AdaptiveResizeImage.argtypes = [POINTER(Image), c_ulong, c_ulong, POINTER(ExceptionInfo)]
+AdaptiveResizeImage.argtypes = [POINTER(Image), size_t, size_t, POINTER(ExceptionInfo)]
 LiquidRescaleImage = _lib.LiquidRescaleImage
 LiquidRescaleImage.restype = POINTER(Image)
-LiquidRescaleImage.argtypes = [POINTER(Image), c_ulong, c_ulong, c_double, c_double, POINTER(ExceptionInfo)]
+LiquidRescaleImage.argtypes = [POINTER(Image), size_t, size_t, c_double, c_double, POINTER(ExceptionInfo)]
 MagnifyImage = _lib.MagnifyImage
 MagnifyImage.restype = POINTER(Image)
 MagnifyImage.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
@@ -3208,19 +3359,16 @@ ResampleImage.restype = POINTER(Image)
 ResampleImage.argtypes = [POINTER(Image), c_double, c_double, FilterTypes, c_double, POINTER(ExceptionInfo)]
 ResizeImage = _lib.ResizeImage
 ResizeImage.restype = POINTER(Image)
-ResizeImage.argtypes = [POINTER(Image), c_ulong, c_ulong, FilterTypes, c_double, POINTER(ExceptionInfo)]
+ResizeImage.argtypes = [POINTER(Image), size_t, size_t, FilterTypes, c_double, POINTER(ExceptionInfo)]
 SampleImage = _lib.SampleImage
 SampleImage.restype = POINTER(Image)
-SampleImage.argtypes = [POINTER(Image), c_ulong, c_ulong, POINTER(ExceptionInfo)]
+SampleImage.argtypes = [POINTER(Image), size_t, size_t, POINTER(ExceptionInfo)]
 ScaleImage = _lib.ScaleImage
 ScaleImage.restype = POINTER(Image)
-ScaleImage.argtypes = [POINTER(Image), c_ulong, c_ulong, POINTER(ExceptionInfo)]
+ScaleImage.argtypes = [POINTER(Image), size_t, size_t, POINTER(ExceptionInfo)]
 ThumbnailImage = _lib.ThumbnailImage
 ThumbnailImage.restype = POINTER(Image)
-ThumbnailImage.argtypes = [POINTER(Image), c_ulong, c_ulong, POINTER(ExceptionInfo)]
-ZoomImage = _lib.ZoomImage
-ZoomImage.restype = POINTER(Image)
-ZoomImage.argtypes = [POINTER(Image), c_ulong, c_ulong, POINTER(ExceptionInfo)]
+ThumbnailImage.argtypes = [POINTER(Image), size_t, size_t, POINTER(ExceptionInfo)]
 AcquireUniqueFileResource = _lib.AcquireUniqueFileResource
 AcquireUniqueFileResource.restype = c_int
 AcquireUniqueFileResource.argtypes = [STRING]
@@ -3234,6 +3382,7 @@ MapResource = 4
 MemoryResource = 5
 ThreadResource = 6
 TimeResource = 7
+ThrottleResource = 8
 ResourceType = c_int # enum
 AcquireMagickResource = _lib.AcquireMagickResource
 AcquireMagickResource.restype = MagickBooleanType
@@ -3322,6 +3471,15 @@ DeleteNodeByValueFromSplayTree.argtypes = [POINTER(SplayTreeInfo), c_void_p]
 DeleteNodeFromSplayTree = _lib.DeleteNodeFromSplayTree
 DeleteNodeFromSplayTree.restype = MagickBooleanType
 DeleteNodeFromSplayTree.argtypes = [POINTER(SplayTreeInfo), c_void_p]
+GetNextKeyInSplayTree = _lib.GetNextKeyInSplayTree
+GetNextKeyInSplayTree.restype = c_void_p
+GetNextKeyInSplayTree.argtypes = [POINTER(SplayTreeInfo)]
+GetNextValueInSplayTree = _lib.GetNextValueInSplayTree
+GetNextValueInSplayTree.restype = c_void_p
+GetNextValueInSplayTree.argtypes = [POINTER(SplayTreeInfo)]
+GetValueFromSplayTree = _lib.GetValueFromSplayTree
+GetValueFromSplayTree.restype = c_void_p
+GetValueFromSplayTree.argtypes = [POINTER(SplayTreeInfo), c_void_p]
 CompareSplayTreeString = _lib.CompareSplayTreeString
 CompareSplayTreeString.restype = c_int
 CompareSplayTreeString.argtypes = [c_void_p, c_void_p]
@@ -3338,17 +3496,8 @@ NewSplayTree = _lib.NewSplayTree
 NewSplayTree.restype = POINTER(SplayTreeInfo)
 NewSplayTree.argtypes = [CFUNCTYPE(c_int, c_void_p, c_void_p), CFUNCTYPE(c_void_p, c_void_p), CFUNCTYPE(c_void_p, c_void_p)]
 GetNumberOfNodesInSplayTree = _lib.GetNumberOfNodesInSplayTree
-GetNumberOfNodesInSplayTree.restype = c_ulong
+GetNumberOfNodesInSplayTree.restype = size_t
 GetNumberOfNodesInSplayTree.argtypes = [POINTER(SplayTreeInfo)]
-GetNextKeyInSplayTree = _lib.GetNextKeyInSplayTree
-GetNextKeyInSplayTree.restype = c_void_p
-GetNextKeyInSplayTree.argtypes = [POINTER(SplayTreeInfo)]
-GetNextValueInSplayTree = _lib.GetNextValueInSplayTree
-GetNextValueInSplayTree.restype = c_void_p
-GetNextValueInSplayTree.argtypes = [POINTER(SplayTreeInfo)]
-GetValueFromSplayTree = _lib.GetValueFromSplayTree
-GetValueFromSplayTree.restype = c_void_p
-GetValueFromSplayTree.argtypes = [POINTER(SplayTreeInfo), c_void_p]
 RemoveNodeByValueFromSplayTree = _lib.RemoveNodeByValueFromSplayTree
 RemoveNodeByValueFromSplayTree.restype = c_void_p
 RemoveNodeByValueFromSplayTree.argtypes = [POINTER(SplayTreeInfo), c_void_p]
@@ -3397,6 +3546,9 @@ CosineEvaluateOperator = 24
 SineEvaluateOperator = 25
 AddModulusEvaluateOperator = 26
 MeanEvaluateOperator = 27
+AbsEvaluateOperator = 28
+ExponentialEvaluateOperator = 29
+MedianEvaluateOperator = 30
 MagickEvaluateOperator = c_int # enum
 EvaluateImages = _lib.EvaluateImages
 EvaluateImages.restype = POINTER(Image)
@@ -3417,13 +3569,13 @@ ArctanFunction = 4
 MagickFunction = c_int # enum
 FunctionImage = _lib.FunctionImage
 FunctionImage.restype = MagickBooleanType
-FunctionImage.argtypes = [POINTER(Image), MagickFunction, c_ulong, POINTER(c_double), POINTER(ExceptionInfo)]
+FunctionImage.argtypes = [POINTER(Image), MagickFunction, size_t, POINTER(c_double), POINTER(ExceptionInfo)]
 FunctionImageChannel = _lib.FunctionImageChannel
 FunctionImageChannel.restype = MagickBooleanType
-FunctionImageChannel.argtypes = [POINTER(Image), ChannelType, MagickFunction, c_ulong, POINTER(c_double), POINTER(ExceptionInfo)]
+FunctionImageChannel.argtypes = [POINTER(Image), ChannelType, MagickFunction, size_t, POINTER(c_double), POINTER(ExceptionInfo)]
 GetImageChannelExtrema = _lib.GetImageChannelExtrema
 GetImageChannelExtrema.restype = MagickBooleanType
-GetImageChannelExtrema.argtypes = [POINTER(Image), ChannelType, POINTER(c_ulong), POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetImageChannelExtrema.argtypes = [POINTER(Image), ChannelType, POINTER(size_t), POINTER(size_t), POINTER(ExceptionInfo)]
 GetImageChannelMean = _lib.GetImageChannelMean
 GetImageChannelMean.restype = MagickBooleanType
 GetImageChannelMean.argtypes = [POINTER(Image), ChannelType, POINTER(c_double), POINTER(c_double), POINTER(ExceptionInfo)]
@@ -3435,7 +3587,7 @@ GetImageChannelRange.restype = MagickBooleanType
 GetImageChannelRange.argtypes = [POINTER(Image), ChannelType, POINTER(c_double), POINTER(c_double), POINTER(ExceptionInfo)]
 GetImageExtrema = _lib.GetImageExtrema
 GetImageExtrema.restype = MagickBooleanType
-GetImageExtrema.argtypes = [POINTER(Image), POINTER(c_ulong), POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetImageExtrema.argtypes = [POINTER(Image), POINTER(size_t), POINTER(size_t), POINTER(ExceptionInfo)]
 GetImageRange = _lib.GetImageRange
 GetImageRange.restype = MagickBooleanType
 GetImageRange.argtypes = [POINTER(Image), POINTER(c_double), POINTER(c_double), POINTER(ExceptionInfo)]
@@ -3502,20 +3654,6 @@ LocaleCompare.argtypes = [STRING, STRING]
 LocaleNCompare = _lib.LocaleNCompare
 LocaleNCompare.restype = c_int
 LocaleNCompare.argtypes = [STRING, STRING, size_t]
-FormatMagickSize = _lib.FormatMagickSize
-FormatMagickSize.restype = c_long
-FormatMagickSize.argtypes = [MagickSizeType, MagickBooleanType, STRING]
-FormatMagickString = _lib.FormatMagickString
-FormatMagickString.restype = c_long
-FormatMagickString.argtypes = [STRING, size_t, STRING]
-FormatMagickStringList = _lib.FormatMagickStringList
-FormatMagickStringList.restype = c_long
-FormatMagickStringList.argtypes = [STRING, size_t, STRING, POINTER(__va_list_tag)]
-__time_t = c_long
-time_t = __time_t
-FormatMagickTime = _lib.FormatMagickTime
-FormatMagickTime.restype = c_long
-FormatMagickTime.argtypes = [time_t, size_t, STRING]
 ConcatenateString = _lib.ConcatenateString
 ConcatenateString.restype = MagickBooleanType
 ConcatenateString.argtypes = [POINTER(STRING), STRING]
@@ -3531,6 +3669,20 @@ CopyMagickString.argtypes = [STRING, STRING, size_t]
 GetStringInfoLength = _lib.GetStringInfoLength
 GetStringInfoLength.restype = size_t
 GetStringInfoLength.argtypes = [POINTER(StringInfo)]
+FormatMagickSize = _lib.FormatMagickSize
+FormatMagickSize.restype = ssize_t
+FormatMagickSize.argtypes = [MagickSizeType, MagickBooleanType, STRING]
+FormatMagickString = _lib.FormatMagickString
+FormatMagickString.restype = ssize_t
+FormatMagickString.argtypes = [STRING, size_t, STRING]
+FormatMagickStringList = _lib.FormatMagickStringList
+FormatMagickStringList.restype = ssize_t
+FormatMagickStringList.argtypes = [STRING, size_t, STRING, POINTER(__va_list_tag)]
+__time_t = c_long
+time_t = __time_t
+FormatMagickTime = _lib.FormatMagickTime
+FormatMagickTime.restype = ssize_t
+FormatMagickTime.argtypes = [time_t, size_t, STRING]
 AcquireStringInfo = _lib.AcquireStringInfo
 AcquireStringInfo.restype = POINTER(StringInfo)
 AcquireStringInfo.argtypes = [size_t]
@@ -3587,7 +3739,7 @@ StripString.restype = None
 StripString.argtypes = [STRING]
 AdaptiveThresholdImage = _lib.AdaptiveThresholdImage
 AdaptiveThresholdImage.restype = POINTER(Image)
-AdaptiveThresholdImage.argtypes = [POINTER(Image), c_ulong, c_ulong, c_long, POINTER(ExceptionInfo)]
+AdaptiveThresholdImage.argtypes = [POINTER(Image), size_t, size_t, ssize_t, POINTER(ExceptionInfo)]
 class _ThresholdMap(Structure):
     pass
 ThresholdMap = _ThresholdMap
@@ -3699,6 +3851,9 @@ ConsolidateCMYKImages.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
 CropImage = _lib.CropImage
 CropImage.restype = POINTER(Image)
 CropImage.argtypes = [POINTER(Image), POINTER(RectangleInfo), POINTER(ExceptionInfo)]
+CropImageToTiles = _lib.CropImageToTiles
+CropImageToTiles.restype = POINTER(Image)
+CropImageToTiles.argtypes = [POINTER(Image), STRING, POINTER(ExceptionInfo)]
 ExcerptImage = _lib.ExcerptImage
 ExcerptImage.restype = POINTER(Image)
 ExcerptImage.argtypes = [POINTER(Image), POINTER(RectangleInfo), POINTER(ExceptionInfo)]
@@ -3713,7 +3868,7 @@ FlopImage.restype = POINTER(Image)
 FlopImage.argtypes = [POINTER(Image), POINTER(ExceptionInfo)]
 RollImage = _lib.RollImage
 RollImage.restype = POINTER(Image)
-RollImage.argtypes = [POINTER(Image), c_long, c_long, POINTER(ExceptionInfo)]
+RollImage.argtypes = [POINTER(Image), ssize_t, ssize_t, POINTER(ExceptionInfo)]
 ShaveImage = _lib.ShaveImage
 ShaveImage.restype = POINTER(Image)
 ShaveImage.argtypes = [POINTER(Image), POINTER(RectangleInfo), POINTER(ExceptionInfo)]
@@ -3737,7 +3892,7 @@ TransformImages.restype = MagickBooleanType
 TransformImages.argtypes = [POINTER(POINTER(Image)), STRING, STRING]
 GetTypeList = _lib.GetTypeList
 GetTypeList.restype = POINTER(STRING)
-GetTypeList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetTypeList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 ListTypeInfo = _lib.ListTypeInfo
 ListTypeInfo.restype = MagickBooleanType
 ListTypeInfo.argtypes = [POINTER(FILE), POINTER(ExceptionInfo)]
@@ -3774,10 +3929,10 @@ AnyStretch = 10
 StretchType = c_int # enum
 GetTypeInfoByFamily = _lib.GetTypeInfoByFamily
 GetTypeInfoByFamily.restype = POINTER(TypeInfo)
-GetTypeInfoByFamily.argtypes = [STRING, StyleType, StretchType, c_ulong, POINTER(ExceptionInfo)]
+GetTypeInfoByFamily.argtypes = [STRING, StyleType, StretchType, size_t, POINTER(ExceptionInfo)]
 GetTypeInfoList = _lib.GetTypeInfoList
 GetTypeInfoList.restype = POINTER(POINTER(TypeInfo))
-GetTypeInfoList.argtypes = [STRING, POINTER(c_ulong), POINTER(ExceptionInfo)]
+GetTypeInfoList.argtypes = [STRING, POINTER(size_t), POINTER(ExceptionInfo)]
 TypeComponentTerminus = _lib.TypeComponentTerminus
 TypeComponentTerminus.restype = None
 TypeComponentTerminus.argtypes = []
@@ -3786,19 +3941,16 @@ Base64Encode.restype = STRING
 Base64Encode.argtypes = [POINTER(c_ubyte), size_t, POINTER(size_t)]
 GetPathComponents = _lib.GetPathComponents
 GetPathComponents.restype = POINTER(STRING)
-GetPathComponents.argtypes = [STRING, POINTER(c_ulong)]
+GetPathComponents.argtypes = [STRING, POINTER(size_t)]
 ListFiles = _lib.ListFiles
 ListFiles.restype = POINTER(STRING)
-ListFiles.argtypes = [STRING, STRING, POINTER(c_ulong)]
+ListFiles.argtypes = [STRING, STRING, POINTER(size_t)]
 OpenMagickStream = _lib.OpenMagickStream
 OpenMagickStream.restype = POINTER(FILE)
 OpenMagickStream.argtypes = [STRING, STRING]
 SystemCommand = _lib.SystemCommand
 SystemCommand.restype = c_int
 SystemCommand.argtypes = [MagickBooleanType, MagickBooleanType, STRING, POINTER(ExceptionInfo)]
-GetMagickPageSize = _lib.GetMagickPageSize
-GetMagickPageSize.restype = c_long
-GetMagickPageSize.argtypes = []
 AcquireUniqueFilename = _lib.AcquireUniqueFilename
 AcquireUniqueFilename.restype = MagickBooleanType
 AcquireUniqueFilename.argtypes = [STRING]
@@ -3820,18 +3972,21 @@ IsMagickTrue.argtypes = [STRING]
 IsPathAccessible = _lib.IsPathAccessible
 IsPathAccessible.restype = MagickBooleanType
 IsPathAccessible.argtypes = [STRING]
+MultilineCensus = _lib.MultilineCensus
+MultilineCensus.restype = size_t
+MultilineCensus.argtypes = [STRING]
+GetMagickPageSize = _lib.GetMagickPageSize
+GetMagickPageSize.restype = ssize_t
+GetMagickPageSize.argtypes = []
 Base64Decode = _lib.Base64Decode
 Base64Decode.restype = POINTER(c_ubyte)
 Base64Decode.argtypes = [STRING, POINTER(size_t)]
-MultilineCensus = _lib.MultilineCensus
-MultilineCensus.restype = c_ulong
-MultilineCensus.argtypes = [STRING]
 AppendImageFormat = _lib.AppendImageFormat
 AppendImageFormat.restype = None
 AppendImageFormat.argtypes = [STRING, STRING]
 ChopPathComponents = _lib.ChopPathComponents
 ChopPathComponents.restype = None
-ChopPathComponents.argtypes = [STRING, c_ulong]
+ChopPathComponents.argtypes = [STRING, size_t]
 ExpandFilename = _lib.ExpandFilename
 ExpandFilename.restype = None
 ExpandFilename.argtypes = [STRING]
@@ -3850,6 +4005,9 @@ PathType = c_int # enum
 GetPathComponent = _lib.GetPathComponent
 GetPathComponent.restype = None
 GetPathComponent.argtypes = [STRING, PathType, STRING]
+MagickDelay = _lib.MagickDelay
+MagickDelay.restype = None
+MagickDelay.argtypes = [MagickSizeType]
 GetMagickHomeURL = _lib.GetMagickHomeURL
 GetMagickHomeURL.restype = STRING
 GetMagickHomeURL.argtypes = []
@@ -3864,16 +4022,16 @@ GetMagickPackageName.restype = STRING
 GetMagickPackageName.argtypes = []
 GetMagickQuantumDepth = _lib.GetMagickQuantumDepth
 GetMagickQuantumDepth.restype = STRING
-GetMagickQuantumDepth.argtypes = [POINTER(c_ulong)]
+GetMagickQuantumDepth.argtypes = [POINTER(size_t)]
 GetMagickQuantumRange = _lib.GetMagickQuantumRange
 GetMagickQuantumRange.restype = STRING
-GetMagickQuantumRange.argtypes = [POINTER(c_ulong)]
+GetMagickQuantumRange.argtypes = [POINTER(size_t)]
 GetMagickReleaseDate = _lib.GetMagickReleaseDate
 GetMagickReleaseDate.restype = STRING
 GetMagickReleaseDate.argtypes = []
 GetMagickVersion = _lib.GetMagickVersion
 GetMagickVersion.restype = STRING
-GetMagickVersion.argtypes = [POINTER(c_ulong)]
+GetMagickVersion.argtypes = [POINTER(size_t)]
 CanonicalXMLContent = _lib.CanonicalXMLContent
 CanonicalXMLContent.restype = STRING
 CanonicalXMLContent.argtypes = [STRING, MagickBooleanType]
@@ -3958,9 +4116,6 @@ MagickGetException.argtypes = [POINTER(MagickWand), POINTER(ExceptionType)]
 MagickGetExceptionType = _lib.MagickGetExceptionType
 MagickGetExceptionType.restype = ExceptionType
 MagickGetExceptionType.argtypes = [POINTER(MagickWand)]
-MagickGetIteratorIndex = _lib.MagickGetIteratorIndex
-MagickGetIteratorIndex.restype = c_long
-MagickGetIteratorIndex.argtypes = [POINTER(MagickWand)]
 IsMagickWand = _lib.IsMagickWand
 IsMagickWand.restype = MagickBooleanType
 IsMagickWand.argtypes = [POINTER(MagickWand)]
@@ -3969,7 +4124,7 @@ MagickClearException.restype = MagickBooleanType
 MagickClearException.argtypes = [POINTER(MagickWand)]
 MagickSetIteratorIndex = _lib.MagickSetIteratorIndex
 MagickSetIteratorIndex.restype = MagickBooleanType
-MagickSetIteratorIndex.argtypes = [POINTER(MagickWand), c_long]
+MagickSetIteratorIndex.argtypes = [POINTER(MagickWand), ssize_t]
 CloneMagickWand = _lib.CloneMagickWand
 CloneMagickWand.restype = POINTER(MagickWand)
 CloneMagickWand.argtypes = [POINTER(MagickWand)]
@@ -3982,6 +4137,9 @@ NewMagickWand.argtypes = []
 NewMagickWandFromImage = _lib.NewMagickWandFromImage
 NewMagickWandFromImage.restype = POINTER(MagickWand)
 NewMagickWandFromImage.argtypes = [POINTER(Image)]
+MagickGetIteratorIndex = _lib.MagickGetIteratorIndex
+MagickGetIteratorIndex.restype = ssize_t
+MagickGetIteratorIndex.argtypes = [POINTER(MagickWand)]
 ClearMagickWand = _lib.ClearMagickWand
 ClearMagickWand.restype = None
 ClearMagickWand.argtypes = [POINTER(MagickWand)]
@@ -4018,6 +4176,12 @@ ConjureImageCommand.argtypes = [POINTER(ImageInfo), c_int, POINTER(STRING), POIN
 ConvertImageCommand = _lib.ConvertImageCommand
 ConvertImageCommand.restype = MagickBooleanType
 ConvertImageCommand.argtypes = [POINTER(ImageInfo), c_int, POINTER(STRING), POINTER(STRING), POINTER(ExceptionInfo)]
+class _PixelView(Structure):
+    pass
+PixelView = _PixelView
+GetPixelViewException = _lib.GetPixelViewException
+GetPixelViewException.restype = STRING
+GetPixelViewException.argtypes = [POINTER(PixelView), POINTER(ExceptionType)]
 class _DrawingWand(Structure):
     pass
 DrawingWand = _DrawingWand
@@ -4043,8 +4207,19 @@ PixelIteratorGetException = _lib.PixelIteratorGetException
 PixelIteratorGetException.restype = STRING
 PixelIteratorGetException.argtypes = [POINTER(PixelIterator), POINTER(ExceptionType)]
 MagickGetImageIndex = _lib.MagickGetImageIndex
-MagickGetImageIndex.restype = c_long
+MagickGetImageIndex.restype = ssize_t
 MagickGetImageIndex.argtypes = [POINTER(MagickWand)]
+DuplexTransferPixelViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(PixelView), POINTER(PixelView), POINTER(PixelView), c_void_p)
+DuplexTransferPixelViewIterator = _lib.DuplexTransferPixelViewIterator
+DuplexTransferPixelViewIterator.restype = MagickBooleanType
+DuplexTransferPixelViewIterator.argtypes = [POINTER(PixelView), POINTER(PixelView), POINTER(PixelView), DuplexTransferPixelViewMethod, c_void_p]
+GetPixelViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(PixelView), c_void_p)
+GetPixelViewIterator = _lib.GetPixelViewIterator
+GetPixelViewIterator.restype = MagickBooleanType
+GetPixelViewIterator.argtypes = [POINTER(PixelView), GetPixelViewMethod, c_void_p]
+IsPixelView = _lib.IsPixelView
+IsPixelView.restype = MagickBooleanType
+IsPixelView.argtypes = [POINTER(PixelView)]
 MagickClipPathImage = _lib.MagickClipPathImage
 MagickClipPathImage.restype = MagickBooleanType
 MagickClipPathImage.argtypes = [POINTER(MagickWand), STRING, MagickBooleanType]
@@ -4053,31 +4228,31 @@ class _PixelWand(Structure):
 PixelWand = _PixelWand
 MagickColorFloodfillImage = _lib.MagickColorFloodfillImage
 MagickColorFloodfillImage.restype = MagickBooleanType
-MagickColorFloodfillImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), c_double, POINTER(PixelWand), c_long, c_long]
+MagickColorFloodfillImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), c_double, POINTER(PixelWand), ssize_t, ssize_t]
 MagickGetImageChannelExtrema = _lib.MagickGetImageChannelExtrema
 MagickGetImageChannelExtrema.restype = MagickBooleanType
-MagickGetImageChannelExtrema.argtypes = [POINTER(MagickWand), ChannelType, POINTER(c_ulong), POINTER(c_ulong)]
+MagickGetImageChannelExtrema.argtypes = [POINTER(MagickWand), ChannelType, POINTER(size_t), POINTER(size_t)]
 MagickGetImageExtrema = _lib.MagickGetImageExtrema
 MagickGetImageExtrema.restype = MagickBooleanType
-MagickGetImageExtrema.argtypes = [POINTER(MagickWand), POINTER(c_ulong), POINTER(c_ulong)]
+MagickGetImageExtrema.argtypes = [POINTER(MagickWand), POINTER(size_t), POINTER(size_t)]
 MagickGetImageMatte = _lib.MagickGetImageMatte
 MagickGetImageMatte.restype = MagickBooleanType
 MagickGetImageMatte.argtypes = [POINTER(MagickWand)]
 MagickGetImagePixels = _lib.MagickGetImagePixels
 MagickGetImagePixels.restype = MagickBooleanType
-MagickGetImagePixels.argtypes = [POINTER(MagickWand), c_long, c_long, c_ulong, c_ulong, STRING, StorageType, c_void_p]
+MagickGetImagePixels.argtypes = [POINTER(MagickWand), ssize_t, ssize_t, size_t, size_t, STRING, StorageType, c_void_p]
 MagickMapImage = _lib.MagickMapImage
 MagickMapImage.restype = MagickBooleanType
 MagickMapImage.argtypes = [POINTER(MagickWand), POINTER(MagickWand), MagickBooleanType]
 MagickMatteFloodfillImage = _lib.MagickMatteFloodfillImage
 MagickMatteFloodfillImage.restype = MagickBooleanType
-MagickMatteFloodfillImage.argtypes = [POINTER(MagickWand), c_double, c_double, POINTER(PixelWand), c_long, c_long]
+MagickMatteFloodfillImage.argtypes = [POINTER(MagickWand), c_double, c_double, POINTER(PixelWand), ssize_t, ssize_t]
 MagickOpaqueImage = _lib.MagickOpaqueImage
 MagickOpaqueImage.restype = MagickBooleanType
 MagickOpaqueImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), POINTER(PixelWand), c_double]
 MagickPaintFloodfillImage = _lib.MagickPaintFloodfillImage
 MagickPaintFloodfillImage.restype = MagickBooleanType
-MagickPaintFloodfillImage.argtypes = [POINTER(MagickWand), ChannelType, POINTER(PixelWand), c_double, POINTER(PixelWand), c_long, c_long]
+MagickPaintFloodfillImage.argtypes = [POINTER(MagickWand), ChannelType, POINTER(PixelWand), c_double, POINTER(PixelWand), ssize_t, ssize_t]
 MagickPaintOpaqueImage = _lib.MagickPaintOpaqueImage
 MagickPaintOpaqueImage.restype = MagickBooleanType
 MagickPaintOpaqueImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), POINTER(PixelWand), c_double]
@@ -4087,21 +4262,39 @@ MagickPaintOpaqueImageChannel.argtypes = [POINTER(MagickWand), ChannelType, POIN
 MagickPaintTransparentImage = _lib.MagickPaintTransparentImage
 MagickPaintTransparentImage.restype = MagickBooleanType
 MagickPaintTransparentImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), c_double, c_double]
+MagickRecolorImage = _lib.MagickRecolorImage
+MagickRecolorImage.restype = MagickBooleanType
+MagickRecolorImage.argtypes = [POINTER(MagickWand), size_t, POINTER(c_double)]
 MagickSetImageAttribute = _lib.MagickSetImageAttribute
 MagickSetImageAttribute.restype = MagickBooleanType
 MagickSetImageAttribute.argtypes = [POINTER(MagickWand), STRING, STRING]
 MagickSetImageIndex = _lib.MagickSetImageIndex
 MagickSetImageIndex.restype = MagickBooleanType
-MagickSetImageIndex.argtypes = [POINTER(MagickWand), c_long]
+MagickSetImageIndex.argtypes = [POINTER(MagickWand), ssize_t]
 MagickSetImageOption = _lib.MagickSetImageOption
 MagickSetImageOption.restype = MagickBooleanType
 MagickSetImageOption.argtypes = [POINTER(MagickWand), STRING, STRING, STRING]
 MagickSetImagePixels = _lib.MagickSetImagePixels
 MagickSetImagePixels.restype = MagickBooleanType
-MagickSetImagePixels.argtypes = [POINTER(MagickWand), c_long, c_long, c_ulong, c_ulong, STRING, StorageType, c_void_p]
+MagickSetImagePixels.argtypes = [POINTER(MagickWand), ssize_t, ssize_t, size_t, size_t, STRING, StorageType, c_void_p]
 MagickTransparentImage = _lib.MagickTransparentImage
 MagickTransparentImage.restype = MagickBooleanType
 MagickTransparentImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), c_double, c_double]
+SetPixelViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(PixelView), c_void_p)
+SetPixelViewIterator = _lib.SetPixelViewIterator
+SetPixelViewIterator.restype = MagickBooleanType
+SetPixelViewIterator.argtypes = [POINTER(PixelView), SetPixelViewMethod, c_void_p]
+TransferPixelViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(PixelView), POINTER(PixelView), c_void_p)
+TransferPixelViewIterator = _lib.TransferPixelViewIterator
+TransferPixelViewIterator.restype = MagickBooleanType
+TransferPixelViewIterator.argtypes = [POINTER(PixelView), POINTER(PixelView), TransferPixelViewMethod, c_void_p]
+UpdatePixelViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(PixelView), c_void_p)
+UpdatePixelViewIterator = _lib.UpdatePixelViewIterator
+UpdatePixelViewIterator.restype = MagickBooleanType
+UpdatePixelViewIterator.argtypes = [POINTER(PixelView), UpdatePixelViewMethod, c_void_p]
+GetPixelViewWand = _lib.GetPixelViewWand
+GetPixelViewWand.restype = POINTER(MagickWand)
+GetPixelViewWand.argtypes = [POINTER(PixelView)]
 MagickAverageImages = _lib.MagickAverageImages
 MagickAverageImages.restype = POINTER(MagickWand)
 MagickAverageImages.argtypes = [POINTER(MagickWand)]
@@ -4119,13 +4312,40 @@ MagickMosaicImages.restype = POINTER(MagickWand)
 MagickMosaicImages.argtypes = [POINTER(MagickWand)]
 MagickRegionOfInterestImage = _lib.MagickRegionOfInterestImage
 MagickRegionOfInterestImage.restype = POINTER(MagickWand)
-MagickRegionOfInterestImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_long, c_long]
+MagickRegionOfInterestImage.argtypes = [POINTER(MagickWand), size_t, size_t, ssize_t, ssize_t]
 MagickGetImageSize = _lib.MagickGetImageSize
 MagickGetImageSize.restype = MagickSizeType
 MagickGetImageSize.argtypes = [POINTER(MagickWand)]
+ClonePixelView = _lib.ClonePixelView
+ClonePixelView.restype = POINTER(PixelView)
+ClonePixelView.argtypes = [POINTER(PixelView)]
+DestroyPixelView = _lib.DestroyPixelView
+DestroyPixelView.restype = POINTER(PixelView)
+DestroyPixelView.argtypes = [POINTER(PixelView)]
+NewPixelView = _lib.NewPixelView
+NewPixelView.restype = POINTER(PixelView)
+NewPixelView.argtypes = [POINTER(MagickWand)]
+NewPixelViewRegion = _lib.NewPixelViewRegion
+NewPixelViewRegion.restype = POINTER(PixelView)
+NewPixelViewRegion.argtypes = [POINTER(MagickWand), ssize_t, ssize_t, size_t, size_t]
+GetPixelViewPixels = _lib.GetPixelViewPixels
+GetPixelViewPixels.restype = POINTER(POINTER(PixelWand))
+GetPixelViewPixels.argtypes = [POINTER(PixelView)]
 PixelGetNextRow = _lib.PixelGetNextRow
 PixelGetNextRow.restype = POINTER(POINTER(PixelWand))
 PixelGetNextRow.argtypes = [POINTER(PixelIterator)]
+GetPixelViewHeight = _lib.GetPixelViewHeight
+GetPixelViewHeight.restype = size_t
+GetPixelViewHeight.argtypes = [POINTER(PixelView)]
+GetPixelViewWidth = _lib.GetPixelViewWidth
+GetPixelViewWidth.restype = size_t
+GetPixelViewWidth.argtypes = [POINTER(PixelView)]
+GetPixelViewX = _lib.GetPixelViewX
+GetPixelViewX.restype = ssize_t
+GetPixelViewX.argtypes = [POINTER(PixelView)]
+GetPixelViewY = _lib.GetPixelViewY
+GetPixelViewY.restype = ssize_t
+GetPixelViewY.argtypes = [POINTER(PixelView)]
 MagickWriteImageBlob = _lib.MagickWriteImageBlob
 MagickWriteImageBlob.restype = POINTER(c_ubyte)
 MagickWriteImageBlob.argtypes = [POINTER(MagickWand), POINTER(size_t)]
@@ -4204,7 +4424,7 @@ DrawGetOpacity.restype = c_double
 DrawGetOpacity.argtypes = [POINTER(DrawingWand)]
 DrawGetStrokeDashArray = _lib.DrawGetStrokeDashArray
 DrawGetStrokeDashArray.restype = POINTER(c_double)
-DrawGetStrokeDashArray.argtypes = [POINTER(DrawingWand), POINTER(c_ulong)]
+DrawGetStrokeDashArray.argtypes = [POINTER(DrawingWand), POINTER(size_t)]
 DrawGetStrokeDashOffset = _lib.DrawGetStrokeDashOffset
 DrawGetStrokeDashOffset.restype = c_double
 DrawGetStrokeDashOffset.argtypes = [POINTER(DrawingWand)]
@@ -4282,6 +4502,9 @@ DrawClearException.argtypes = [POINTER(DrawingWand)]
 DrawComposite = _lib.DrawComposite
 DrawComposite.restype = MagickBooleanType
 DrawComposite.argtypes = [POINTER(DrawingWand), CompositeOperator, c_double, c_double, c_double, c_double, POINTER(MagickWand)]
+DrawGetFontResolution = _lib.DrawGetFontResolution
+DrawGetFontResolution.restype = MagickBooleanType
+DrawGetFontResolution.argtypes = [POINTER(DrawingWand), POINTER(c_double), POINTER(c_double)]
 DrawGetStrokeAntialias = _lib.DrawGetStrokeAntialias
 DrawGetStrokeAntialias.restype = MagickBooleanType
 DrawGetStrokeAntialias.argtypes = [POINTER(DrawingWand)]
@@ -4309,9 +4532,12 @@ DrawSetFont.argtypes = [POINTER(DrawingWand), STRING]
 DrawSetFontFamily = _lib.DrawSetFontFamily
 DrawSetFontFamily.restype = MagickBooleanType
 DrawSetFontFamily.argtypes = [POINTER(DrawingWand), STRING]
+DrawSetFontResolution = _lib.DrawSetFontResolution
+DrawSetFontResolution.restype = MagickBooleanType
+DrawSetFontResolution.argtypes = [POINTER(DrawingWand), c_double, c_double]
 DrawSetStrokeDashArray = _lib.DrawSetStrokeDashArray
 DrawSetStrokeDashArray.restype = MagickBooleanType
-DrawSetStrokeDashArray.argtypes = [POINTER(DrawingWand), c_ulong, POINTER(c_double)]
+DrawSetStrokeDashArray.argtypes = [POINTER(DrawingWand), size_t, POINTER(c_double)]
 DrawSetStrokePatternURL = _lib.DrawSetStrokePatternURL
 DrawSetStrokePatternURL.restype = MagickBooleanType
 DrawSetStrokePatternURL.argtypes = [POINTER(DrawingWand), STRING]
@@ -4334,10 +4560,10 @@ DrawGetFontStyle = _lib.DrawGetFontStyle
 DrawGetFontStyle.restype = StyleType
 DrawGetFontStyle.argtypes = [POINTER(DrawingWand)]
 DrawGetFontWeight = _lib.DrawGetFontWeight
-DrawGetFontWeight.restype = c_ulong
+DrawGetFontWeight.restype = size_t
 DrawGetFontWeight.argtypes = [POINTER(DrawingWand)]
 DrawGetStrokeMiterLimit = _lib.DrawGetStrokeMiterLimit
-DrawGetStrokeMiterLimit.restype = c_ulong
+DrawGetStrokeMiterLimit.restype = size_t
 DrawGetStrokeMiterLimit.argtypes = [POINTER(DrawingWand)]
 ClearDrawingWand = _lib.ClearDrawingWand
 ClearDrawingWand.restype = None
@@ -4356,7 +4582,7 @@ class _PointInfo(Structure):
 PointInfo = _PointInfo
 DrawBezier = _lib.DrawBezier
 DrawBezier.restype = None
-DrawBezier.argtypes = [POINTER(DrawingWand), c_ulong, POINTER(PointInfo)]
+DrawBezier.argtypes = [POINTER(DrawingWand), size_t, POINTER(PointInfo)]
 DrawGetBorderColor = _lib.DrawGetBorderColor
 DrawGetBorderColor.restype = None
 DrawGetBorderColor.argtypes = [POINTER(DrawingWand), POINTER(PixelWand)]
@@ -4464,10 +4690,10 @@ DrawPoint.restype = None
 DrawPoint.argtypes = [POINTER(DrawingWand), c_double, c_double]
 DrawPolygon = _lib.DrawPolygon
 DrawPolygon.restype = None
-DrawPolygon.argtypes = [POINTER(DrawingWand), c_ulong, POINTER(PointInfo)]
+DrawPolygon.argtypes = [POINTER(DrawingWand), size_t, POINTER(PointInfo)]
 DrawPolyline = _lib.DrawPolyline
 DrawPolyline.restype = None
-DrawPolyline.argtypes = [POINTER(DrawingWand), c_ulong, POINTER(PointInfo)]
+DrawPolyline.argtypes = [POINTER(DrawingWand), size_t, POINTER(PointInfo)]
 DrawPopClipPath = _lib.DrawPopClipPath
 DrawPopClipPath.restype = None
 DrawPopClipPath.argtypes = [POINTER(DrawingWand)]
@@ -4524,7 +4750,7 @@ DrawSetFontStyle.restype = None
 DrawSetFontStyle.argtypes = [POINTER(DrawingWand), StyleType]
 DrawSetFontWeight = _lib.DrawSetFontWeight
 DrawSetFontWeight.restype = None
-DrawSetFontWeight.argtypes = [POINTER(DrawingWand), c_ulong]
+DrawSetFontWeight.argtypes = [POINTER(DrawingWand), size_t]
 DrawSetGravity = _lib.DrawSetGravity
 DrawSetGravity.restype = None
 DrawSetGravity.argtypes = [POINTER(DrawingWand), GravityType]
@@ -4548,7 +4774,7 @@ DrawSetStrokeLineJoin.restype = None
 DrawSetStrokeLineJoin.argtypes = [POINTER(DrawingWand), LineJoin]
 DrawSetStrokeMiterLimit = _lib.DrawSetStrokeMiterLimit
 DrawSetStrokeMiterLimit.restype = None
-DrawSetStrokeMiterLimit.argtypes = [POINTER(DrawingWand), c_ulong]
+DrawSetStrokeMiterLimit.argtypes = [POINTER(DrawingWand), size_t]
 DrawSetStrokeOpacity = _lib.DrawSetStrokeOpacity
 DrawSetStrokeOpacity.restype = None
 DrawSetStrokeOpacity.argtypes = [POINTER(DrawingWand), c_double]
@@ -4572,7 +4798,7 @@ DrawSetTextUnderColor.restype = None
 DrawSetTextUnderColor.argtypes = [POINTER(DrawingWand), POINTER(PixelWand)]
 DrawSetViewbox = _lib.DrawSetViewbox
 DrawSetViewbox.restype = None
-DrawSetViewbox.argtypes = [POINTER(DrawingWand), c_ulong, c_ulong, c_ulong, c_ulong]
+DrawSetViewbox.argtypes = [POINTER(DrawingWand), ssize_t, ssize_t, ssize_t, ssize_t]
 DrawSkewX = _lib.DrawSkewX
 DrawSkewX.restype = None
 DrawSkewX.argtypes = [POINTER(DrawingWand), c_double]
@@ -4590,7 +4816,7 @@ ImportImageCommand.restype = MagickBooleanType
 ImportImageCommand.argtypes = [POINTER(ImageInfo), c_int, POINTER(STRING), POINTER(STRING), POINTER(ExceptionInfo)]
 MagickGetImageChannelFeatures = _lib.MagickGetImageChannelFeatures
 MagickGetImageChannelFeatures.restype = POINTER(ChannelFeatures)
-MagickGetImageChannelFeatures.argtypes = [POINTER(MagickWand), c_ulong]
+MagickGetImageChannelFeatures.argtypes = [POINTER(MagickWand), size_t]
 MagickGetImageChannelStatistics = _lib.MagickGetImageChannelStatistics
 MagickGetImageChannelStatistics.restype = POINTER(ChannelStatistics)
 MagickGetImageChannelStatistics.argtypes = [POINTER(MagickWand)]
@@ -4633,6 +4859,9 @@ PizCompression = 15
 Pxr24Compression = 16
 B44Compression = 17
 B44ACompression = 18
+LZMACompression = 19
+JBIG1Compression = 20
+JBIG2Compression = 21
 CompressionType = c_int # enum
 MagickGetImageCompression = _lib.MagickGetImageCompression
 MagickGetImageCompression.restype = CompressionType
@@ -4697,7 +4926,7 @@ MagickAdaptiveBlurImageChannel.restype = MagickBooleanType
 MagickAdaptiveBlurImageChannel.argtypes = [POINTER(MagickWand), ChannelType, c_double, c_double]
 MagickAdaptiveResizeImage = _lib.MagickAdaptiveResizeImage
 MagickAdaptiveResizeImage.restype = MagickBooleanType
-MagickAdaptiveResizeImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong]
+MagickAdaptiveResizeImage.argtypes = [POINTER(MagickWand), size_t, size_t]
 MagickAdaptiveSharpenImage = _lib.MagickAdaptiveSharpenImage
 MagickAdaptiveSharpenImage.restype = MagickBooleanType
 MagickAdaptiveSharpenImage.argtypes = [POINTER(MagickWand), c_double, c_double]
@@ -4706,7 +4935,7 @@ MagickAdaptiveSharpenImageChannel.restype = MagickBooleanType
 MagickAdaptiveSharpenImageChannel.argtypes = [POINTER(MagickWand), ChannelType, c_double, c_double]
 MagickAdaptiveThresholdImage = _lib.MagickAdaptiveThresholdImage
 MagickAdaptiveThresholdImage.restype = MagickBooleanType
-MagickAdaptiveThresholdImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_long]
+MagickAdaptiveThresholdImage.argtypes = [POINTER(MagickWand), size_t, size_t, ssize_t]
 MagickAddImage = _lib.MagickAddImage
 MagickAddImage.restype = MagickBooleanType
 MagickAddImage.argtypes = [POINTER(MagickWand), POINTER(MagickWand)]
@@ -4751,7 +4980,7 @@ MagickBlurImageChannel.restype = MagickBooleanType
 MagickBlurImageChannel.argtypes = [POINTER(MagickWand), ChannelType, c_double, c_double]
 MagickBorderImage = _lib.MagickBorderImage
 MagickBorderImage.restype = MagickBooleanType
-MagickBorderImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), c_ulong, c_ulong]
+MagickBorderImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), size_t, size_t]
 MagickBrightnessContrastImage = _lib.MagickBrightnessContrastImage
 MagickBrightnessContrastImage.restype = MagickBooleanType
 MagickBrightnessContrastImage.argtypes = [POINTER(MagickWand), c_double, c_double]
@@ -4763,7 +4992,7 @@ MagickCharcoalImage.restype = MagickBooleanType
 MagickCharcoalImage.argtypes = [POINTER(MagickWand), c_double, c_double]
 MagickChopImage = _lib.MagickChopImage
 MagickChopImage.restype = MagickBooleanType
-MagickChopImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_long, c_long]
+MagickChopImage.argtypes = [POINTER(MagickWand), size_t, size_t, ssize_t, ssize_t]
 MagickClampImage = _lib.MagickClampImage
 MagickClampImage.restype = MagickBooleanType
 MagickClampImage.argtypes = [POINTER(MagickWand)]
@@ -4788,18 +5017,21 @@ MagickColorDecisionListImage.argtypes = [POINTER(MagickWand), STRING]
 MagickColorizeImage = _lib.MagickColorizeImage
 MagickColorizeImage.restype = MagickBooleanType
 MagickColorizeImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), POINTER(PixelWand)]
+MagickColorMatrixImage = _lib.MagickColorMatrixImage
+MagickColorMatrixImage.restype = MagickBooleanType
+MagickColorMatrixImage.argtypes = [POINTER(MagickWand), POINTER(KernelInfo)]
 MagickCommentImage = _lib.MagickCommentImage
 MagickCommentImage.restype = MagickBooleanType
 MagickCommentImage.argtypes = [POINTER(MagickWand), STRING]
 MagickCompositeImage = _lib.MagickCompositeImage
 MagickCompositeImage.restype = MagickBooleanType
-MagickCompositeImage.argtypes = [POINTER(MagickWand), POINTER(MagickWand), CompositeOperator, c_long, c_long]
+MagickCompositeImage.argtypes = [POINTER(MagickWand), POINTER(MagickWand), CompositeOperator, ssize_t, ssize_t]
 MagickCompositeImageChannel = _lib.MagickCompositeImageChannel
 MagickCompositeImageChannel.restype = MagickBooleanType
-MagickCompositeImageChannel.argtypes = [POINTER(MagickWand), ChannelType, POINTER(MagickWand), CompositeOperator, c_long, c_long]
+MagickCompositeImageChannel.argtypes = [POINTER(MagickWand), ChannelType, POINTER(MagickWand), CompositeOperator, ssize_t, ssize_t]
 MagickConstituteImage = _lib.MagickConstituteImage
 MagickConstituteImage.restype = MagickBooleanType
-MagickConstituteImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, STRING, StorageType, c_void_p]
+MagickConstituteImage.argtypes = [POINTER(MagickWand), size_t, size_t, STRING, StorageType, c_void_p]
 MagickContrastImage = _lib.MagickContrastImage
 MagickContrastImage.restype = MagickBooleanType
 MagickContrastImage.argtypes = [POINTER(MagickWand), MagickBooleanType]
@@ -4811,16 +5043,16 @@ MagickContrastStretchImageChannel.restype = MagickBooleanType
 MagickContrastStretchImageChannel.argtypes = [POINTER(MagickWand), ChannelType, c_double, c_double]
 MagickConvolveImage = _lib.MagickConvolveImage
 MagickConvolveImage.restype = MagickBooleanType
-MagickConvolveImage.argtypes = [POINTER(MagickWand), c_ulong, POINTER(c_double)]
+MagickConvolveImage.argtypes = [POINTER(MagickWand), size_t, POINTER(c_double)]
 MagickConvolveImageChannel = _lib.MagickConvolveImageChannel
 MagickConvolveImageChannel.restype = MagickBooleanType
-MagickConvolveImageChannel.argtypes = [POINTER(MagickWand), ChannelType, c_ulong, POINTER(c_double)]
+MagickConvolveImageChannel.argtypes = [POINTER(MagickWand), ChannelType, size_t, POINTER(c_double)]
 MagickCropImage = _lib.MagickCropImage
 MagickCropImage.restype = MagickBooleanType
-MagickCropImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_long, c_long]
+MagickCropImage.argtypes = [POINTER(MagickWand), size_t, size_t, ssize_t, ssize_t]
 MagickCycleColormapImage = _lib.MagickCycleColormapImage
 MagickCycleColormapImage.restype = MagickBooleanType
-MagickCycleColormapImage.argtypes = [POINTER(MagickWand), c_long]
+MagickCycleColormapImage.argtypes = [POINTER(MagickWand), ssize_t]
 MagickDecipherImage = _lib.MagickDecipherImage
 MagickDecipherImage.restype = MagickBooleanType
 MagickDecipherImage.argtypes = [POINTER(MagickWand), STRING]
@@ -4838,7 +5070,7 @@ MagickDisplayImages.restype = MagickBooleanType
 MagickDisplayImages.argtypes = [POINTER(MagickWand), STRING]
 MagickDistortImage = _lib.MagickDistortImage
 MagickDistortImage.restype = MagickBooleanType
-MagickDistortImage.argtypes = [POINTER(MagickWand), DistortImageMethod, c_ulong, POINTER(c_double), MagickBooleanType]
+MagickDistortImage.argtypes = [POINTER(MagickWand), DistortImageMethod, size_t, POINTER(c_double), MagickBooleanType]
 MagickDrawImage = _lib.MagickDrawImage
 MagickDrawImage.restype = MagickBooleanType
 MagickDrawImage.argtypes = [POINTER(MagickWand), POINTER(DrawingWand)]
@@ -4868,10 +5100,10 @@ MagickEvaluateImageChannel.restype = MagickBooleanType
 MagickEvaluateImageChannel.argtypes = [POINTER(MagickWand), ChannelType, MagickEvaluateOperator, c_double]
 MagickExportImagePixels = _lib.MagickExportImagePixels
 MagickExportImagePixels.restype = MagickBooleanType
-MagickExportImagePixels.argtypes = [POINTER(MagickWand), c_long, c_long, c_ulong, c_ulong, STRING, StorageType, c_void_p]
+MagickExportImagePixels.argtypes = [POINTER(MagickWand), ssize_t, ssize_t, size_t, size_t, STRING, StorageType, c_void_p]
 MagickExtentImage = _lib.MagickExtentImage
 MagickExtentImage.restype = MagickBooleanType
-MagickExtentImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_long, c_long]
+MagickExtentImage.argtypes = [POINTER(MagickWand), size_t, size_t, ssize_t, ssize_t]
 MagickFilterImage = _lib.MagickFilterImage
 MagickFilterImage.restype = MagickBooleanType
 MagickFilterImage.argtypes = [POINTER(MagickWand), POINTER(KernelInfo)]
@@ -4883,7 +5115,7 @@ MagickFlipImage.restype = MagickBooleanType
 MagickFlipImage.argtypes = [POINTER(MagickWand)]
 MagickFloodfillPaintImage = _lib.MagickFloodfillPaintImage
 MagickFloodfillPaintImage.restype = MagickBooleanType
-MagickFloodfillPaintImage.argtypes = [POINTER(MagickWand), ChannelType, POINTER(PixelWand), c_double, POINTER(PixelWand), c_long, c_long, MagickBooleanType]
+MagickFloodfillPaintImage.argtypes = [POINTER(MagickWand), ChannelType, POINTER(PixelWand), c_double, POINTER(PixelWand), ssize_t, ssize_t, MagickBooleanType]
 MagickFlopImage = _lib.MagickFlopImage
 MagickFlopImage.restype = MagickBooleanType
 MagickFlopImage.argtypes = [POINTER(MagickWand)]
@@ -4892,13 +5124,13 @@ MagickForwardFourierTransformImage.restype = MagickBooleanType
 MagickForwardFourierTransformImage.argtypes = [POINTER(MagickWand), MagickBooleanType]
 MagickFrameImage = _lib.MagickFrameImage
 MagickFrameImage.restype = MagickBooleanType
-MagickFrameImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), c_ulong, c_ulong, c_long, c_long]
+MagickFrameImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), size_t, size_t, ssize_t, ssize_t]
 MagickFunctionImage = _lib.MagickFunctionImage
 MagickFunctionImage.restype = MagickBooleanType
-MagickFunctionImage.argtypes = [POINTER(MagickWand), MagickFunction, c_ulong, POINTER(c_double)]
+MagickFunctionImage.argtypes = [POINTER(MagickWand), MagickFunction, size_t, POINTER(c_double)]
 MagickFunctionImageChannel = _lib.MagickFunctionImageChannel
 MagickFunctionImageChannel.restype = MagickBooleanType
-MagickFunctionImageChannel.argtypes = [POINTER(MagickWand), ChannelType, MagickFunction, c_ulong, POINTER(c_double)]
+MagickFunctionImageChannel.argtypes = [POINTER(MagickWand), ChannelType, MagickFunction, size_t, POINTER(c_double)]
 MagickGammaImage = _lib.MagickGammaImage
 MagickGammaImage.restype = MagickBooleanType
 MagickGammaImage.argtypes = [POINTER(MagickWand), c_double]
@@ -4937,7 +5169,7 @@ MagickGetImageChannelRange.restype = MagickBooleanType
 MagickGetImageChannelRange.argtypes = [POINTER(MagickWand), ChannelType, POINTER(c_double), POINTER(c_double)]
 MagickGetImageColormapColor = _lib.MagickGetImageColormapColor
 MagickGetImageColormapColor.restype = MagickBooleanType
-MagickGetImageColormapColor.argtypes = [POINTER(MagickWand), c_ulong, POINTER(PixelWand)]
+MagickGetImageColormapColor.argtypes = [POINTER(MagickWand), size_t, POINTER(PixelWand)]
 MagickGetImageDistortion = _lib.MagickGetImageDistortion
 MagickGetImageDistortion.restype = MagickBooleanType
 MagickGetImageDistortion.argtypes = [POINTER(MagickWand), POINTER(MagickWand), MetricType, POINTER(c_double)]
@@ -4952,10 +5184,10 @@ MagickGetImageLength.restype = MagickBooleanType
 MagickGetImageLength.argtypes = [POINTER(MagickWand), POINTER(MagickSizeType)]
 MagickGetImagePage = _lib.MagickGetImagePage
 MagickGetImagePage.restype = MagickBooleanType
-MagickGetImagePage.argtypes = [POINTER(MagickWand), POINTER(c_ulong), POINTER(c_ulong), POINTER(c_long), POINTER(c_long)]
+MagickGetImagePage.argtypes = [POINTER(MagickWand), POINTER(size_t), POINTER(size_t), POINTER(ssize_t), POINTER(ssize_t)]
 MagickGetImagePixelColor = _lib.MagickGetImagePixelColor
 MagickGetImagePixelColor.restype = MagickBooleanType
-MagickGetImagePixelColor.argtypes = [POINTER(MagickWand), c_long, c_long, POINTER(PixelWand)]
+MagickGetImagePixelColor.argtypes = [POINTER(MagickWand), ssize_t, ssize_t, POINTER(PixelWand)]
 MagickGetImageRange = _lib.MagickGetImageRange
 MagickGetImageRange.restype = MagickBooleanType
 MagickGetImageRange.argtypes = [POINTER(MagickWand), POINTER(c_double), POINTER(c_double)]
@@ -4985,7 +5217,7 @@ MagickImplodeImage.restype = MagickBooleanType
 MagickImplodeImage.argtypes = [POINTER(MagickWand), c_double]
 MagickImportImagePixels = _lib.MagickImportImagePixels
 MagickImportImagePixels.restype = MagickBooleanType
-MagickImportImagePixels.argtypes = [POINTER(MagickWand), c_long, c_long, c_ulong, c_ulong, STRING, StorageType, c_void_p]
+MagickImportImagePixels.argtypes = [POINTER(MagickWand), ssize_t, ssize_t, size_t, size_t, STRING, StorageType, c_void_p]
 MagickInverseFourierTransformImage = _lib.MagickInverseFourierTransformImage
 MagickInverseFourierTransformImage.restype = MagickBooleanType
 MagickInverseFourierTransformImage.argtypes = [POINTER(MagickWand), POINTER(MagickWand), MagickBooleanType]
@@ -5003,7 +5235,7 @@ MagickLinearStretchImage.restype = MagickBooleanType
 MagickLinearStretchImage.argtypes = [POINTER(MagickWand), c_double, c_double]
 MagickLiquidRescaleImage = _lib.MagickLiquidRescaleImage
 MagickLiquidRescaleImage.restype = MagickBooleanType
-MagickLiquidRescaleImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_double, c_double]
+MagickLiquidRescaleImage.argtypes = [POINTER(MagickWand), size_t, size_t, c_double, c_double]
 MagickMagnifyImage = _lib.MagickMagnifyImage
 MagickMagnifyImage.restype = MagickBooleanType
 MagickMagnifyImage.argtypes = [POINTER(MagickWand)]
@@ -5013,15 +5245,18 @@ MagickMedianFilterImage.argtypes = [POINTER(MagickWand), c_double]
 MagickMinifyImage = _lib.MagickMinifyImage
 MagickMinifyImage.restype = MagickBooleanType
 MagickMinifyImage.argtypes = [POINTER(MagickWand)]
+MagickModeImage = _lib.MagickModeImage
+MagickModeImage.restype = MagickBooleanType
+MagickModeImage.argtypes = [POINTER(MagickWand), c_double]
 MagickModulateImage = _lib.MagickModulateImage
 MagickModulateImage.restype = MagickBooleanType
 MagickModulateImage.argtypes = [POINTER(MagickWand), c_double, c_double, c_double]
 MagickMorphologyImage = _lib.MagickMorphologyImage
 MagickMorphologyImage.restype = MagickBooleanType
-MagickMorphologyImage.argtypes = [POINTER(MagickWand), MorphologyMethod, c_long, POINTER(KernelInfo)]
+MagickMorphologyImage.argtypes = [POINTER(MagickWand), MorphologyMethod, ssize_t, POINTER(KernelInfo)]
 MagickMorphologyImageChannel = _lib.MagickMorphologyImageChannel
 MagickMorphologyImageChannel.restype = MagickBooleanType
-MagickMorphologyImageChannel.argtypes = [POINTER(MagickWand), ChannelType, MorphologyMethod, c_long, POINTER(KernelInfo)]
+MagickMorphologyImageChannel.argtypes = [POINTER(MagickWand), ChannelType, MorphologyMethod, ssize_t, POINTER(KernelInfo)]
 MagickMotionBlurImage = _lib.MagickMotionBlurImage
 MagickMotionBlurImage.restype = MagickBooleanType
 MagickMotionBlurImage.argtypes = [POINTER(MagickWand), c_double, c_double, c_double]
@@ -5036,7 +5271,7 @@ MagickNegateImageChannel.restype = MagickBooleanType
 MagickNegateImageChannel.argtypes = [POINTER(MagickWand), ChannelType, MagickBooleanType]
 MagickNewImage = _lib.MagickNewImage
 MagickNewImage.restype = MagickBooleanType
-MagickNewImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, POINTER(PixelWand)]
+MagickNewImage.argtypes = [POINTER(MagickWand), size_t, size_t, POINTER(PixelWand)]
 MagickNextImage = _lib.MagickNextImage
 MagickNextImage.restype = MagickBooleanType
 MagickNextImage.argtypes = [POINTER(MagickWand)]
@@ -5078,16 +5313,16 @@ MagickPolaroidImage.restype = MagickBooleanType
 MagickPolaroidImage.argtypes = [POINTER(MagickWand), POINTER(DrawingWand), c_double]
 MagickPosterizeImage = _lib.MagickPosterizeImage
 MagickPosterizeImage.restype = MagickBooleanType
-MagickPosterizeImage.argtypes = [POINTER(MagickWand), c_ulong, MagickBooleanType]
+MagickPosterizeImage.argtypes = [POINTER(MagickWand), size_t, MagickBooleanType]
 MagickPreviousImage = _lib.MagickPreviousImage
 MagickPreviousImage.restype = MagickBooleanType
 MagickPreviousImage.argtypes = [POINTER(MagickWand)]
 MagickQuantizeImage = _lib.MagickQuantizeImage
 MagickQuantizeImage.restype = MagickBooleanType
-MagickQuantizeImage.argtypes = [POINTER(MagickWand), c_ulong, ColorspaceType, c_ulong, MagickBooleanType, MagickBooleanType]
+MagickQuantizeImage.argtypes = [POINTER(MagickWand), size_t, ColorspaceType, size_t, MagickBooleanType, MagickBooleanType]
 MagickQuantizeImages = _lib.MagickQuantizeImages
 MagickQuantizeImages.restype = MagickBooleanType
-MagickQuantizeImages.argtypes = [POINTER(MagickWand), c_ulong, ColorspaceType, c_ulong, MagickBooleanType, MagickBooleanType]
+MagickQuantizeImages.argtypes = [POINTER(MagickWand), size_t, ColorspaceType, size_t, MagickBooleanType, MagickBooleanType]
 MagickRadialBlurImage = _lib.MagickRadialBlurImage
 MagickRadialBlurImage.restype = MagickBooleanType
 MagickRadialBlurImage.argtypes = [POINTER(MagickWand), c_double]
@@ -5096,7 +5331,7 @@ MagickRadialBlurImageChannel.restype = MagickBooleanType
 MagickRadialBlurImageChannel.argtypes = [POINTER(MagickWand), ChannelType, c_double]
 MagickRaiseImage = _lib.MagickRaiseImage
 MagickRaiseImage.restype = MagickBooleanType
-MagickRaiseImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_long, c_long, MagickBooleanType]
+MagickRaiseImage.argtypes = [POINTER(MagickWand), size_t, size_t, ssize_t, ssize_t, MagickBooleanType]
 MagickRandomThresholdImage = _lib.MagickRandomThresholdImage
 MagickRandomThresholdImage.restype = MagickBooleanType
 MagickRandomThresholdImage.argtypes = [POINTER(MagickWand), c_double, c_double]
@@ -5112,9 +5347,6 @@ MagickReadImageBlob.argtypes = [POINTER(MagickWand), c_void_p, size_t]
 MagickReadImageFile = _lib.MagickReadImageFile
 MagickReadImageFile.restype = MagickBooleanType
 MagickReadImageFile.argtypes = [POINTER(MagickWand), POINTER(FILE)]
-MagickRecolorImage = _lib.MagickRecolorImage
-MagickRecolorImage.restype = MagickBooleanType
-MagickRecolorImage.argtypes = [POINTER(MagickWand), c_ulong, POINTER(c_double)]
 MagickReduceNoiseImage = _lib.MagickReduceNoiseImage
 MagickReduceNoiseImage.restype = MagickBooleanType
 MagickReduceNoiseImage.argtypes = [POINTER(MagickWand), c_double]
@@ -5139,19 +5371,19 @@ MagickResetImagePage.restype = MagickBooleanType
 MagickResetImagePage.argtypes = [POINTER(MagickWand), STRING]
 MagickResizeImage = _lib.MagickResizeImage
 MagickResizeImage.restype = MagickBooleanType
-MagickResizeImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, FilterTypes, c_double]
+MagickResizeImage.argtypes = [POINTER(MagickWand), size_t, size_t, FilterTypes, c_double]
 MagickRollImage = _lib.MagickRollImage
 MagickRollImage.restype = MagickBooleanType
-MagickRollImage.argtypes = [POINTER(MagickWand), c_long, c_long]
+MagickRollImage.argtypes = [POINTER(MagickWand), ssize_t, ssize_t]
 MagickRotateImage = _lib.MagickRotateImage
 MagickRotateImage.restype = MagickBooleanType
 MagickRotateImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), c_double]
 MagickSampleImage = _lib.MagickSampleImage
 MagickSampleImage.restype = MagickBooleanType
-MagickSampleImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong]
+MagickSampleImage.argtypes = [POINTER(MagickWand), size_t, size_t]
 MagickScaleImage = _lib.MagickScaleImage
 MagickScaleImage.restype = MagickBooleanType
-MagickScaleImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong]
+MagickScaleImage.argtypes = [POINTER(MagickWand), size_t, size_t]
 MagickSegmentImage = _lib.MagickSegmentImage
 MagickSegmentImage.restype = MagickBooleanType
 MagickSegmentImage.argtypes = [POINTER(MagickWand), ColorspaceType, MagickBooleanType, c_double, c_double]
@@ -5187,13 +5419,16 @@ MagickSetImageBorderColor.restype = MagickBooleanType
 MagickSetImageBorderColor.argtypes = [POINTER(MagickWand), POINTER(PixelWand)]
 MagickSetImageChannelDepth = _lib.MagickSetImageChannelDepth
 MagickSetImageChannelDepth.restype = MagickBooleanType
-MagickSetImageChannelDepth.argtypes = [POINTER(MagickWand), ChannelType, c_ulong]
+MagickSetImageChannelDepth.argtypes = [POINTER(MagickWand), ChannelType, size_t]
 MagickSetImageClipMask = _lib.MagickSetImageClipMask
 MagickSetImageClipMask.restype = MagickBooleanType
 MagickSetImageClipMask.argtypes = [POINTER(MagickWand), POINTER(MagickWand)]
+MagickSetImageColor = _lib.MagickSetImageColor
+MagickSetImageColor.restype = MagickBooleanType
+MagickSetImageColor.argtypes = [POINTER(MagickWand), POINTER(PixelWand)]
 MagickSetImageColormapColor = _lib.MagickSetImageColormapColor
 MagickSetImageColormapColor.restype = MagickBooleanType
-MagickSetImageColormapColor.argtypes = [POINTER(MagickWand), c_ulong, POINTER(PixelWand)]
+MagickSetImageColormapColor.argtypes = [POINTER(MagickWand), size_t, POINTER(PixelWand)]
 MagickSetImageColorspace = _lib.MagickSetImageColorspace
 MagickSetImageColorspace.restype = MagickBooleanType
 MagickSetImageColorspace.argtypes = [POINTER(MagickWand), ColorspaceType]
@@ -5205,19 +5440,19 @@ MagickSetImageCompression.restype = MagickBooleanType
 MagickSetImageCompression.argtypes = [POINTER(MagickWand), CompressionType]
 MagickSetImageDelay = _lib.MagickSetImageDelay
 MagickSetImageDelay.restype = MagickBooleanType
-MagickSetImageDelay.argtypes = [POINTER(MagickWand), c_ulong]
+MagickSetImageDelay.argtypes = [POINTER(MagickWand), size_t]
 MagickSetImageDepth = _lib.MagickSetImageDepth
 MagickSetImageDepth.restype = MagickBooleanType
-MagickSetImageDepth.argtypes = [POINTER(MagickWand), c_ulong]
+MagickSetImageDepth.argtypes = [POINTER(MagickWand), size_t]
 MagickSetImageDispose = _lib.MagickSetImageDispose
 MagickSetImageDispose.restype = MagickBooleanType
 MagickSetImageDispose.argtypes = [POINTER(MagickWand), DisposeType]
 MagickSetImageCompressionQuality = _lib.MagickSetImageCompressionQuality
 MagickSetImageCompressionQuality.restype = MagickBooleanType
-MagickSetImageCompressionQuality.argtypes = [POINTER(MagickWand), c_ulong]
+MagickSetImageCompressionQuality.argtypes = [POINTER(MagickWand), size_t]
 MagickSetImageExtent = _lib.MagickSetImageExtent
 MagickSetImageExtent.restype = MagickBooleanType
-MagickSetImageExtent.argtypes = [POINTER(MagickWand), c_ulong, c_ulong]
+MagickSetImageExtent.argtypes = [POINTER(MagickWand), size_t, size_t]
 MagickSetImageFilename = _lib.MagickSetImageFilename
 MagickSetImageFilename.restype = MagickBooleanType
 MagickSetImageFilename.argtypes = [POINTER(MagickWand), STRING]
@@ -5244,7 +5479,7 @@ MagickSetImageInterpolateMethod.restype = MagickBooleanType
 MagickSetImageInterpolateMethod.argtypes = [POINTER(MagickWand), InterpolatePixelMethod]
 MagickSetImageIterations = _lib.MagickSetImageIterations
 MagickSetImageIterations.restype = MagickBooleanType
-MagickSetImageIterations.argtypes = [POINTER(MagickWand), c_ulong]
+MagickSetImageIterations.argtypes = [POINTER(MagickWand), size_t]
 MagickSetImageMatte = _lib.MagickSetImageMatte
 MagickSetImageMatte.restype = MagickBooleanType
 MagickSetImageMatte.argtypes = [POINTER(MagickWand), MagickBooleanType]
@@ -5271,7 +5506,7 @@ MagickSetImageOrientation.restype = MagickBooleanType
 MagickSetImageOrientation.argtypes = [POINTER(MagickWand), OrientationType]
 MagickSetImagePage = _lib.MagickSetImagePage
 MagickSetImagePage.restype = MagickBooleanType
-MagickSetImagePage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_long, c_long]
+MagickSetImagePage.argtypes = [POINTER(MagickWand), size_t, size_t, ssize_t, ssize_t]
 MagickSetImageRedPrimary = _lib.MagickSetImageRedPrimary
 MagickSetImageRedPrimary.restype = MagickBooleanType
 MagickSetImageRedPrimary.argtypes = [POINTER(MagickWand), c_double, c_double]
@@ -5291,10 +5526,10 @@ MagickSetImageResolution.restype = MagickBooleanType
 MagickSetImageResolution.argtypes = [POINTER(MagickWand), c_double, c_double]
 MagickSetImageScene = _lib.MagickSetImageScene
 MagickSetImageScene.restype = MagickBooleanType
-MagickSetImageScene.argtypes = [POINTER(MagickWand), c_ulong]
+MagickSetImageScene.argtypes = [POINTER(MagickWand), size_t]
 MagickSetImageTicksPerSecond = _lib.MagickSetImageTicksPerSecond
 MagickSetImageTicksPerSecond.restype = MagickBooleanType
-MagickSetImageTicksPerSecond.argtypes = [POINTER(MagickWand), c_long]
+MagickSetImageTicksPerSecond.argtypes = [POINTER(MagickWand), ssize_t]
 MagickSetImageType = _lib.MagickSetImageType
 MagickSetImageType.restype = MagickBooleanType
 MagickSetImageType.argtypes = [POINTER(MagickWand), ImageType]
@@ -5315,7 +5550,7 @@ MagickShadeImage.restype = MagickBooleanType
 MagickShadeImage.argtypes = [POINTER(MagickWand), MagickBooleanType, c_double, c_double]
 MagickShadowImage = _lib.MagickShadowImage
 MagickShadowImage.restype = MagickBooleanType
-MagickShadowImage.argtypes = [POINTER(MagickWand), c_double, c_double, c_long, c_long]
+MagickShadowImage.argtypes = [POINTER(MagickWand), c_double, c_double, ssize_t, ssize_t]
 MagickSharpenImage = _lib.MagickSharpenImage
 MagickSharpenImage.restype = MagickBooleanType
 MagickSharpenImage.argtypes = [POINTER(MagickWand), c_double, c_double]
@@ -5324,7 +5559,7 @@ MagickSharpenImageChannel.restype = MagickBooleanType
 MagickSharpenImageChannel.argtypes = [POINTER(MagickWand), ChannelType, c_double, c_double]
 MagickShaveImage = _lib.MagickShaveImage
 MagickShaveImage.restype = MagickBooleanType
-MagickShaveImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong]
+MagickShaveImage.argtypes = [POINTER(MagickWand), size_t, size_t]
 MagickShearImage = _lib.MagickShearImage
 MagickShearImage.restype = MagickBooleanType
 MagickShearImage.argtypes = [POINTER(MagickWand), POINTER(PixelWand), c_double, c_double]
@@ -5342,13 +5577,16 @@ MagickSolarizeImage.restype = MagickBooleanType
 MagickSolarizeImage.argtypes = [POINTER(MagickWand), c_double]
 MagickSparseColorImage = _lib.MagickSparseColorImage
 MagickSparseColorImage.restype = MagickBooleanType
-MagickSparseColorImage.argtypes = [POINTER(MagickWand), ChannelType, SparseColorMethod, c_ulong, POINTER(c_double)]
+MagickSparseColorImage.argtypes = [POINTER(MagickWand), ChannelType, SparseColorMethod, size_t, POINTER(c_double)]
 MagickSpliceImage = _lib.MagickSpliceImage
 MagickSpliceImage.restype = MagickBooleanType
-MagickSpliceImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_long, c_long]
+MagickSpliceImage.argtypes = [POINTER(MagickWand), size_t, size_t, ssize_t, ssize_t]
 MagickSpreadImage = _lib.MagickSpreadImage
 MagickSpreadImage.restype = MagickBooleanType
 MagickSpreadImage.argtypes = [POINTER(MagickWand), c_double]
+MagickStatisticImage = _lib.MagickStatisticImage
+MagickStatisticImage.restype = MagickBooleanType
+MagickStatisticImage.argtypes = [POINTER(MagickWand), ChannelType, StatisticType, size_t, size_t]
 MagickStripImage = _lib.MagickStripImage
 MagickStripImage.restype = MagickBooleanType
 MagickStripImage.argtypes = [POINTER(MagickWand)]
@@ -5375,7 +5613,7 @@ MagickThresholdImageChannel.restype = MagickBooleanType
 MagickThresholdImageChannel.argtypes = [POINTER(MagickWand), ChannelType, c_double]
 MagickThumbnailImage = _lib.MagickThumbnailImage
 MagickThumbnailImage.restype = MagickBooleanType
-MagickThumbnailImage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong]
+MagickThumbnailImage.argtypes = [POINTER(MagickWand), size_t, size_t]
 MagickTrimImage = _lib.MagickTrimImage
 MagickTrimImage.restype = MagickBooleanType
 MagickTrimImage.argtypes = [POINTER(MagickWand), c_double]
@@ -5390,7 +5628,7 @@ MagickUnsharpMaskImageChannel.restype = MagickBooleanType
 MagickUnsharpMaskImageChannel.argtypes = [POINTER(MagickWand), ChannelType, c_double, c_double, c_double, c_double]
 MagickVignetteImage = _lib.MagickVignetteImage
 MagickVignetteImage.restype = MagickBooleanType
-MagickVignetteImage.argtypes = [POINTER(MagickWand), c_double, c_double, c_long, c_long]
+MagickVignetteImage.argtypes = [POINTER(MagickWand), c_double, c_double, ssize_t, ssize_t]
 MagickWaveImage = _lib.MagickWaveImage
 MagickWaveImage.restype = MagickBooleanType
 MagickWaveImage.argtypes = [POINTER(MagickWand), c_double, c_double]
@@ -5450,13 +5688,13 @@ MagickGetImageClipMask.restype = POINTER(MagickWand)
 MagickGetImageClipMask.argtypes = [POINTER(MagickWand)]
 MagickGetImageRegion = _lib.MagickGetImageRegion
 MagickGetImageRegion.restype = POINTER(MagickWand)
-MagickGetImageRegion.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_long, c_long]
+MagickGetImageRegion.argtypes = [POINTER(MagickWand), size_t, size_t, ssize_t, ssize_t]
 MagickMergeImageLayers = _lib.MagickMergeImageLayers
 MagickMergeImageLayers.restype = POINTER(MagickWand)
 MagickMergeImageLayers.argtypes = [POINTER(MagickWand), ImageLayerMethod]
 MagickMorphImages = _lib.MagickMorphImages
 MagickMorphImages.restype = POINTER(MagickWand)
-MagickMorphImages.argtypes = [POINTER(MagickWand), c_ulong]
+MagickMorphImages.argtypes = [POINTER(MagickWand), size_t]
 
 # values for enumeration 'MontageMode'
 UndefinedMode = 0
@@ -5476,9 +5714,12 @@ MagickPreviewImages.argtypes = [POINTER(MagickWand), PreviewType]
 MagickSimilarityImage = _lib.MagickSimilarityImage
 MagickSimilarityImage.restype = POINTER(MagickWand)
 MagickSimilarityImage.argtypes = [POINTER(MagickWand), POINTER(MagickWand), POINTER(RectangleInfo), POINTER(c_double)]
+MagickSmushImages = _lib.MagickSmushImages
+MagickSmushImages.restype = POINTER(MagickWand)
+MagickSmushImages.argtypes = [POINTER(MagickWand), MagickBooleanType, ssize_t]
 MagickSteganoImage = _lib.MagickSteganoImage
 MagickSteganoImage.restype = POINTER(MagickWand)
-MagickSteganoImage.argtypes = [POINTER(MagickWand), POINTER(MagickWand), c_long]
+MagickSteganoImage.argtypes = [POINTER(MagickWand), POINTER(MagickWand), ssize_t]
 MagickStereoImage = _lib.MagickStereoImage
 MagickStereoImage.restype = POINTER(MagickWand)
 MagickStereoImage.argtypes = [POINTER(MagickWand), POINTER(MagickWand)]
@@ -5493,52 +5734,52 @@ MagickGetImageOrientation.restype = OrientationType
 MagickGetImageOrientation.argtypes = [POINTER(MagickWand)]
 MagickGetImageHistogram = _lib.MagickGetImageHistogram
 MagickGetImageHistogram.restype = POINTER(POINTER(PixelWand))
-MagickGetImageHistogram.argtypes = [POINTER(MagickWand), POINTER(c_ulong)]
+MagickGetImageHistogram.argtypes = [POINTER(MagickWand), POINTER(size_t)]
 MagickGetImageRenderingIntent = _lib.MagickGetImageRenderingIntent
 MagickGetImageRenderingIntent.restype = RenderingIntent
 MagickGetImageRenderingIntent.argtypes = [POINTER(MagickWand)]
 MagickGetImageUnits = _lib.MagickGetImageUnits
 MagickGetImageUnits.restype = ResolutionType
 MagickGetImageUnits.argtypes = [POINTER(MagickWand)]
+MagickGetImageColors = _lib.MagickGetImageColors
+MagickGetImageColors.restype = size_t
+MagickGetImageColors.argtypes = [POINTER(MagickWand)]
+MagickGetImageCompressionQuality = _lib.MagickGetImageCompressionQuality
+MagickGetImageCompressionQuality.restype = size_t
+MagickGetImageCompressionQuality.argtypes = [POINTER(MagickWand)]
+MagickGetImageDelay = _lib.MagickGetImageDelay
+MagickGetImageDelay.restype = size_t
+MagickGetImageDelay.argtypes = [POINTER(MagickWand)]
+MagickGetImageChannelDepth = _lib.MagickGetImageChannelDepth
+MagickGetImageChannelDepth.restype = size_t
+MagickGetImageChannelDepth.argtypes = [POINTER(MagickWand), ChannelType]
+MagickGetImageDepth = _lib.MagickGetImageDepth
+MagickGetImageDepth.restype = size_t
+MagickGetImageDepth.argtypes = [POINTER(MagickWand)]
+MagickGetImageHeight = _lib.MagickGetImageHeight
+MagickGetImageHeight.restype = size_t
+MagickGetImageHeight.argtypes = [POINTER(MagickWand)]
+MagickGetImageIterations = _lib.MagickGetImageIterations
+MagickGetImageIterations.restype = size_t
+MagickGetImageIterations.argtypes = [POINTER(MagickWand)]
+MagickGetImageScene = _lib.MagickGetImageScene
+MagickGetImageScene.restype = size_t
+MagickGetImageScene.argtypes = [POINTER(MagickWand)]
+MagickGetImageTicksPerSecond = _lib.MagickGetImageTicksPerSecond
+MagickGetImageTicksPerSecond.restype = size_t
+MagickGetImageTicksPerSecond.argtypes = [POINTER(MagickWand)]
+MagickGetImageWidth = _lib.MagickGetImageWidth
+MagickGetImageWidth.restype = size_t
+MagickGetImageWidth.argtypes = [POINTER(MagickWand)]
+MagickGetNumberImages = _lib.MagickGetNumberImages
+MagickGetNumberImages.restype = size_t
+MagickGetNumberImages.argtypes = [POINTER(MagickWand)]
 MagickGetImageBlob = _lib.MagickGetImageBlob
 MagickGetImageBlob.restype = POINTER(c_ubyte)
 MagickGetImageBlob.argtypes = [POINTER(MagickWand), POINTER(size_t)]
 MagickGetImagesBlob = _lib.MagickGetImagesBlob
 MagickGetImagesBlob.restype = POINTER(c_ubyte)
 MagickGetImagesBlob.argtypes = [POINTER(MagickWand), POINTER(size_t)]
-MagickGetImageColors = _lib.MagickGetImageColors
-MagickGetImageColors.restype = c_ulong
-MagickGetImageColors.argtypes = [POINTER(MagickWand)]
-MagickGetImageCompressionQuality = _lib.MagickGetImageCompressionQuality
-MagickGetImageCompressionQuality.restype = c_ulong
-MagickGetImageCompressionQuality.argtypes = [POINTER(MagickWand)]
-MagickGetImageDelay = _lib.MagickGetImageDelay
-MagickGetImageDelay.restype = c_ulong
-MagickGetImageDelay.argtypes = [POINTER(MagickWand)]
-MagickGetImageChannelDepth = _lib.MagickGetImageChannelDepth
-MagickGetImageChannelDepth.restype = c_ulong
-MagickGetImageChannelDepth.argtypes = [POINTER(MagickWand), ChannelType]
-MagickGetImageDepth = _lib.MagickGetImageDepth
-MagickGetImageDepth.restype = c_ulong
-MagickGetImageDepth.argtypes = [POINTER(MagickWand)]
-MagickGetImageHeight = _lib.MagickGetImageHeight
-MagickGetImageHeight.restype = c_ulong
-MagickGetImageHeight.argtypes = [POINTER(MagickWand)]
-MagickGetImageIterations = _lib.MagickGetImageIterations
-MagickGetImageIterations.restype = c_ulong
-MagickGetImageIterations.argtypes = [POINTER(MagickWand)]
-MagickGetImageScene = _lib.MagickGetImageScene
-MagickGetImageScene.restype = c_ulong
-MagickGetImageScene.argtypes = [POINTER(MagickWand)]
-MagickGetImageTicksPerSecond = _lib.MagickGetImageTicksPerSecond
-MagickGetImageTicksPerSecond.restype = c_ulong
-MagickGetImageTicksPerSecond.argtypes = [POINTER(MagickWand)]
-MagickGetImageWidth = _lib.MagickGetImageWidth
-MagickGetImageWidth.restype = c_ulong
-MagickGetImageWidth.argtypes = [POINTER(MagickWand)]
-MagickGetNumberImages = _lib.MagickGetNumberImages
-MagickGetNumberImages.restype = c_ulong
-MagickGetNumberImages.argtypes = [POINTER(MagickWand)]
 MagickGetImageVirtualPixelMethod = _lib.MagickGetImageVirtualPixelMethod
 MagickGetImageVirtualPixelMethod.restype = VirtualPixelMethod
 MagickGetImageVirtualPixelMethod.argtypes = [POINTER(MagickWand)]
@@ -5562,34 +5803,34 @@ MagickGetImageArtifact.restype = STRING
 MagickGetImageArtifact.argtypes = [POINTER(MagickWand), STRING]
 MagickGetImageArtifacts = _lib.MagickGetImageArtifacts
 MagickGetImageArtifacts.restype = POINTER(STRING)
-MagickGetImageArtifacts.argtypes = [POINTER(MagickWand), STRING, POINTER(c_ulong)]
+MagickGetImageArtifacts.argtypes = [POINTER(MagickWand), STRING, POINTER(size_t)]
 MagickGetImageProfiles = _lib.MagickGetImageProfiles
 MagickGetImageProfiles.restype = POINTER(STRING)
-MagickGetImageProfiles.argtypes = [POINTER(MagickWand), STRING, POINTER(c_ulong)]
+MagickGetImageProfiles.argtypes = [POINTER(MagickWand), STRING, POINTER(size_t)]
 MagickGetImageProperty = _lib.MagickGetImageProperty
 MagickGetImageProperty.restype = STRING
 MagickGetImageProperty.argtypes = [POINTER(MagickWand), STRING]
 MagickGetImageProperties = _lib.MagickGetImageProperties
 MagickGetImageProperties.restype = POINTER(STRING)
-MagickGetImageProperties.argtypes = [POINTER(MagickWand), STRING, POINTER(c_ulong)]
+MagickGetImageProperties.argtypes = [POINTER(MagickWand), STRING, POINTER(size_t)]
 MagickGetOption = _lib.MagickGetOption
 MagickGetOption.restype = STRING
 MagickGetOption.argtypes = [POINTER(MagickWand), STRING]
 MagickGetOptions = _lib.MagickGetOptions
 MagickGetOptions.restype = POINTER(STRING)
-MagickGetOptions.argtypes = [POINTER(MagickWand), STRING, POINTER(c_ulong)]
+MagickGetOptions.argtypes = [POINTER(MagickWand), STRING, POINTER(size_t)]
 MagickQueryConfigureOption = _lib.MagickQueryConfigureOption
 MagickQueryConfigureOption.restype = STRING
 MagickQueryConfigureOption.argtypes = [STRING]
 MagickQueryConfigureOptions = _lib.MagickQueryConfigureOptions
 MagickQueryConfigureOptions.restype = POINTER(STRING)
-MagickQueryConfigureOptions.argtypes = [STRING, POINTER(c_ulong)]
+MagickQueryConfigureOptions.argtypes = [STRING, POINTER(size_t)]
 MagickQueryFonts = _lib.MagickQueryFonts
 MagickQueryFonts.restype = POINTER(STRING)
-MagickQueryFonts.argtypes = [STRING, POINTER(c_ulong)]
+MagickQueryFonts.argtypes = [STRING, POINTER(size_t)]
 MagickQueryFormats = _lib.MagickQueryFormats
 MagickQueryFormats.restype = POINTER(STRING)
-MagickQueryFormats.argtypes = [STRING, POINTER(c_ulong)]
+MagickQueryFormats.argtypes = [STRING, POINTER(size_t)]
 MagickGetColorspace = _lib.MagickGetColorspace
 MagickGetColorspace.restype = ColorspaceType
 MagickGetColorspace.argtypes = [POINTER(MagickWand)]
@@ -5604,22 +5845,22 @@ MagickGetPackageName.restype = STRING
 MagickGetPackageName.argtypes = []
 MagickGetQuantumDepth = _lib.MagickGetQuantumDepth
 MagickGetQuantumDepth.restype = STRING
-MagickGetQuantumDepth.argtypes = [POINTER(c_ulong)]
+MagickGetQuantumDepth.argtypes = [POINTER(size_t)]
 MagickGetQuantumRange = _lib.MagickGetQuantumRange
 MagickGetQuantumRange.restype = STRING
-MagickGetQuantumRange.argtypes = [POINTER(c_ulong)]
+MagickGetQuantumRange.argtypes = [POINTER(size_t)]
 MagickGetReleaseDate = _lib.MagickGetReleaseDate
 MagickGetReleaseDate.restype = STRING
 MagickGetReleaseDate.argtypes = []
 MagickGetVersion = _lib.MagickGetVersion
 MagickGetVersion.restype = STRING
-MagickGetVersion.argtypes = [POINTER(c_ulong)]
+MagickGetVersion.argtypes = [POINTER(size_t)]
 MagickGetPointsize = _lib.MagickGetPointsize
 MagickGetPointsize.restype = c_double
 MagickGetPointsize.argtypes = [POINTER(MagickWand)]
 MagickGetSamplingFactors = _lib.MagickGetSamplingFactors
 MagickGetSamplingFactors.restype = POINTER(c_double)
-MagickGetSamplingFactors.argtypes = [POINTER(MagickWand), POINTER(c_ulong)]
+MagickGetSamplingFactors.argtypes = [POINTER(MagickWand), POINTER(size_t)]
 MagickQueryFontMetrics = _lib.MagickQueryFontMetrics
 MagickQueryFontMetrics.restype = POINTER(c_double)
 MagickQueryFontMetrics.argtypes = [POINTER(MagickWand), POINTER(DrawingWand), STRING]
@@ -5655,13 +5896,16 @@ MagickGetAntialias.restype = MagickBooleanType
 MagickGetAntialias.argtypes = [POINTER(MagickWand)]
 MagickGetPage = _lib.MagickGetPage
 MagickGetPage.restype = MagickBooleanType
-MagickGetPage.argtypes = [POINTER(MagickWand), POINTER(c_ulong), POINTER(c_ulong), POINTER(c_long), POINTER(c_long)]
+MagickGetPage.argtypes = [POINTER(MagickWand), POINTER(size_t), POINTER(size_t), POINTER(ssize_t), POINTER(ssize_t)]
+MagickGetResolution = _lib.MagickGetResolution
+MagickGetResolution.restype = MagickBooleanType
+MagickGetResolution.argtypes = [POINTER(MagickWand), POINTER(c_double), POINTER(c_double)]
 MagickGetSize = _lib.MagickGetSize
 MagickGetSize.restype = MagickBooleanType
-MagickGetSize.argtypes = [POINTER(MagickWand), POINTER(c_ulong), POINTER(c_ulong)]
+MagickGetSize.argtypes = [POINTER(MagickWand), POINTER(size_t), POINTER(size_t)]
 MagickGetSizeOffset = _lib.MagickGetSizeOffset
 MagickGetSizeOffset.restype = MagickBooleanType
-MagickGetSizeOffset.argtypes = [POINTER(MagickWand), POINTER(c_long)]
+MagickGetSizeOffset.argtypes = [POINTER(MagickWand), POINTER(ssize_t)]
 MagickProfileImage = _lib.MagickProfileImage
 MagickProfileImage.restype = MagickBooleanType
 MagickProfileImage.argtypes = [POINTER(MagickWand), STRING, c_void_p, size_t]
@@ -5679,10 +5923,10 @@ MagickSetCompression.restype = MagickBooleanType
 MagickSetCompression.argtypes = [POINTER(MagickWand), CompressionType]
 MagickSetCompressionQuality = _lib.MagickSetCompressionQuality
 MagickSetCompressionQuality.restype = MagickBooleanType
-MagickSetCompressionQuality.argtypes = [POINTER(MagickWand), c_ulong]
+MagickSetCompressionQuality.argtypes = [POINTER(MagickWand), size_t]
 MagickSetDepth = _lib.MagickSetDepth
 MagickSetDepth.restype = MagickBooleanType
-MagickSetDepth.argtypes = [POINTER(MagickWand), c_ulong]
+MagickSetDepth.argtypes = [POINTER(MagickWand), size_t]
 MagickSetExtract = _lib.MagickSetExtract
 MagickSetExtract.restype = MagickBooleanType
 MagickSetExtract.argtypes = [POINTER(MagickWand), STRING]
@@ -5721,7 +5965,7 @@ MagickSetOrientation.restype = MagickBooleanType
 MagickSetOrientation.argtypes = [POINTER(MagickWand), OrientationType]
 MagickSetPage = _lib.MagickSetPage
 MagickSetPage.restype = MagickBooleanType
-MagickSetPage.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_long, c_long]
+MagickSetPage.argtypes = [POINTER(MagickWand), size_t, size_t, ssize_t, ssize_t]
 MagickSetPassphrase = _lib.MagickSetPassphrase
 MagickSetPassphrase.restype = MagickBooleanType
 MagickSetPassphrase.argtypes = [POINTER(MagickWand), STRING]
@@ -5736,13 +5980,13 @@ MagickSetResourceLimit.restype = MagickBooleanType
 MagickSetResourceLimit.argtypes = [ResourceType, MagickSizeType]
 MagickSetSamplingFactors = _lib.MagickSetSamplingFactors
 MagickSetSamplingFactors.restype = MagickBooleanType
-MagickSetSamplingFactors.argtypes = [POINTER(MagickWand), c_ulong, POINTER(c_double)]
+MagickSetSamplingFactors.argtypes = [POINTER(MagickWand), size_t, POINTER(c_double)]
 MagickSetSize = _lib.MagickSetSize
 MagickSetSize.restype = MagickBooleanType
-MagickSetSize.argtypes = [POINTER(MagickWand), c_ulong, c_ulong]
+MagickSetSize.argtypes = [POINTER(MagickWand), size_t, size_t]
 MagickSetSizeOffset = _lib.MagickSetSizeOffset
 MagickSetSizeOffset.restype = MagickBooleanType
-MagickSetSizeOffset.argtypes = [POINTER(MagickWand), c_ulong, c_ulong, c_long]
+MagickSetSizeOffset.argtypes = [POINTER(MagickWand), size_t, size_t, ssize_t]
 MagickSetType = _lib.MagickSetType
 MagickSetType.restype = MagickBooleanType
 MagickSetType.argtypes = [POINTER(MagickWand), ImageType]
@@ -5758,15 +6002,15 @@ MagickGetResourceLimit.argtypes = [ResourceType]
 MagickGetBackgroundColor = _lib.MagickGetBackgroundColor
 MagickGetBackgroundColor.restype = POINTER(PixelWand)
 MagickGetBackgroundColor.argtypes = [POINTER(MagickWand)]
+MagickGetCompressionQuality = _lib.MagickGetCompressionQuality
+MagickGetCompressionQuality.restype = size_t
+MagickGetCompressionQuality.argtypes = [POINTER(MagickWand)]
 MagickGetImageProfile = _lib.MagickGetImageProfile
 MagickGetImageProfile.restype = POINTER(c_ubyte)
 MagickGetImageProfile.argtypes = [POINTER(MagickWand), STRING, POINTER(size_t)]
 MagickRemoveImageProfile = _lib.MagickRemoveImageProfile
 MagickRemoveImageProfile.restype = POINTER(c_ubyte)
 MagickRemoveImageProfile.argtypes = [POINTER(MagickWand), STRING, POINTER(size_t)]
-MagickGetCompressionQuality = _lib.MagickGetCompressionQuality
-MagickGetCompressionQuality.restype = c_ulong
-MagickGetCompressionQuality.argtypes = [POINTER(MagickWand)]
 MagickCommand = CFUNCTYPE(MagickBooleanType, POINTER(ImageInfo), c_int, POINTER(STRING), POINTER(STRING), POINTER(ExceptionInfo))
 MagickCommandGenesis = _lib.MagickCommandGenesis
 MagickCommandGenesis.restype = MagickBooleanType
@@ -5795,9 +6039,6 @@ PixelGetIteratorException.argtypes = [POINTER(PixelIterator), POINTER(ExceptionT
 PixelGetIteratorExceptionType = _lib.PixelGetIteratorExceptionType
 PixelGetIteratorExceptionType.restype = ExceptionType
 PixelGetIteratorExceptionType.argtypes = [POINTER(PixelIterator)]
-PixelGetIteratorRow = _lib.PixelGetIteratorRow
-PixelGetIteratorRow.restype = c_long
-PixelGetIteratorRow.argtypes = [POINTER(PixelIterator)]
 IsPixelIterator = _lib.IsPixelIterator
 IsPixelIterator.restype = MagickBooleanType
 IsPixelIterator.argtypes = [POINTER(PixelIterator)]
@@ -5806,7 +6047,7 @@ PixelClearIteratorException.restype = MagickBooleanType
 PixelClearIteratorException.argtypes = [POINTER(PixelIterator)]
 PixelSetIteratorRow = _lib.PixelSetIteratorRow
 PixelSetIteratorRow.restype = MagickBooleanType
-PixelSetIteratorRow.argtypes = [POINTER(PixelIterator), c_long]
+PixelSetIteratorRow.argtypes = [POINTER(PixelIterator), ssize_t]
 PixelSyncIterator = _lib.PixelSyncIterator
 PixelSyncIterator.restype = MagickBooleanType
 PixelSyncIterator.argtypes = [POINTER(PixelIterator)]
@@ -5821,16 +6062,19 @@ NewPixelIterator.restype = POINTER(PixelIterator)
 NewPixelIterator.argtypes = [POINTER(MagickWand)]
 NewPixelRegionIterator = _lib.NewPixelRegionIterator
 NewPixelRegionIterator.restype = POINTER(PixelIterator)
-NewPixelRegionIterator.argtypes = [POINTER(MagickWand), c_long, c_long, c_ulong, c_ulong]
+NewPixelRegionIterator.argtypes = [POINTER(MagickWand), ssize_t, ssize_t, size_t, size_t]
 PixelGetCurrentIteratorRow = _lib.PixelGetCurrentIteratorRow
 PixelGetCurrentIteratorRow.restype = POINTER(POINTER(PixelWand))
-PixelGetCurrentIteratorRow.argtypes = [POINTER(PixelIterator), POINTER(c_ulong)]
+PixelGetCurrentIteratorRow.argtypes = [POINTER(PixelIterator), POINTER(size_t)]
 PixelGetNextIteratorRow = _lib.PixelGetNextIteratorRow
 PixelGetNextIteratorRow.restype = POINTER(POINTER(PixelWand))
-PixelGetNextIteratorRow.argtypes = [POINTER(PixelIterator), POINTER(c_ulong)]
+PixelGetNextIteratorRow.argtypes = [POINTER(PixelIterator), POINTER(size_t)]
 PixelGetPreviousIteratorRow = _lib.PixelGetPreviousIteratorRow
 PixelGetPreviousIteratorRow.restype = POINTER(POINTER(PixelWand))
-PixelGetPreviousIteratorRow.argtypes = [POINTER(PixelIterator), POINTER(c_ulong)]
+PixelGetPreviousIteratorRow.argtypes = [POINTER(PixelIterator), POINTER(size_t)]
+PixelGetIteratorRow = _lib.PixelGetIteratorRow
+PixelGetIteratorRow.restype = ssize_t
+PixelGetIteratorRow.argtypes = [POINTER(PixelIterator)]
 ClearPixelIterator = _lib.ClearPixelIterator
 ClearPixelIterator.restype = None
 ClearPixelIterator.argtypes = [POINTER(PixelIterator)]
@@ -5843,65 +6087,6 @@ PixelSetFirstIteratorRow.argtypes = [POINTER(PixelIterator)]
 PixelSetLastIteratorRow = _lib.PixelSetLastIteratorRow
 PixelSetLastIteratorRow.restype = None
 PixelSetLastIteratorRow.argtypes = [POINTER(PixelIterator)]
-class _PixelView(Structure):
-    pass
-PixelView = _PixelView
-GetPixelViewException = _lib.GetPixelViewException
-GetPixelViewException.restype = STRING
-GetPixelViewException.argtypes = [POINTER(PixelView), POINTER(ExceptionType)]
-GetPixelViewX = _lib.GetPixelViewX
-GetPixelViewX.restype = c_long
-GetPixelViewX.argtypes = [POINTER(PixelView)]
-GetPixelViewY = _lib.GetPixelViewY
-GetPixelViewY.restype = c_long
-GetPixelViewY.argtypes = [POINTER(PixelView)]
-DuplexTransferPixelViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(PixelView), POINTER(PixelView), POINTER(PixelView), c_void_p)
-DuplexTransferPixelViewIterator = _lib.DuplexTransferPixelViewIterator
-DuplexTransferPixelViewIterator.restype = MagickBooleanType
-DuplexTransferPixelViewIterator.argtypes = [POINTER(PixelView), POINTER(PixelView), POINTER(PixelView), DuplexTransferPixelViewMethod, c_void_p]
-GetPixelViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(PixelView), c_void_p)
-GetPixelViewIterator = _lib.GetPixelViewIterator
-GetPixelViewIterator.restype = MagickBooleanType
-GetPixelViewIterator.argtypes = [POINTER(PixelView), GetPixelViewMethod, c_void_p]
-IsPixelView = _lib.IsPixelView
-IsPixelView.restype = MagickBooleanType
-IsPixelView.argtypes = [POINTER(PixelView)]
-SetPixelViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(PixelView), c_void_p)
-SetPixelViewIterator = _lib.SetPixelViewIterator
-SetPixelViewIterator.restype = MagickBooleanType
-SetPixelViewIterator.argtypes = [POINTER(PixelView), SetPixelViewMethod, c_void_p]
-TransferPixelViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(PixelView), POINTER(PixelView), c_void_p)
-TransferPixelViewIterator = _lib.TransferPixelViewIterator
-TransferPixelViewIterator.restype = MagickBooleanType
-TransferPixelViewIterator.argtypes = [POINTER(PixelView), POINTER(PixelView), TransferPixelViewMethod, c_void_p]
-UpdatePixelViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(PixelView), c_void_p)
-UpdatePixelViewIterator = _lib.UpdatePixelViewIterator
-UpdatePixelViewIterator.restype = MagickBooleanType
-UpdatePixelViewIterator.argtypes = [POINTER(PixelView), UpdatePixelViewMethod, c_void_p]
-GetPixelViewWand = _lib.GetPixelViewWand
-GetPixelViewWand.restype = POINTER(MagickWand)
-GetPixelViewWand.argtypes = [POINTER(PixelView)]
-ClonePixelView = _lib.ClonePixelView
-ClonePixelView.restype = POINTER(PixelView)
-ClonePixelView.argtypes = [POINTER(PixelView)]
-DestroyPixelView = _lib.DestroyPixelView
-DestroyPixelView.restype = POINTER(PixelView)
-DestroyPixelView.argtypes = [POINTER(PixelView)]
-NewPixelView = _lib.NewPixelView
-NewPixelView.restype = POINTER(PixelView)
-NewPixelView.argtypes = [POINTER(MagickWand)]
-NewPixelViewRegion = _lib.NewPixelViewRegion
-NewPixelViewRegion.restype = POINTER(PixelView)
-NewPixelViewRegion.argtypes = [POINTER(MagickWand), c_long, c_long, c_ulong, c_ulong]
-GetPixelViewPixels = _lib.GetPixelViewPixels
-GetPixelViewPixels.restype = POINTER(POINTER(PixelWand))
-GetPixelViewPixels.argtypes = [POINTER(PixelView)]
-GetPixelViewHeight = _lib.GetPixelViewHeight
-GetPixelViewHeight.restype = c_ulong
-GetPixelViewHeight.argtypes = [POINTER(PixelView)]
-GetPixelViewWidth = _lib.GetPixelViewWidth
-GetPixelViewWidth.restype = c_ulong
-GetPixelViewWidth.argtypes = [POINTER(PixelView)]
 PixelGetColorAsNormalizedString = _lib.PixelGetColorAsNormalizedString
 PixelGetColorAsNormalizedString.restype = STRING
 PixelGetColorAsNormalizedString.argtypes = [POINTER(PixelWand)]
@@ -5964,19 +6149,19 @@ ClonePixelWand.restype = POINTER(PixelWand)
 ClonePixelWand.argtypes = [POINTER(PixelWand)]
 ClonePixelWands = _lib.ClonePixelWands
 ClonePixelWands.restype = POINTER(POINTER(PixelWand))
-ClonePixelWands.argtypes = [POINTER(POINTER(PixelWand)), c_ulong]
+ClonePixelWands.argtypes = [POINTER(POINTER(PixelWand)), size_t]
 DestroyPixelWand = _lib.DestroyPixelWand
 DestroyPixelWand.restype = POINTER(PixelWand)
 DestroyPixelWand.argtypes = [POINTER(PixelWand)]
 DestroyPixelWands = _lib.DestroyPixelWands
 DestroyPixelWands.restype = POINTER(POINTER(PixelWand))
-DestroyPixelWands.argtypes = [POINTER(POINTER(PixelWand)), c_ulong]
+DestroyPixelWands.argtypes = [POINTER(POINTER(PixelWand)), size_t]
 NewPixelWand = _lib.NewPixelWand
 NewPixelWand.restype = POINTER(PixelWand)
 NewPixelWand.argtypes = []
 NewPixelWands = _lib.NewPixelWands
 NewPixelWands.restype = POINTER(POINTER(PixelWand))
-NewPixelWands.argtypes = [c_ulong]
+NewPixelWands.argtypes = [size_t]
 PixelGetAlphaQuantum = _lib.PixelGetAlphaQuantum
 PixelGetAlphaQuantum.restype = Quantum
 PixelGetAlphaQuantum.argtypes = [POINTER(PixelWand)]
@@ -6005,7 +6190,7 @@ PixelGetYellowQuantum = _lib.PixelGetYellowQuantum
 PixelGetYellowQuantum.restype = Quantum
 PixelGetYellowQuantum.argtypes = [POINTER(PixelWand)]
 PixelGetColorCount = _lib.PixelGetColorCount
-PixelGetColorCount.restype = c_ulong
+PixelGetColorCount.restype = size_t
 PixelGetColorCount.argtypes = [POINTER(PixelWand)]
 ClearPixelWand = _lib.ClearPixelWand
 ClearPixelWand.restype = None
@@ -6013,6 +6198,9 @@ ClearPixelWand.argtypes = [POINTER(PixelWand)]
 PixelGetHSL = _lib.PixelGetHSL
 PixelGetHSL.restype = None
 PixelGetHSL.argtypes = [POINTER(PixelWand), POINTER(c_double), POINTER(c_double), POINTER(c_double)]
+PixelGetMagickColor = _lib.PixelGetMagickColor
+PixelGetMagickColor.restype = None
+PixelGetMagickColor.argtypes = [POINTER(PixelWand), POINTER(MagickPixelPacket)]
 PixelGetQuantumColor = _lib.PixelGetQuantumColor
 PixelGetQuantumColor.restype = None
 PixelGetQuantumColor.argtypes = [POINTER(PixelWand), POINTER(PixelPacket)]
@@ -6039,7 +6227,7 @@ PixelSetColorFromWand.restype = None
 PixelSetColorFromWand.argtypes = [POINTER(PixelWand), POINTER(PixelWand)]
 PixelSetColorCount = _lib.PixelSetColorCount
 PixelSetColorCount.restype = None
-PixelSetColorCount.argtypes = [POINTER(PixelWand), c_ulong]
+PixelSetColorCount.argtypes = [POINTER(PixelWand), size_t]
 PixelSetCyan = _lib.PixelSetCyan
 PixelSetCyan.restype = None
 PixelSetCyan.argtypes = [POINTER(PixelWand), c_double]
@@ -6094,43 +6282,62 @@ PixelSetYellowQuantum.argtypes = [POINTER(PixelWand), Quantum]
 StreamImageCommand = _lib.StreamImageCommand
 StreamImageCommand.restype = MagickBooleanType
 StreamImageCommand.argtypes = [POINTER(ImageInfo), c_int, POINTER(STRING), POINTER(STRING), POINTER(ExceptionInfo)]
-vprintf = _lib.vprintf
-vprintf.restype = c_int
-vprintf.argtypes = [STRING, POINTER(__va_list_tag)]
-getchar = _lib.getchar
-getchar.restype = c_int
-getchar.argtypes = []
-fgetc_unlocked = _lib.fgetc_unlocked
-fgetc_unlocked.restype = c_int
-fgetc_unlocked.argtypes = [POINTER(FILE)]
-getc_unlocked = _lib.getc_unlocked
-getc_unlocked.restype = c_int
-getc_unlocked.argtypes = [POINTER(FILE)]
-getchar_unlocked = _lib.getchar_unlocked
-getchar_unlocked.restype = c_int
-getchar_unlocked.argtypes = []
-putchar = _lib.putchar
-putchar.restype = c_int
-putchar.argtypes = [c_int]
-fputc_unlocked = _lib.fputc_unlocked
-fputc_unlocked.restype = c_int
-fputc_unlocked.argtypes = [c_int, POINTER(FILE)]
-putc_unlocked = _lib.putc_unlocked
-putc_unlocked.restype = c_int
-putc_unlocked.argtypes = [c_int, POINTER(FILE)]
-putchar_unlocked = _lib.putchar_unlocked
-putchar_unlocked.restype = c_int
-putchar_unlocked.argtypes = [c_int]
-__ssize_t = c_long
-getline = _lib.getline
-getline.restype = __ssize_t
-getline.argtypes = [POINTER(STRING), POINTER(size_t), POINTER(FILE)]
-feof_unlocked = _lib.feof_unlocked
-feof_unlocked.restype = c_int
-feof_unlocked.argtypes = [POINTER(FILE)]
-ferror_unlocked = _lib.ferror_unlocked
-ferror_unlocked.restype = c_int
-ferror_unlocked.argtypes = [POINTER(FILE)]
+class _WandView(Structure):
+    pass
+WandView = _WandView
+GetWandViewException = _lib.GetWandViewException
+GetWandViewException.restype = STRING
+GetWandViewException.argtypes = [POINTER(WandView), POINTER(ExceptionType)]
+DuplexTransferWandViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(WandView), POINTER(WandView), POINTER(WandView), ssize_t, c_int, c_void_p)
+DuplexTransferWandViewIterator = _lib.DuplexTransferWandViewIterator
+DuplexTransferWandViewIterator.restype = MagickBooleanType
+DuplexTransferWandViewIterator.argtypes = [POINTER(WandView), POINTER(WandView), POINTER(WandView), DuplexTransferWandViewMethod, c_void_p]
+GetWandViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(WandView), ssize_t, c_int, c_void_p)
+GetWandViewIterator = _lib.GetWandViewIterator
+GetWandViewIterator.restype = MagickBooleanType
+GetWandViewIterator.argtypes = [POINTER(WandView), GetWandViewMethod, c_void_p]
+IsWandView = _lib.IsWandView
+IsWandView.restype = MagickBooleanType
+IsWandView.argtypes = [POINTER(WandView)]
+SetWandViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(WandView), ssize_t, c_int, c_void_p)
+SetWandViewIterator = _lib.SetWandViewIterator
+SetWandViewIterator.restype = MagickBooleanType
+SetWandViewIterator.argtypes = [POINTER(WandView), SetWandViewMethod, c_void_p]
+TransferWandViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(WandView), POINTER(WandView), ssize_t, c_int, c_void_p)
+TransferWandViewIterator = _lib.TransferWandViewIterator
+TransferWandViewIterator.restype = MagickBooleanType
+TransferWandViewIterator.argtypes = [POINTER(WandView), POINTER(WandView), TransferWandViewMethod, c_void_p]
+UpdateWandViewMethod = CFUNCTYPE(MagickBooleanType, POINTER(WandView), ssize_t, c_int, c_void_p)
+UpdateWandViewIterator = _lib.UpdateWandViewIterator
+UpdateWandViewIterator.restype = MagickBooleanType
+UpdateWandViewIterator.argtypes = [POINTER(WandView), UpdateWandViewMethod, c_void_p]
+GetWandViewWand = _lib.GetWandViewWand
+GetWandViewWand.restype = POINTER(MagickWand)
+GetWandViewWand.argtypes = [POINTER(WandView)]
+GetWandViewPixels = _lib.GetWandViewPixels
+GetWandViewPixels.restype = POINTER(POINTER(PixelWand))
+GetWandViewPixels.argtypes = [POINTER(WandView)]
+GetWandViewExtent = _lib.GetWandViewExtent
+GetWandViewExtent.restype = RectangleInfo
+GetWandViewExtent.argtypes = [POINTER(WandView)]
+SetWandViewDescription = _lib.SetWandViewDescription
+SetWandViewDescription.restype = None
+SetWandViewDescription.argtypes = [POINTER(WandView), STRING]
+SetWandViewThreads = _lib.SetWandViewThreads
+SetWandViewThreads.restype = None
+SetWandViewThreads.argtypes = [POINTER(WandView), size_t]
+CloneWandView = _lib.CloneWandView
+CloneWandView.restype = POINTER(WandView)
+CloneWandView.argtypes = [POINTER(WandView)]
+DestroyWandView = _lib.DestroyWandView
+DestroyWandView.restype = POINTER(WandView)
+DestroyWandView.argtypes = [POINTER(WandView)]
+NewWandView = _lib.NewWandView
+NewWandView.restype = POINTER(WandView)
+NewWandView.argtypes = [POINTER(MagickWand)]
+NewWandViewExtent = _lib.NewWandViewExtent
+NewWandViewExtent.restype = POINTER(WandView)
+NewWandViewExtent.argtypes = [POINTER(MagickWand), ssize_t, ssize_t, size_t, size_t]
 __underflow = _lib.__underflow
 __underflow.restype = c_int
 __underflow.argtypes = [POINTER(_IO_FILE)]
@@ -6847,36 +7054,6 @@ getpt.argtypes = []
 getloadavg = _lib.getloadavg
 getloadavg.restype = c_int
 getloadavg.argtypes = [POINTER(c_double), c_int]
-class fd_set(Structure):
-    pass
-class timeval(Structure):
-    pass
-select = _lib.select
-select.restype = c_int
-select.argtypes = [c_int, POINTER(fd_set), POINTER(fd_set), POINTER(fd_set), POINTER(timeval)]
-class timespec(Structure):
-    pass
-timespec._fields_ = [
-    ('tv_sec', __time_t),
-    ('tv_nsec', c_long),
-]
-class __sigset_t(Structure):
-    pass
-__sigset_t._fields_ = [
-    ('__val', c_ulong * 16),
-]
-pselect = _lib.pselect
-pselect.restype = c_int
-pselect.argtypes = [c_int, POINTER(fd_set), POINTER(fd_set), POINTER(fd_set), POINTER(timespec), POINTER(__sigset_t)]
-gnu_dev_major = _lib.gnu_dev_major
-gnu_dev_major.restype = c_uint
-gnu_dev_major.argtypes = [c_ulonglong]
-gnu_dev_minor = _lib.gnu_dev_minor
-gnu_dev_minor.restype = c_uint
-gnu_dev_minor.argtypes = [c_ulonglong]
-gnu_dev_makedev = _lib.gnu_dev_makedev
-gnu_dev_makedev.restype = c_ulonglong
-gnu_dev_makedev.argtypes = [c_uint, c_uint]
 __clock_t = c_long
 clock_t = __clock_t
 clock = _lib.clock
@@ -6957,6 +7134,12 @@ timelocal.argtypes = [POINTER(tm)]
 dysize = _lib.dysize
 dysize.restype = c_int
 dysize.argtypes = [c_int]
+class timespec(Structure):
+    pass
+timespec._fields_ = [
+    ('tv_sec', __time_t),
+    ('tv_nsec', c_long),
+]
 nanosleep = _lib.nanosleep
 nanosleep.restype = c_int
 nanosleep.argtypes = [POINTER(timespec), POINTER(timespec)]
@@ -7010,8 +7193,66 @@ getdate.argtypes = [STRING]
 getdate_r = _lib.getdate_r
 getdate_r.restype = c_int
 getdate_r.argtypes = [STRING, POINTER(tm)]
-_CacheView._fields_ = [
+vprintf = _lib.vprintf
+vprintf.restype = c_int
+vprintf.argtypes = [STRING, POINTER(__va_list_tag)]
+getchar = _lib.getchar
+getchar.restype = c_int
+getchar.argtypes = []
+fgetc_unlocked = _lib.fgetc_unlocked
+fgetc_unlocked.restype = c_int
+fgetc_unlocked.argtypes = [POINTER(FILE)]
+getc_unlocked = _lib.getc_unlocked
+getc_unlocked.restype = c_int
+getc_unlocked.argtypes = [POINTER(FILE)]
+getchar_unlocked = _lib.getchar_unlocked
+getchar_unlocked.restype = c_int
+getchar_unlocked.argtypes = []
+putchar = _lib.putchar
+putchar.restype = c_int
+putchar.argtypes = [c_int]
+fputc_unlocked = _lib.fputc_unlocked
+fputc_unlocked.restype = c_int
+fputc_unlocked.argtypes = [c_int, POINTER(FILE)]
+putc_unlocked = _lib.putc_unlocked
+putc_unlocked.restype = c_int
+putc_unlocked.argtypes = [c_int, POINTER(FILE)]
+putchar_unlocked = _lib.putchar_unlocked
+putchar_unlocked.restype = c_int
+putchar_unlocked.argtypes = [c_int]
+getline = _lib.getline
+getline.restype = __ssize_t
+getline.argtypes = [POINTER(STRING), POINTER(size_t), POINTER(FILE)]
+feof_unlocked = _lib.feof_unlocked
+feof_unlocked.restype = c_int
+feof_unlocked.argtypes = [POINTER(FILE)]
+ferror_unlocked = _lib.ferror_unlocked
+ferror_unlocked.restype = c_int
+ferror_unlocked.argtypes = [POINTER(FILE)]
+class fd_set(Structure):
+    pass
+class timeval(Structure):
+    pass
+select = _lib.select
+select.restype = c_int
+select.argtypes = [c_int, POINTER(fd_set), POINTER(fd_set), POINTER(fd_set), POINTER(timeval)]
+class __sigset_t(Structure):
+    pass
+__sigset_t._fields_ = [
+    ('__val', c_ulong * 16),
 ]
+pselect = _lib.pselect
+pselect.restype = c_int
+pselect.argtypes = [c_int, POINTER(fd_set), POINTER(fd_set), POINTER(fd_set), POINTER(timespec), POINTER(__sigset_t)]
+gnu_dev_major = _lib.gnu_dev_major
+gnu_dev_major.restype = c_uint
+gnu_dev_major.argtypes = [c_ulonglong]
+gnu_dev_minor = _lib.gnu_dev_minor
+gnu_dev_minor.restype = c_uint
+gnu_dev_minor.argtypes = [c_ulonglong]
+gnu_dev_makedev = _lib.gnu_dev_makedev
+gnu_dev_makedev.restype = c_ulonglong
+gnu_dev_makedev.argtypes = [c_uint, c_uint]
 _CoderInfo._fields_ = [
     ('path', STRING),
     ('magick', STRING),
@@ -7020,14 +7261,14 @@ _CoderInfo._fields_ = [
     ('stealth', MagickBooleanType),
     ('previous', POINTER(_CoderInfo)),
     ('next', POINTER(_CoderInfo)),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 _MagickPixelPacket._fields_ = [
     ('storage_class', ClassType),
     ('colorspace', ColorspaceType),
     ('matte', MagickBooleanType),
     ('fuzz', c_double),
-    ('depth', c_ulong),
+    ('depth', size_t),
     ('red', MagickRealType),
     ('green', MagickRealType),
     ('blue', MagickRealType),
@@ -7043,7 +7284,7 @@ _ColorInfo._fields_ = [
     ('stealth', MagickBooleanType),
     ('previous', POINTER(_ColorInfo)),
     ('next', POINTER(_ColorInfo)),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 _ConfigureInfo._fields_ = [
     ('path', STRING),
@@ -7053,28 +7294,28 @@ _ConfigureInfo._fields_ = [
     ('stealth', MagickBooleanType),
     ('previous', POINTER(_ConfigureInfo)),
     ('next', POINTER(_ConfigureInfo)),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 _FrameInfo._fields_ = [
-    ('width', c_ulong),
-    ('height', c_ulong),
-    ('x', c_long),
-    ('y', c_long),
-    ('inner_bevel', c_long),
-    ('outer_bevel', c_long),
+    ('width', size_t),
+    ('height', size_t),
+    ('x', ssize_t),
+    ('y', ssize_t),
+    ('inner_bevel', ssize_t),
+    ('outer_bevel', ssize_t),
 ]
 _DelegateInfo._fields_ = [
     ('path', STRING),
     ('decode', STRING),
     ('encode', STRING),
     ('commands', STRING),
-    ('mode', c_long),
+    ('mode', ssize_t),
     ('thread_support', MagickBooleanType),
     ('spawn', MagickBooleanType),
     ('stealth', MagickBooleanType),
     ('previous', POINTER(_DelegateInfo)),
     ('next', POINTER(_DelegateInfo)),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 _ImageAttribute._fields_ = [
     ('key', STRING),
@@ -7088,10 +7329,10 @@ _PointInfo._fields_ = [
     ('y', c_double),
 ]
 _RectangleInfo._fields_ = [
-    ('width', c_ulong),
-    ('height', c_ulong),
-    ('x', c_long),
-    ('y', c_long),
+    ('width', size_t),
+    ('height', size_t),
+    ('x', ssize_t),
+    ('y', ssize_t),
 ]
 _AffineMatrix._fields_ = [
     ('sx', c_double),
@@ -7123,10 +7364,10 @@ _GradientInfo._fields_ = [
     ('bounding_box', RectangleInfo),
     ('gradient_vector', SegmentInfo),
     ('stops', POINTER(StopInfo)),
-    ('number_stops', c_ulong),
+    ('number_stops', size_t),
     ('spread', SpreadMethod),
     ('debug', MagickBooleanType),
-    ('signature', c_ulong),
+    ('signature', size_t),
     ('center', PointInfo),
     ('radius', MagickRealType),
 ]
@@ -7142,11 +7383,17 @@ _ElementReference._fields_ = [
     ('id', STRING),
     ('type', ReferenceType),
     ('gradient', GradientInfo),
-    ('signature', c_ulong),
+    ('signature', size_t),
     ('previous', POINTER(_ElementReference)),
     ('next', POINTER(_ElementReference)),
 ]
 ElementReference = _ElementReference
+
+# values for enumeration 'DirectionType'
+UndefinedDirection = 0
+RightToLeftDirection = 1
+LeftToRightDirection = 2
+DirectionType = c_int # enum
 _DrawInfo._fields_ = [
     ('primitive', STRING),
     ('geometry', STRING),
@@ -7165,18 +7412,18 @@ _DrawInfo._fields_ = [
     ('fill_rule', FillRule),
     ('linecap', LineCap),
     ('linejoin', LineJoin),
-    ('miterlimit', c_ulong),
+    ('miterlimit', size_t),
     ('dash_offset', c_double),
     ('decorate', DecorationType),
     ('compose', CompositeOperator),
     ('text', STRING),
-    ('face', c_ulong),
+    ('face', size_t),
     ('font', STRING),
     ('metrics', STRING),
     ('family', STRING),
     ('style', StyleType),
     ('stretch', StretchType),
-    ('weight', c_ulong),
+    ('weight', size_t),
     ('encoding', STRING),
     ('pointsize', c_double),
     ('density', STRING),
@@ -7192,10 +7439,11 @@ _DrawInfo._fields_ = [
     ('render', MagickBooleanType),
     ('element_reference', ElementReference),
     ('debug', MagickBooleanType),
-    ('signature', c_ulong),
+    ('signature', size_t),
     ('kerning', c_double),
     ('interword_spacing', c_double),
     ('interline_spacing', c_double),
+    ('direction', DirectionType),
 ]
 
 # values for enumeration 'PrimitiveType'
@@ -7218,7 +7466,7 @@ PathPrimitive = 15
 PrimitiveType = c_int # enum
 _PrimitiveInfo._fields_ = [
     ('point', PointInfo),
-    ('coordinates', c_ulong),
+    ('coordinates', size_t),
     ('primitive', PrimitiveType),
     ('method', PaintMethod),
     ('text', STRING),
@@ -7243,7 +7491,7 @@ _ExceptionInfo._fields_ = [
     ('exceptions', c_void_p),
     ('relinquish', MagickBooleanType),
     ('semaphore', POINTER(SemaphoreInfo)),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 _ChannelFeatures._fields_ = [
     ('angular_second_moment', c_double * 4),
@@ -7276,6 +7524,8 @@ _ColorPacket._fields_ = [
     ('pixel', PixelPacket),
     ('index', IndexPacket),
     ('count', MagickSizeType),
+]
+_ImageView._fields_ = [
 ]
 class _ChromaticityInfo(Structure):
     pass
@@ -7326,7 +7576,7 @@ _TimerInfo._fields_ = [
     ('user', Timer),
     ('elapsed', Timer),
     ('state', TimerState),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 class _Ascii85Info(Structure):
     pass
@@ -7340,21 +7590,21 @@ _ProfileInfo._fields_ = [
     ('name', STRING),
     ('length', size_t),
     ('info', POINTER(c_ubyte)),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 ProfileInfo = _ProfileInfo
 _Image._fields_ = [
     ('storage_class', ClassType),
     ('colorspace', ColorspaceType),
     ('compression', CompressionType),
-    ('quality', c_ulong),
+    ('quality', size_t),
     ('orientation', OrientationType),
     ('taint', MagickBooleanType),
     ('matte', MagickBooleanType),
-    ('columns', c_ulong),
-    ('rows', c_ulong),
-    ('depth', c_ulong),
-    ('colors', c_ulong),
+    ('columns', size_t),
+    ('rows', size_t),
+    ('depth', size_t),
+    ('colors', size_t),
     ('colormap', POINTER(PixelPacket)),
     ('background_color', PixelPacket),
     ('border_color', PixelPacket),
@@ -7367,7 +7617,7 @@ _Image._fields_ = [
     ('montage', STRING),
     ('directory', STRING),
     ('geometry', STRING),
-    ('offset', c_long),
+    ('offset', ssize_t),
     ('x_resolution', c_double),
     ('y_resolution', c_double),
     ('page', RectangleInfo),
@@ -7383,12 +7633,12 @@ _Image._fields_ = [
     ('compose', CompositeOperator),
     ('dispose', DisposeType),
     ('clip_mask', POINTER(_Image)),
-    ('scene', c_ulong),
-    ('delay', c_ulong),
-    ('ticks_per_second', c_long),
-    ('iterations', c_ulong),
-    ('total_colors', c_ulong),
-    ('start_loop', c_long),
+    ('scene', size_t),
+    ('delay', size_t),
+    ('ticks_per_second', ssize_t),
+    ('iterations', size_t),
+    ('total_colors', size_t),
+    ('start_loop', ssize_t),
     ('error', ErrorInfo),
     ('timer', TimerInfo),
     ('progress_monitor', MagickProgressMonitor),
@@ -7400,17 +7650,17 @@ _Image._fields_ = [
     ('filename', c_char * 4096),
     ('magick_filename', c_char * 4096),
     ('magick', c_char * 4096),
-    ('magick_columns', c_ulong),
-    ('magick_rows', c_ulong),
+    ('magick_columns', size_t),
+    ('magick_rows', size_t),
     ('exception', ExceptionInfo),
     ('debug', MagickBooleanType),
-    ('reference_count', c_long),
+    ('reference_count', ssize_t),
     ('semaphore', POINTER(SemaphoreInfo)),
     ('color_profile', ProfileInfo),
     ('iptc_profile', ProfileInfo),
     ('generic_profile', POINTER(ProfileInfo)),
-    ('generic_profiles', c_ulong),
-    ('signature', c_ulong),
+    ('generic_profiles', size_t),
+    ('signature', size_t),
     ('previous', POINTER(_Image)),
     ('list', POINTER(_Image)),
     ('next', POINTER(_Image)),
@@ -7424,6 +7674,8 @@ _Image._fields_ = [
     ('type', ImageType),
     ('dither', MagickBooleanType),
     ('extent', MagickSizeType),
+    ('ping', MagickBooleanType),
+    ('channels', size_t),
 ]
 _ImageInfo._fields_ = [
     ('compression', CompressionType),
@@ -7436,13 +7688,13 @@ _ImageInfo._fields_ = [
     ('extract', STRING),
     ('page', STRING),
     ('scenes', STRING),
-    ('scene', c_ulong),
-    ('number_scenes', c_ulong),
-    ('depth', c_ulong),
+    ('scene', size_t),
+    ('number_scenes', size_t),
+    ('depth', size_t),
     ('interlace', InterlaceType),
     ('endian', EndianType),
     ('units', ResolutionType),
-    ('quality', c_ulong),
+    ('quality', size_t),
     ('sampling_factor', STRING),
     ('server_name', STRING),
     ('font', STRING),
@@ -7455,11 +7707,11 @@ _ImageInfo._fields_ = [
     ('matte_color', PixelPacket),
     ('dither', MagickBooleanType),
     ('monochrome', MagickBooleanType),
-    ('colors', c_ulong),
+    ('colors', size_t),
     ('colorspace', ColorspaceType),
     ('type', ImageType),
     ('preview_type', PreviewType),
-    ('group', c_long),
+    ('group', ssize_t),
     ('ping', MagickBooleanType),
     ('verbose', MagickBooleanType),
     ('view', STRING),
@@ -7480,10 +7732,10 @@ _ImageInfo._fields_ = [
     ('filename', c_char * 4096),
     ('debug', MagickBooleanType),
     ('tile', STRING),
-    ('subimage', c_ulong),
-    ('subrange', c_ulong),
+    ('subimage', size_t),
+    ('subrange', size_t),
     ('pen', PixelPacket),
-    ('signature', c_ulong),
+    ('signature', size_t),
     ('virtual_pixel_method', VirtualPixelMethod),
     ('transparent_color', PixelPacket),
     ('profile', c_void_p),
@@ -7496,7 +7748,7 @@ _LocaleInfo._fields_ = [
     ('stealth', MagickBooleanType),
     ('previous', POINTER(_LocaleInfo)),
     ('next', POINTER(_LocaleInfo)),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 _LogInfo._fields_ = [
 ]
@@ -7511,7 +7763,7 @@ _MagicInfo._fields_ = [
     ('stealth', MagickBooleanType),
     ('previous', POINTER(_MagicInfo)),
     ('next', POINTER(_MagicInfo)),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 IsImageFormatHandler = CFUNCTYPE(MagickBooleanType, POINTER(c_ubyte), size_t)
 
@@ -7541,7 +7793,7 @@ _MagickInfo._fields_ = [
     ('stealth', MagickBooleanType),
     ('previous', POINTER(_MagickInfo)),
     ('next', POINTER(_MagickInfo)),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 _MimeInfo._fields_ = [
 ]
@@ -7550,12 +7802,12 @@ _ModuleInfo._fields_ = [
     ('tag', STRING),
     ('handle', c_void_p),
     ('unregister_module', CFUNCTYPE(None)),
-    ('register_module', CFUNCTYPE(c_ulong)),
+    ('register_module', CFUNCTYPE(size_t)),
     ('timestamp', time_t),
     ('stealth', MagickBooleanType),
     ('previous', POINTER(_ModuleInfo)),
     ('next', POINTER(_ModuleInfo)),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 _MontageInfo._fields_ = [
     ('geometry', STRING),
@@ -7565,7 +7817,7 @@ _MontageInfo._fields_ = [
     ('texture', STRING),
     ('font', STRING),
     ('pointsize', c_double),
-    ('border_width', c_ulong),
+    ('border_width', size_t),
     ('shadow', MagickBooleanType),
     ('fill', PixelPacket),
     ('stroke', PixelPacket),
@@ -7575,17 +7827,34 @@ _MontageInfo._fields_ = [
     ('gravity', GravityType),
     ('filename', c_char * 4096),
     ('debug', MagickBooleanType),
-    ('signature', c_ulong),
+    ('signature', size_t),
+]
+KernelInfo._fields_ = [
+    ('type', KernelInfoType),
+    ('width', size_t),
+    ('height', size_t),
+    ('x', ssize_t),
+    ('y', ssize_t),
+    ('values', POINTER(c_double)),
+    ('minimum', c_double),
+    ('maximum', c_double),
+    ('negative_range', c_double),
+    ('positive_range', c_double),
+    ('angle', c_double),
+    ('next', POINTER(KernelInfo)),
+    ('signature', size_t),
+]
+_CacheView._fields_ = [
 ]
 _PolicyInfo._fields_ = [
 ]
 _QuantizeInfo._fields_ = [
-    ('number_colors', c_ulong),
-    ('tree_depth', c_ulong),
+    ('number_colors', size_t),
+    ('tree_depth', size_t),
     ('dither', MagickBooleanType),
     ('colorspace', ColorspaceType),
     ('measure_error', MagickBooleanType),
-    ('signature', c_ulong),
+    ('signature', size_t),
     ('dither_method', DitherMethod),
 ]
 _QuantumInfo._fields_ = [
@@ -7599,10 +7868,15 @@ SemaphoreInfo._fields_ = [
 _SplayTreeInfo._fields_ = [
 ]
 _ChannelStatistics._fields_ = [
-    ('depth', c_ulong),
+    ('depth', size_t),
     ('minima', c_double),
     ('maxima', c_double),
+    ('sum', c_double),
+    ('sum_squared', c_double),
+    ('sum_cubed', c_double),
+    ('sum_fourth_power', c_double),
     ('mean', c_double),
+    ('variance', c_double),
     ('standard_deviation', c_double),
     ('kurtosis', c_double),
     ('skewness', c_double),
@@ -7611,21 +7885,21 @@ _StringInfo._fields_ = [
     ('path', c_char * 4096),
     ('datum', POINTER(c_ubyte)),
     ('length', size_t),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 _ThresholdMap._fields_ = [
 ]
 _TokenInfo._fields_ = [
 ]
 _TypeInfo._fields_ = [
-    ('face', c_ulong),
+    ('face', size_t),
     ('path', STRING),
     ('name', STRING),
     ('description', STRING),
     ('family', STRING),
     ('style', StyleType),
     ('stretch', StretchType),
-    ('weight', c_ulong),
+    ('weight', size_t),
     ('encoding', STRING),
     ('foundry', STRING),
     ('format', STRING),
@@ -7634,7 +7908,7 @@ _TypeInfo._fields_ = [
     ('stealth', MagickBooleanType),
     ('previous', POINTER(_TypeInfo)),
     ('next', POINTER(_TypeInfo)),
-    ('signature', c_ulong),
+    ('signature', size_t),
 ]
 _XMLTreeInfo._fields_ = [
 ]
@@ -7647,13 +7921,15 @@ _XImportInfo._fields_ = [
 ]
 _MagickWand._fields_ = [
 ]
+_PixelView._fields_ = [
+]
 _DrawingWand._fields_ = [
 ]
 _PixelIterator._fields_ = [
 ]
-_PixelView._fields_ = [
-]
 _PixelWand._fields_ = [
+]
+_WandView._fields_ = [
 ]
 class __mbstate_t(Structure):
     pass
@@ -7674,11 +7950,6 @@ _G_fpos_t._fields_ = [
 _G_fpos64_t._fields_ = [
     ('__pos', __off64_t),
     ('__state', __mbstate_t),
-]
-__suseconds_t = c_long
-timeval._fields_ = [
-    ('tv_sec', __time_t),
-    ('tv_usec', __suseconds_t),
 ]
 class _IO_marker(Structure):
     pass
@@ -7732,16 +8003,21 @@ drand48_data._fields_ = [
     ('__init', c_ushort),
     ('__a', c_ulonglong),
 ]
+sigevent._fields_ = [
+]
+__suseconds_t = c_long
+timeval._fields_ = [
+    ('tv_sec', __time_t),
+    ('tv_usec', __suseconds_t),
+]
 __fd_mask = c_long
 fd_set._fields_ = [
     ('fds_bits', __fd_mask * 16),
 ]
-sigevent._fields_ = [
-]
-class locale_data(Structure):
+class __locale_data(Structure):
     pass
 __locale_struct._fields_ = [
-    ('__locales', POINTER(locale_data) * 13),
+    ('__locales', POINTER(__locale_data) * 13),
     ('__ctype_b', POINTER(c_ushort)),
     ('__ctype_tolower', POINTER(c_int)),
     ('__ctype_toupper', POINTER(c_int)),
@@ -7762,39 +8038,38 @@ _IO_marker._fields_ = [
     ('_sbuf', POINTER(_IO_FILE)),
     ('_pos', c_int),
 ]
-locale_data._fields_ = [
+__locale_data._fields_ = [
 ]
-__all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
-           'GrayVirtualPixelMethod', 'PaletteMatteType',
-           'getc_unlocked', 'SolarizeImage', 'MagickSteganoImage',
+__all__ = ['RGBOQuantum', 'OpaqueImage', 'ManhattanKernel',
+           'LocaleLower', 'MagickDelay', 'GrayVirtualPixelMethod',
+           'PaletteMatteType', 'getc_unlocked', 'SolarizeImage',
+           'TransferImageViewMethod', 'MagickSteganoImage',
            'MagickSetBackgroundColor', 'SetLogName',
-           'MinusCompositeOp', 'canonicalize_file_name',
-           'GetMimeInfo', 'MorphologyMethod', 'ChopImage',
-           'MagickClipPathImage', 'ParseImageGeometry',
-           'SyncNextImageInList', 'MagickGetAntialias',
-           'DecorationType', 'SignedQuantumFormat',
-           'MagickPolicyOptions', 'localtime', 'FatalErrorHandler',
-           'GetOneCacheViewVirtualMethodPixel', 'rand_r',
-           'ResetMagickMemory', 'OutCompositeOp', 'ctime_r',
+           'HashPointerType', 'canonicalize_file_name', 'GetMimeInfo',
+           'MorphologyMethod', 'ChopImage', 'MagickClipPathImage',
+           'ParseImageGeometry', 'SyncNextImageInList',
+           'MagickGetAntialias', 'IsImageView', 'DecorationType',
+           'LineEndsKernel', 'MagickPolicyOptions', 'localtime',
+           'FatalErrorHandler', 'GetOneCacheViewVirtualMethodPixel',
+           'rand_r', 'ResetMagickMemory', 'OutCompositeOp', 'ctime_r',
            'GetOneCacheViewAuthenticPixel', 'getloadavg',
            'DelegatePolicyDomain', 'IsMagickTrue', 'MagickRealType',
            'NewPixelViewRegion', 'StereoAnaglyphImage',
-           'GaussianNoiseEvaluateOperator', 'DisposeType',
+           'AcquireUniqueFileResource', 'DisposeType',
            'UndefinedMetric', 'IsRightsAuthorized',
            'DrawPopGraphicContext', 'PixelGetCyan', 'DrawPoint',
-           'BackgroundVirtualPixelMethod', 'MagickImageListOptions',
-           '__va_list_tag', 'mkostemp', '__off64_t',
-           'AllocateSemaphoreInfo', 'ForgetGravity', 'StopInfo',
-           'UndefinedPathUnits', 'DistanceMorphology',
-           'MagickWriteImagesFile', 'UndefinedPreview',
-           'GetMagickPrecision', '_PrimitiveInfo', 'HashPointerType',
-           'ExceptionType', 'MagickSetImageBackgroundColor',
-           'SubtractCompositeOp', 'MagickGetImageRegion',
+           'BackgroundVirtualPixelMethod', '__va_list_tag',
+           'mkostemp', '__off64_t', 'AllocateSemaphoreInfo',
+           'ForgetGravity', 'StopInfo', 'UndefinedPathUnits',
+           'DistanceMorphology', 'MagickWriteImagesFile',
+           'UndefinedPreview', 'GetMagickPrecision', '_PrimitiveInfo',
+           'PaintMethod', 'ExceptionType',
+           'MagickSetImageBackgroundColor', 'MagickGetImageRegion',
            'AcquireMagickMatrix', 'ferror', 'getdate_r',
            'ClearPixelWand', 'BlackChannel', '_ErrorInfo',
            'CacheEvent', 'AcquireImageColormap',
            'PixelSetBlackQuantum', 'setstate_r',
-           'GetImageFromMagickWand', 'LineJoin',
+           'GetImageFromMagickWand', 'LineJoin', 'ResizeDistortion',
            'LiberateSemaphoreInfo', 'OrderedPosterizeImage',
            '_MontageInfo', 'DrawSetClipRule', 'LeftBottomOrientation',
            'MagickSetImageOpacity', 'MagickGetIteratorIndex',
@@ -7802,27 +8077,29 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'AcquireExceptionInfo', 'ShortPixel',
            'MagickSetPassphrase', 'MagickGetNumberImages', 'malloc',
            'IsMagickWand', '_Image', 'UndefinedQuantumAlpha',
-           'printf', 'CoderWarning', 'MagickThumbnailImage',
+           'ImageView', 'CoderWarning', 'MagickThumbnailImage',
            'TriangleFilter', 'getchar', 'CopyMagickString',
            'AcquireIndexes', 'DestroyImageProperties',
-           'fputs_unlocked', 'GetDelegateCommand', 'qecvt_r',
-           'MagickCoalesceImages', 'MagickSetImagePage', 'ftello64',
-           'DestroyMagickRegistry', 'DrawGetStrokeLineCap',
-           'PutEntryInHashmap', 'GetMagickCopyright', 'DrawSetFont',
-           'MagickDecorateOptions', 'AcquireCacheViewPixels',
-           'OptionWarning', 'PrependImageToList', '_RectangleInfo',
-           'SetImageClipMask', '_IO_FILE', 'RotatePreview',
-           'DestroyMagickMemory', 'MagickGetImageSignature',
-           'GeometryInfo', 'UpdatePixelViewIterator',
-           'GetImageChannelFeatures', 'AreaValue',
-           'MagickResizeImage', 'DrawGetStrokeLineJoin',
-           'ChannelStatistics', 'DrawPathMoveToAbsolute',
-           'StripString', 'GRAYColorspace', 'ResizeQuantumMemory',
-           'GrayscaleMatteType', 'MagickGetImageChannelDistortion',
-           'SetXMLTreeContent', 'rewind', 'CubicFilter',
-           'ResetImageProfileIterator', '_MagicInfo',
-           'AcquireOneCacheViewPixel', 'SetLogEventMask',
-           'SetPixelViewIterator', 'QueryMagickColor',
+           'fputs_unlocked', 'CropImageToTiles', 'GetDelegateCommand',
+           'qecvt_r', 'SignedQuantumFormat', 'MagickSetImagePage',
+           'ftello64', 'DestroyMagickRegistry',
+           'DrawGetStrokeLineCap', 'PutEntryInHashmap',
+           'GetMagickCopyright', 'DrawSetFont',
+           'MagickDecorateOptions', 'RightToLeftDirection',
+           'AcquireCacheViewPixels', 'OptionWarning',
+           'PrependImageToList', '_RectangleInfo', 'SetImageClipMask',
+           '_IO_FILE', 'RotatePreview', 'DestroyMagickMemory',
+           'MagickGetImageSignature', 'GeometryInfo',
+           'UpdatePixelViewIterator', 'GetImageChannelFeatures',
+           'EdgeDetectPreview', 'MagickResizeImage',
+           'DrawGetStrokeLineJoin', 'ChannelStatistics',
+           'DrawPathMoveToAbsolute', 'StripString', 'GRAYColorspace',
+           'ResizeQuantumMemory', 'GrayscaleMatteType',
+           'MagickGetImageChannelDistortion',
+           'MagickAdaptiveSharpenImageChannel', 'SetXMLTreeContent',
+           'rewind', 'CubicFilter', 'ResetImageProfileIterator',
+           '_MagicInfo', 'AcquireOneCacheViewPixel',
+           'SetLogEventMask', 'QueryMagickColor',
            'MagickDeleteImageProperty', 'BrightnessContrastImage',
            'GetImageGeometry', 'MagickCoreTerminus',
            'RemoteDisplayCommand', '__secure_getenv', 'GetOnePixel',
@@ -7833,44 +8110,46 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'MagickGammaImage', 'GetLocaleList',
            'MagickDelegateOptions', 'GetOneCacheViewVirtualPixel',
            'SetMagickMemoryMethods', 'ThreadResource', 'RightAlign',
-           'MagickSigmoidalContrastImage', 'PercentValue', 'strtouq',
-           'RootPath', 'DeskewImage', 'MagickDeskewImage',
+           'MagickSigmoidalContrastImage', 'TransferWandViewIterator',
+           'strtouq', 'RootPath', 'DeskewImage', 'MagickDeskewImage',
            'OpenMorphology', 'strtoul', 'PixelSetHSL',
-           'SyncCacheViewAuthenticPixels', 'GeometryFlags',
-           'SetImageBackgroundColor', 'PixelSetOpacity', 'strtol_l',
-           'DefineImageArtifact', 'fwrite', 'PixelGetGreenQuantum',
-           'StringToArgv', 'MagickDisposeOptions',
-           'AppendImageFormat', 'SetImageRegistry', 'DrawGetOpacity',
+           'SyncCacheViewAuthenticPixels', 'ModulusAddCompositeOp',
+           'SetImageBackgroundColor', 'PixelSetOpacity',
+           'GetImageViewAuthenticPixels', 'DefineImageArtifact',
+           'fwrite', 'PixelGetGreenQuantum', 'StringToArgv',
+           'MagickDisposeOptions', 'AppendImageFormat',
+           'SetImageRegistry', 'DrawGetOpacity',
            'RightTopOrientation', 'BorderImage', 'ConstituteImage',
            'GetLogInfoList', 'GrayChannels', 'DrawPathLineToAbsolute',
-           'MosaicLayer', 'NormalizeImage', 'QuantizeImages',
-           'TransverseImage', 'PaintOpaqueImage',
-           'MagickSetColorspace', 'GaussianFilter',
-           'ParseGravityGeometry', 'SortColormapByIntensity',
-           'TransferPixelViewMethod', 'gcvt',
-           'MissingDelegateWarning', 'GetTypeInfoByFamily',
+           'MosaicLayer', 'NormalizeImage',
+           'MagickSetImageVirtualPixelMethod', 'TransverseImage',
+           'PaintOpaqueImage', 'MagickSetColorspace',
+           'GaussianFilter', 'ParseGravityGeometry',
+           'SortColormapByIntensity', 'TransferPixelViewMethod',
+           'gcvt', 'MissingDelegateWarning', 'GetTypeInfoByFamily',
            'MagickGetImageChannelStatistics', 'PixelGetBlackQuantum',
            'MorphImages', 'sigevent', 'DrawGetExceptionType',
            '_LocaleInfo', 'FilterImage', 'ResetImageRegistryIterator',
            'HorizontalTileEdgeVirtualPixelMethod',
            'MagickMosaicImages', 'AnnotateEvent', '_Ascii85Info',
            'X11Compliance', 'MagickSetImageUnits', 'CloneMontageInfo',
-           'GetImageMask', 'DestroyKernelInfo', 'div_t',
+           'FreiChenKernel', 'DestroyKernelInfo', 'div_t',
            'MagickHaldClutImageChannel', 'sprintf',
            'MagickGetImageBorderColor', 'PixelSetMagenta',
-           'MagickStyleOptions', 'FloydSteinbergDitherMethod',
-           'MagickGetImageType', 'SplineInterpolatePixel',
-           'MagickOptimizeImageLayers', 'StartTimer', 'SouthGravity',
+           'MagickColorMatrixImage', 'MagickStyleOptions',
+           'FloydSteinbergDitherMethod', 'MagickGetImageType',
+           'SplineInterpolatePixel', 'MagickOptimizeImageLayers',
+           'StartTimer', 'SouthGravity', '__io_write_fn',
            'UndefinedDitherMethod', 'NormalStretch',
            'InsertTagIntoXMLTree', 'GetImageException',
-           'ResourceComponentGenesis', 'DrawInfo', 'QuantumAlphaType',
-           'TransformHSL', '_ColorInfo', 'ImplodePreview',
-           'MagickNextImage', 'Tokenizer', 'StorageType',
-           'LevelColorsImageChannel', 'GaussianKernel',
+           'ResourceComponentGenesis', 'SkeletonKernel', 'DrawInfo',
+           'QuantumAlphaType', 'TransformHSL', '_ColorInfo',
+           'ImplodePreview', 'MagickNextImage', 'Tokenizer',
+           'StorageType', 'LevelColorsImageChannel', 'GaussianKernel',
            'OverlineDecoration', 'gnu_dev_makedev',
            'AppendValueToLinkedList', 'ColorPrimitive',
            'ExportQuantumPixels', 'SegmentInfo', 'strtoll_l', 'rand',
-           'MontageInfo', 'UndefinedInterlace', 'clock_getcpuclockid',
+           '_ImageInfo', 'UndefinedInterlace', 'clock_getcpuclockid',
            'GetNextImageProperty', 'RGBChannels',
            'TransparentPaintImage', 'ImageToFile',
            'MagickVirtualPixelOptions', 'MagickListOptions',
@@ -7880,8 +8159,8 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'ecvt_r', 'ColorizeImage', 'PixelGetYellow', 'setbuffer',
            'IsPathAccessible', 'MeshInterpolatePixel',
            'LabColorspace', 'MagickGetOptions', 'DrawGetClipRule',
-           'UndefinedRule', 'DrawPathCurveToSmoothRelative',
-           'MagickAdaptiveSharpenImageChannel', 'DrawGetFontFamily',
+           'UndefinedRule', 'UpdatePixelViewMethod',
+           'DestroyPixelView', 'DrawGetFontFamily',
            'ParseAffineGeometry', 'Rec709YCbCrColorspace',
            'DrawGetTextAlignment', 'MagickGetImageGamma',
            'AreaResource', 'CirclePrimitive',
@@ -7889,14 +8168,13 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'PixelSetMagentaQuantum', 'CatchException',
            'SigmoidalContrastImageChannel', 'DrawGetStrokeOpacity',
            'CloneDrawingWand', 'AcquirePixelCachePixels',
-           'BlackQuantum', '__ssize_t', 'sRGBColorspace',
-           'CloneImageProperties', 'ComplianceType',
-           'MagickImportImagePixels', 'GetImageInfoFile',
-           'CenterGravity', 'GetTypeInfoList', 'SetImageDepth',
-           'ChannelImage', 'GetNumberOfEntriesInHashmap',
-           'MagickIdentifyImage', 'MagickFlattenImages',
-           'OrEvaluateOperator', 'FileToBlob', '__clockid_t',
-           'ReferenceImage', 'DelegateComponentGenesis',
+           'BlackQuantum', 'sRGBColorspace', 'CloneImageProperties',
+           'ComplianceType', 'MagickImportImagePixels',
+           'GetImageInfoFile', 'CenterGravity', 'GetTypeInfoList',
+           'SetImageDepth', 'ChannelImage',
+           'GetNumberOfEntriesInHashmap', 'MagickIdentifyImage',
+           'MagickFlattenImages', 'OrEvaluateOperator', 'FileToBlob',
+           'SquareCap', 'ReferenceImage', 'DelegateComponentGenesis',
            'Ascii85Encode', 'CoalesceImages', 'ReferenceType',
            'OptimizeLayer', 'SetQuantumFormat', 'CombineImages',
            'GetImageClipMask', 'MagickTransparentPaintImage',
@@ -7904,28 +8182,29 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'PopImageList', 'ModuleError', 'PixelSetRed',
            'ParseRegionGeometry', 'MagicComponentTerminus',
            'MagickPreviewImages', 'DrawSetViewbox', 'PointFilter',
-           'setvbuf', 'GetPolicyValue', 'MagicInfo',
-           'DestroyMagickWand', 'MagickGetImagePixelColor', 'a64l',
-           'SparseColorMethod', '_IO_putc', 'CenterAlign',
-           'PrimitiveType', 'RemoveLastElementFromLinkedList',
-           'PixelGetYellowQuantum', 'PixelGetColorAsNormalizedString',
-           'ListMagicInfo', 'StreamImageCommand',
-           'MagickSparseColorOptions', 'ImageRegistryType',
-           'MagickCommandOptions', 'GrayAlphaQuantum', 'fgetpos64',
-           'SegmentImage', 'BoxFilter', 'InterpretImageProperties',
+           'setvbuf', 'BlurImage', 'MagicInfo', 'DestroyMagickWand',
+           'MagickGetImagePixelColor', 'a64l', 'SparseColorMethod',
+           '_IO_putc', 'CenterAlign', 'PrimitiveType',
+           'RemoveLastElementFromLinkedList', 'PixelGetYellowQuantum',
+           'PixelGetColorAsNormalizedString', 'ListMagicInfo',
+           'StreamImageCommand', 'MapImages', 'PixelGetMagickColor',
+           'ImageRegistryType', 'MagickCommandOptions',
+           'GrayAlphaQuantum', 'fgetpos64', 'SegmentImage',
+           'BoxFilter', 'InterpretImageProperties', 'CompassKernel',
            'DrawTranslate', 'QuantumFormatType',
            'SetStringInfoLength', 'MagickSetImageFuzz',
            'CloneImageArtifacts', 'MagickReduceNoiseImage',
            'FuzzyColorMatch', 'MagickPrimitiveOptions',
            'GetLastImageInList', 'FlattenLayer', 'ptsname_r',
            'PerspectiveDistortion', 'PixelPacket',
-           'GetBlobStreamData', 'mkstemps64', 'MagickShaveImage',
-           'GetModuleInfo', 'ExpandAffine',
-           'MagickGetInterlaceScheme', 'GetElapsedTime',
-           'ColorizeCompositeOp', 'ThresholdWhiteEvaluateOperator',
-           'XorCompositeOp', 'ConcatenateStringInfo',
-           'TransparentPaintImageChroma', 'GetNextValueInSplayTree',
-           'mkdtemp', 'IsPixelWand', 'GammaImage',
+           'GetBlobStreamData', 'DrawComment', 'DrawGetClipUnits',
+           'mkstemps64', 'MagickShaveImage', 'GetModuleInfo',
+           'ExpandAffine', 'MagickGetInterlaceScheme',
+           'GetElapsedTime', 'ColorizeCompositeOp',
+           'ThresholdWhiteEvaluateOperator', 'XorCompositeOp',
+           'ConcatenateStringInfo', 'ReplaceImageInListReturnLast',
+           'GetNextValueInSplayTree', 'mkdtemp', 'IsPixelWand',
+           'GammaImage', 'SetWandViewIterator',
            'GetAuthenticPixelQueue', 'DrawSetStrokeMiterLimit',
            'AcquireOneVirtualPixel', 'CloneSplayTree',
            'MagickLineJoinOptions', 'GetImageDepth',
@@ -7941,13 +8220,13 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'GetCacheViewVirtualIndexQueue', 'OrientationType',
            'RandomThresholdImageChannel', 'DrawPushGraphicContext',
            'PeekDrawingWand', 'CopyBlueCompositeOp',
-           'DestroyPixelWand', 'MagickDistortImage', 'seed48_r',
+           'GetCommandOptionFlags', 'MagickDistortImage', 'seed48_r',
            'OpenCacheView', 'ClearCompositeOp',
-           'MagickColorFloodfillImage', 'XNegative', 'fd_set',
-           'IsImageFormatHandler', '_ModuleInfo', 'SyncImageSettings',
-           'DispatchImage', 'GetPreviousImage', 'FileResource',
-           'int32_t', 'MagickLocaleOptions', 'RandomFatalError',
-           'MagickOrderedPosterizeImageChannel',
+           'MagickColorFloodfillImage', 'MagickAverageImages',
+           'fd_set', 'IsImageFormatHandler', '_ModuleInfo',
+           'SyncImageSettings', 'DispatchImage', 'GetPreviousImage',
+           'FileResource', 'int32_t', 'MagickLocaleOptions',
+           'RandomFatalError', 'MagickOrderedPosterizeImageChannel',
            'DeleteNodeFromSplayTree', 'DestroyTokenInfo',
            'XorEvaluateOperator', 'StringInfoToString', 'putw',
            'MagickGetImageWhitePoint', 'WriteImage',
@@ -7955,125 +8234,135 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'SetResampleFilterVirtualPixelMethod',
            'GetNextImageRegistry', 'MagickGetImageProperties',
            'DrawGetStrokeAntialias', 'CopyMagentaCompositeOp',
-           'PeakAbsoluteErrorMetric', 'RhoValue',
-           'MagickSetSamplingFactors', 'putc', 'MinimumImages',
-           'EqualizeImage', 'TypeComponentTerminus',
-           'DivideEvaluateOperator', 'DrawSetStrokeAlpha',
-           'SetAlphaChannel', 'MagickGetGravity', 'LanczosFilter',
-           'PixelGetCyanQuantum', 'MagickPolicyRightsOptions',
-           'GetXMLTreePath', 'ResourceLimitFatalError',
-           'SetFatalErrorHandler', 'MagickGetImageRedPrimary',
-           'UndefinedEndian', 'PixelClearIteratorException',
-           '__suseconds_t', 'EqualizeImageChannel',
-           'UnderlineDecoration', 'LeastSquaresAddTerms',
-           'MagickGetImageColormapColor', 'MagickImplodeImage',
-           'clearenv', 'StringToStringInfo', 'SpliceImageIntoList',
+           'PeakAbsoluteErrorMetric', 'MagickSetSamplingFactors',
+           'putc', 'MinimumImages', 'EqualizeImage',
+           'TypeComponentTerminus', 'DivideEvaluateOperator',
+           'DrawSetStrokeAlpha', 'SetAlphaChannel',
+           'MagickGetGravity', 'LanczosFilter', 'PixelGetCyanQuantum',
+           'MagickPolicyRightsOptions', 'GetXMLTreePath',
+           'ResourceLimitFatalError', 'SetFatalErrorHandler',
+           'MagickGetImageRedPrimary', 'UndefinedEndian',
+           'PixelClearIteratorException', '__suseconds_t',
+           'EqualizeImageChannel', 'UnderlineDecoration',
+           'LeastSquaresAddTerms', 'MagickGetImageColormapColor',
+           'MagickImplodeImage', 'CacheView_', 'clearenv',
+           'StringToStringInfo', 'SpliceImageIntoList',
            'DrawPathClose', 'GetMagickList', 'GetPolicyList',
-           'PushImageList', 'RoundJoin', 'IdentifyImage',
-           'InterpolatePixelColor', 'UndefinedJoin',
-           'GetMagickOptions', '_IO_marker', 'GetImageDecoder',
-           'MagickGetImagesBlob', 'MagickGetOption',
-           'IsPixelIterator', 'MagickSetImageGreenPrimary',
-           'GetOptimalKernelWidth', 'MagickSetProgressMonitor',
-           'FormatImageAttributeList', 'MonitorError',
-           'MagickFrameImage', '_IO_lock_t', 'DecodeImageHandler',
-           'MagickCompressOptions', 'GetMagickDescription',
-           'HanningFilter', 'MagickSepiaToneImage', 'PixelGetHSL',
-           'GetCoderList', 'DrawPathLineToVerticalRelative',
-           '_ElementReference', 'nrand48', 'DistortCompositeOp',
+           'SplitImageList', 'MeanStatistic', 'popen', 'RoundJoin',
+           'IdentifyImage', 'InterpolatePixelColor', 'UndefinedJoin',
+           '_IO_marker', 'GetImageDecoder', 'MagickGetImagesBlob',
+           'MagickGetOption', 'IsPixelIterator',
+           'MagickSetImageGreenPrimary', 'GetOptimalKernelWidth',
+           'MagickSetProgressMonitor', 'FormatImageAttributeList',
+           'MonitorError', 'MagickFrameImage', '_IO_lock_t',
+           'DecodeImageHandler', 'MagickCompressOptions',
+           'GetMagickDescription', 'HanningFilter',
+           'MagickSepiaToneImage', 'PixelGetHSL', 'GetCoderList',
+           'DrawPathLineToVerticalRelative', '_ElementReference',
+           'GetWandViewWand', 'DistortCompositeOp',
            'AnimateImageCommand', 'ErrorInfo', 'GetImagePixels',
            'GetExceptionInfo', '_FrameInfo', 'JPEG2000Compression',
            'fseek', 'ConsolidateCMYKImages', 'DrawGetStrokeDashArray',
            'MagickSetCompressionQuality', 'CatromFilter', '__timer_t',
-           'SetImageAttribute', 'DifferenceCompositeOp',
-           'ResetImageOptionIterator', 'MontageImageCommand',
-           'WarningException', 'CompositeLayers', 'SepiaToneImage',
-           'SVGCompliance', 'TemporaryFilename', 'ResizeImage',
+           'MagickSmushImages', 'SetImageAttribute',
+           'DifferenceCompositeOp', 'ResetImageOptionIterator',
+           'MontageImageCommand', 'WarningException',
+           'CompositeLayers', 'SepiaToneImage', 'SVGCompliance',
+           'TemporaryFilename', 'gnu_dev_minor', 'ResizeImage',
            'CopyMagickMemory', 'MagickClearException', 'TypeWarning',
-           'OpenModules', 'MontageImages', 'SetImageInfoBlob',
-           'CloneImageAttributes', 'gnu_dev_minor', 'MonitorWarning',
+           'OpenModules', 'MontageImages', 'GetWandViewIterator',
+           'MedianEvaluateOperator', 'SetImageInfoBlob',
+           'CloneImageAttributes', 'ctime', 'MonitorWarning',
            'IsHistogramImage', 'PolicyFatalError', 'CacheFatalError',
-           'TrueColorMatteType', 'PingImage', 'FlopImage', 'freopen',
-           'SetImageArtifact', 'fread_unlocked', 'EscapeString',
+           'TrueColorMatteType', 'PingImage', 'FlopImage',
+           'MagickFunction', 'freopen', 'SetImageArtifact',
+           'fread_unlocked', 'EscapeString', 'JBIG2Compression',
            'PixelGetBlueQuantum', 'rpmatch', 'MagickNewImage',
-           '_ProfileInfo', 'unlockpt', 'TypeComponentGenesis',
-           'FloatingPointQuantumFormat', 'ctermid',
-           'ReverseImageList', 'AverageImages', 'IsMonochromeImage',
+           'printf', '_ProfileInfo', 'unlockpt',
+           'TypeComponentGenesis', 'FloatingPointQuantumFormat',
+           'ctermid', 'GetMagickInfo', 'ReverseImageList',
+           'AverageImages', 'IsMonochromeImage',
            'DisplaceCompositeOp', '__clock_t', 'GetPixelViewIterator',
            'PixelGetPreviousIteratorRow',
            'UndefinedVirtualPixelMethod', 'ClearDrawingWand',
            'MaxEvaluateOperator', 'ObjectBoundingBox',
-           'SplitImageList', 'PixelGetIndex', 'ChangeMaskCompositeOp',
+           'FuzzErrorMetric', 'PixelGetIndex',
+           'UpdateImageViewMethod', 'ChangeMaskCompositeOp',
            'CompositeImageChannel', 'DestroyStringList',
            'TextureImage', 'gmtime', 'ThresholdMap',
            'CoderFatalError', 'NewMagickImage', 'SyncImagePixels',
-           'fcloseall', 'GetCoderInfoList', 'IsBlobExempt',
-           'AcquireKernelInfo', 'AcquireImage', 'MagickSetImageDepth',
-           'ShadePreview', 'QuantizePreview', 'AcquireImageInfo',
-           'NoPolicyRights', 'PopDrawingWand', 'ClutImage',
+           'fcloseall', 'GetCoderInfoList', 'DistortResizeImage',
+           'IsBlobExempt', 'AcquireKernelInfo', 'AcquireImage',
+           'MagickSetImageDepth', 'ShadePreview', 'QuantizePreview',
+           'AcquireImageInfo', 'NoPolicyRights',
+           'MagickImageFilterModule', 'PopDrawingWand', 'ClutImage',
            'MagickEdgeImage', 'CheckerTileVirtualPixelMethod',
            'DrawPathCurveToRelative', 'tempnam',
-           'RemoveEntryFromHashmap', 'tmpfile',
+           'RemoveEntryFromHashmap', 'AbsEvaluateOperator',
            'DestroyImageArtifacts', 'HardLightCompositeOp',
            'NegateImage', '_PointInfo', 'UnregisterMagickInfo',
            'MagickSetImageInterpolateMethod', 'ReflectSpread',
            'InitializeMagick', 'FileOpenFatalError',
            'UndefinedDistortion', 'YCCColorspace', 'GetLogName',
-           'MagickOpaquePaintImageChannel', 'GetBlobSize',
+           'GetCommandOptions', 'GetBlobSize',
            'MagickConvolveImageChannel',
            'TransparentVirtualPixelMethod', 'GetCacheViewPixels',
            'ListCoderInfo', 'GetDelegateMode',
            'AllocateImageColormap', 'GrayChannel', 'GradientInfo',
-           'ListLogInfo', 'ShiftImageList', 'DePolarDistortion',
-           'ImageError', 'OpaquePaintImage', 'MagickFillRuleOptions',
-           'LinearBurnCompositeOp', 'AffineMatrix', 'YPbPrColorspace',
-           'AcquireRandomInfo', 'VerticalTileVirtualPixelMethod',
-           'PathType', 'LogComponentTerminus', 'MagickIntentOptions',
+           'MagickImageCoderModule', 'ListLogInfo', 'ShiftImageList',
+           'DePolarDistortion', 'ImageError', 'OpaquePaintImage',
+           'MagickFillRuleOptions', 'LinearBurnCompositeOp',
+           'AffineMatrix', 'YPbPrColorspace', 'AcquireRandomInfo',
+           'VerticalTileVirtualPixelMethod', 'PathType',
+           'LogComponentTerminus', 'MagickIntentOptions',
            'GetNextImageInList', 'ResetLinkedListIterator',
-           'MagickSetImageInterlaceScheme', 'ColorComponentTerminus',
+           'MagickSetImageInterlaceScheme',
+           'StandardDeviationStatistic', 'ColorComponentTerminus',
            'SetImageInfoFile', 'ftello', 'BottomRightOrientation',
            'NoCompliance', 'GradientType', 'IntegerInterpolatePixel',
            'MagickLabelImage', 'StreamWarning', 'DestroyImageOptions',
            'ErodeMorphology', 'DrawGetFont', 'LogEvaluateOperator',
            'MagickFalse', 'posix_openpt', 'lldiv_t', 'DrawRender',
-           'XiNegative', 'ImportImagePixels', 'ChebyshevKernel',
-           'MagickSparseColorImage', 'LOGKernel', 'DarkenCompositeOp',
-           'MagickRadialBlurImageChannel', 'Strip', '_IO_feof',
+           'ImportImagePixels', 'ChebyshevKernel',
+           'MagickSparseColorImage', 'ConjureImageCommand',
+           'DarkenCompositeOp', 'MagickRadialBlurImageChannel',
+           'GetPolicyInfoList', '_IO_feof', 'GetImageViewMethod',
            'BlurImageChannel', 'EastGravity', 'GetCacheViewIndexes',
            'DrawSetFillRule', 'DrawPathLineToRelative',
-           'InitializeModuleList', 'strtoul_l', 'LagrangeFilter',
+           'InitializeModuleList', 'IsWandView', 'LagrangeFilter',
            'MagickSpliceImage', 'ShepardsDistortion',
-           'FormatMagickCaption', 'MontageMode', 'time',
-           'GetAuthenticPixels', 'UndefinedResolution',
+           'LZMACompression', 'SquareKernel', 'GetPixelViewWand',
+           'time', 'GetAuthenticPixels', 'UndefinedResolution',
            'RegistryFatalError', 'DrawSetFillOpacity',
-           'MagickFunctionImage', 'GetIndexes', 'MagickPolaroidImage',
-           'TopRightOrientation', 'RelinquishAlignedMemory',
-           'InterpolatePixelMethod', 'CMYKColorspace',
-           'SaturationIntent', 'AddEvaluateOperator',
-           'MagickCommandGenesis', 'DeleteImageProfile',
-           'SetRandomTrueRandom', 'PixelGetQuantumColor',
-           'CacheComponentTerminus', 'SwirlImage', 'PushDrawingWand',
-           'ResourceType', 'MagickGetFilename', 'QuantumInfo',
-           'UndefinedDecoration', 'AllValues', 'GetStringInfoPath',
-           'UndefinedKernel', 'RGBTransformImage',
-           'MagickCompareImageChannels', 'cuserid',
-           'MagickEmbossImage', 'MagickGetImageMatteColor',
+           'MagickFunctionImage', 'GetIndexes', 'CMYKQuantum',
+           'TopRightOrientation', 'ExponentialEvaluateOperator',
+           'RelinquishAlignedMemory', 'InterpolatePixelMethod',
+           'CMYKColorspace', 'SaturationIntent',
+           'MagickValidateOptions', 'MagickCommandGenesis',
+           'DeleteImageProfile', 'SetRandomTrueRandom',
+           'PixelGetQuantumColor', 'CacheComponentTerminus',
+           'SwirlImage', 'PushDrawingWand', 'ResourceType',
+           'MagickGetFilename', 'QuantumInfo', 'UndefinedDecoration',
+           'GetStringInfoPath', 'UndefinedKernel',
+           'RGBTransformImage', 'MagickCompareImageChannels',
+           'cuserid', 'MagickEmbossImage', 'MagickGetImageMatteColor',
            'MagickRemoveImage', 'MagickMorphologyOptions',
            '_QuantumInfo', '__time_t',
            'GetNumberOfElementsInLinkedList', 'MultilineCensus',
            'MagickSetImageProfile', 'GetImageChannelRange',
-           'GrayQuantum', 'AddNoisePreview',
-           'MagickRemoveImageProfile', 'CloneImageInfo', 'div',
-           '__off_t', 'DrawGetTextDecoration',
-           'MagickQuantumFormatOptions', 'nrand48_r',
-           'FilterImageChannel', 'Quantum', 'DrawSetFontStretch',
+           'GrayQuantum', '__clockid_t', 'DarkenIntensityCompositeOp',
+           'AddNoisePreview', 'UpdateWandViewMethod',
+           'MagickRemoveImageProfile', 'CloneImageInfo',
+           'KirschKernel', 'div', '__off_t', 'DrawGetTextDecoration',
+           'MagickQuantumFormatOptions', 'putchar_unlocked',
+           'FilterImageChannel', 'DrawSetFontStretch',
            'PixelSetGreenQuantum', 'ecvt', 'OptimizeType', 'strtoull',
            '_DrawInfo', 'DisassociateImageStream',
            'PegtopLightCompositeOp', 'SigmoidalContrastImage',
-           'MagickPingImageFile', 'GetPixelViewHeight',
-           'OverlayCompositeOp', 'ReacquireMemory', 'CacheWarning',
-           'PolylinePrimitive', '_MagickInfo',
-           'DelegateComponentTerminus', 'NewHashmap',
+           'HitAndMissMorphology', 'MagickPingImageFile',
+           'GetPixelViewHeight', 'OverlayCompositeOp',
+           'ReacquireMemory', 'CacheWarning', 'PolylinePrimitive',
+           '_MagickInfo', 'DelegateComponentTerminus', 'NewHashmap',
            'MagickSetImageColormapColor', 'strtol',
            'GetMultilineTypeMetrics', 'ImagePrimitive',
            'B44ACompression', 'FilterTypes', 'PreviewImage',
@@ -8082,190 +8371,200 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'LevelImageColors', 'MagickSetFont', 'BlackmanFilter',
            'IsHashmapEmpty', 'ImagesToBlob',
            'MagickMotionBlurImageChannel', 'MagickCropImage',
-           'FilterWarning', 'FileToStringInfo', 'putc_unlocked',
-           'SetWarningHandler', 'GetNextKeyInHashmap',
-           '_ExceptionInfo', 'AffinityImage', 'UnrecognizedDispose',
-           'StereoImage', 'PixelSetYellow', 'XServerFatalError',
+           'FilterWarning', 'FileToStringInfo',
+           'ScaleGeometryKernelInfo', 'SetWarningHandler',
+           'GetNextKeyInHashmap', '_ExceptionInfo', 'AffinityImage',
+           'UnrecognizedDispose', 'StereoImage', 'PixelSetYellow',
+           'XServerFatalError',
            'DrawPathCurveToQuadraticBezierRelative',
            'SetImageOpacity', 'OptimizePlusImageLayers',
            'UndefinedColorspace', 'DrawRoundRectangle',
-           'TileVirtualPixelMethod', 'DestroyMagick', 'clock_settime',
-           'MagickMagnifyImage', 'perror', 'DrawPrimitive',
-           'MagickTextureImage', 'OpenIntensityMorphology',
-           'PixelGetBlack', 'TypeFatalError', 'SpliceImage',
-           'SolarizePreview', 'LocaleUpper', 'GetMagickFeatures',
+           'TileVirtualPixelMethod', 'DestroyMagick',
+           'StatisticImage', 'clock_settime', 'MagickMagnifyImage',
+           'perror', 'DrawPrimitive', 'MagickTextureImage',
+           'OpenIntensityMorphology', 'PixelGetBlack',
+           'TypeFatalError', 'SpliceImage', 'SolarizePreview',
+           'LocaleUpper', 'RidgesKernel', 'GetMagickFeatures',
            'CopyCyanCompositeOp', 'GetImageDynamicThreshold',
            'GetImageExtent', 'PasskeyDecipherImage',
-           'LockSemaphoreInfo', 'RollImage', 'PoissonNoise',
-           'WestGravity', 'PixelGetAlphaQuantum', 'ResampleImage',
-           'MagickEqualizeImageChannel', 'ftrylockfile',
-           'BilinearReverseDistortion', 'strtoq', '_TypeMetric',
+           'LockSemaphoreInfo', 'RollImage', 'MinusDstCompositeOp',
+           'PoissonNoise', 'WestGravity', 'PixelGetAlphaQuantum',
+           'ResampleImage', 'MagickEqualizeImageChannel',
+           'ftrylockfile', 'BlobEvent', 'strtoq', '_TypeMetric',
            'ColorComponentGenesis', 'RelinquishUniqueFileResource',
            'DestroyImageProfiles', 'DrawAllocateWand',
            'CopyRedCompositeOp', 'MagickGravityOptions', 'Image',
            'IdentifyImageCommand', 'PixelSetAlpha', 'UndefinedEvents',
+           'GetImageViewVirtualIndexes',
            'MagickGetImageInterlaceScheme', 'ExceptionEvent',
            'PixelWand', 'FlipImage', 'MagickNegateImage',
            'AverageInterpolatePixel', 'FormatString', 'strtold',
            'abort', 'RemoveImageProfile', 'strtoll', '__locale_t',
-           'ModuleFatalError', 'PlusKernel', 'EdgeDetectPreview',
-           'clearerr', 'SharpenImage', 'DrawPolygon',
+           'ModuleFatalError', 'PlusKernel', 'NewImageView',
+           'AllEvents', 'clearerr', 'SharpenImage', 'DrawPolygon',
            'ShowKernelInfo', 'GetFirstImageInList', 'IsPixelView',
            'CropImage', 'GetImageKurtosis',
            'BlackThresholdImageChannel', 'MagickGetSizeOffset',
-           'DecimalValue', 'GetMagicInfoList', 'SizeBlob',
-           'ModuleComponentGenesis', 'flockfile',
-           'QueueAuthenticPixels', 'HuffmanEncodeImage', 'TypeInfo',
-           'SharpenPreview', 'unsetenv',
-           'GetCacheViewAuthenticIndexQueue', 'GetMontageInfo',
-           'RemoveDupsLayer', 'DestroyHashmap',
+           'GetMagicInfoList', 'SizeBlob', 'ModuleComponentGenesis',
+           'MagickGetImageBlob', 'flockfile', 'QueueAuthenticPixels',
+           'HuffmanEncodeImage', 'TypeInfo', 'SharpenPreview',
+           'unsetenv', 'GetCacheViewAuthenticIndexQueue',
+           'GetMontageInfo', 'RemoveDupsLayer', 'DestroyHashmap',
            'UniformNoiseEvaluateOperator', 'InsertImageInList',
            'InheritException', 'DrawingWand', 'MagickLevelImage',
            'MagickStretchOptions', 'SelectiveBlurImageChannel',
-           'MagickModeOptions', 'MorphologyImage',
-           'FunctionImageChannel', 'lrand48', 'Rec709LumaColorspace',
-           'MagickAdaptiveThresholdImage', 'HashmapInfo',
-           'PolicyInfo', 'DelegateInfo', 'MagickWhiteThresholdImage',
-           'DrawSetFontFamily', 'EdgeInMorphology',
-           'GetMagickSeekableStream', 'FILE', 'DrawPopClipPath',
-           'size_t', 'PixelGetBlue', 'BarrelDistortion',
-           'DrawGetStrokeDashOffset', 'RemoveDuplicateLayers',
-           'UndefinedGradient', 'SpreadImage',
-           'MagickBlurImageChannel', 'NewPixelWands', 'getpt',
-           'NearestNeighborInterpolatePixel', 'MagickSetCompression',
-           'ReduceNoiseImage', 'BlueShiftImage', 'ExportImagePixels',
-           'MagickBlurImage', 'CMYKOQuantum',
-           'MagickSigmoidalContrastImageChannel',
+           'SetImageViewThreads', 'MagickModeOptions',
+           'MorphologyImage', 'FunctionImageChannel', 'lrand48',
+           'Rec709LumaColorspace', 'MagickAdaptiveThresholdImage',
+           'HashmapInfo', 'PolicyInfo', 'DelegateInfo',
+           'MagickWhiteThresholdImage', 'DrawSetFontFamily',
+           'EdgeInMorphology', 'GetMagickSeekableStream', 'FILE',
+           'DuplexTransferImageViewMethod', 'size_t', 'PixelGetBlue',
+           'BarrelDistortion', 'DrawGetStrokeDashOffset',
+           'RemoveDuplicateLayers', 'UndefinedGradient',
+           'SpreadImage', 'MagickBlurImageChannel', 'NewPixelWands',
+           'getpt', 'NearestNeighborInterpolatePixel',
+           'MagickSetCompression', 'ReduceNoiseImage',
+           'BlueShiftImage', 'ExportImagePixels', 'MagickBlurImage',
+           'CMYKOQuantum', 'MagickSigmoidalContrastImageChannel',
            'EvaluateImageChannel', 'MagickGetImageResolution',
            'ArcPrimitive', 'BilinearColorInterpolate',
-           'ContrastImage', 'MagickSetImageOption',
+           'IsCommandOption', 'ContrastImage', 'MagickSetImageOption',
            'SrcOverCompositeOp', 'GreenQuantum', 'MagickInfo',
-           'MagickSetImageExtent', 'DrawGetClipPath',
-           'MagickSetImageDelay', 'PoissonNoiseEvaluateOperator',
-           'HSLTransform', 'SignatureImage',
+           'MagickSetImageExtent', 'getchar_unlocked',
+           'DrawGetClipPath', 'MagickSetImageDelay',
+           'PoissonNoiseEvaluateOperator', 'HSLTransform',
+           'MagickStatisticOptions', 'SignatureImage',
            'MeanErrorPerPixelMetric', 'GetCacheViewVirtualPixels',
-           'getdelim', 'SeparateImages', 'MagickGetBackgroundColor',
-           'RemoveNodeFromSplayTree', 'GetMagickEndianSupport',
-           'UndefinedFilter', 'ParseSizeGeometry',
-           'MagickSetImagePixels', 'clock_gettime', 'UniformNoise',
-           'SaturateCompositeOp', 'NormalStyle',
-           'GetVirtualIndexQueue', 'MirrorVirtualPixelMethod',
-           '__fd_mask', 'MagickSetImageFormat', 'MagickScaleImage',
+           'getdelim', 'SeparateImages', '_ImageView',
+           'MagickGetBackgroundColor', 'RemoveNodeFromSplayTree',
+           'GetMagickEndianSupport', 'UndefinedFilter',
+           'ParseSizeGeometry', 'MagickSetImagePixels',
+           'clock_gettime', 'UniformNoise', 'SaturateCompositeOp',
+           'NormalStyle', 'GetVirtualIndexQueue',
+           'MirrorVirtualPixelMethod', '__fd_mask',
+           'MagickSetImageFormat', 'SetPixelViewIterator',
            'GetNextImageOption', 'RedChannel',
            'PixelSetColorFromWand', 'MagickSetImageTicksPerSecond',
            'MagickGetImageGravity', 'GetCoderInfo', 'initstate_r',
            'ImageAttribute', 'DitherVirtualPixelMethod',
            'PixelGetIteratorRow', 'MeanSquaredErrorMetric',
-           'GetNumberScenes', 'MultiplyEvaluateOperator', 'NoValue',
+           'GetNumberScenes', 'MultiplyEvaluateOperator',
            'ClonePixelWands', 'InvokeDelegate', '_PixelIterator',
            'mrand48_r', 'NewMagickWand', 'DrawScale', 'asprintf',
            'AcquireImagePixels', 'FormatMagickStringList',
            '_IO_cookie_io_functions_t', 'XMLTreeInfo',
            'ResizeMagickMemory', 'DissolveCompositeOp', 'asctime_r',
            'SetLogFormat', 'CorruptImageFatalError',
-           'CorruptImageWarning', 'nanosleep', 'GetPixelViewX',
-           '__uflow', 'ConcatenateString', 'MergeImageLayers',
-           'GetMimeList', 'MagickLinearStretchImage',
-           'AdaptiveSharpenImage', 'GetTimerInfo', 'UndefinedDispose',
+           'CorruptImageWarning', 'nanosleep', 'RobidouxFilter',
+           'GetPixelViewX', '__uflow', 'ConcatenateString',
+           'MergeImageLayers', 'GetMimeList',
+           'MagickLinearStretchImage', 'AdaptiveSharpenImage',
+           'GetTimerInfo', 'UndefinedDispose',
            'MagickUnsharpMaskImage', 'IsHighDynamicRangeImage',
            'GetImageFromMagickRegistry', 'MagickSharpenImage',
-           'DrawSetTextInterwordSpacing', 'GetLocaleInfoList',
-           'OpacityQuantum', 'valloc', 'CloneImage',
-           'GetImageHistogram', 'DrawAffineImage',
+           'RobertsKernel', 'DrawSetTextInterwordSpacing',
+           'GetLocaleInfoList', 'OpacityQuantum', 'valloc',
+           'CloneImage', 'GetImageHistogram', 'DrawAffineImage',
            'PixelSyncIterator', 'MagickGetImageVirtualPixelMethod',
            'MagickFontsOptions', 'SetQuantumPack', 'RepeatSpread',
            'CyanQuantum', 'fprintf', 'BottomLeftOrientation',
-           'clock_nanosleep', 'MagickSetImageRenderingIntent',
-           'MagickCycleColormapImage', 'DestroyXMLTree',
-           'BZipCompression', 'SetQuantumDepth',
+           'clock_nanosleep', '__ssize_t', 'MagickCycleColormapImage',
+           'DestroyXMLTree', 'BZipCompression', 'SetQuantumDepth',
            'ErodeIntensityMorphology', 'DrawSetTextInterlineSpacing',
            'UndefinedMethod', 'DstOutCompositeOp',
            'FuzzyOpacityCompare', 'MagickSetOption', 'PaletteType',
-           'RoundCap', 'GIFInterlace', 'SetQuantumPad',
-           'SetStringInfoPath', '__mbstate_t',
+           'LosslessJPEGCompression', 'RoundCap', 'GIFInterlace',
+           'SetQuantumPad', 'SetStringInfoPath', '__mbstate_t',
            'MagickGetImageHistogram', 'GetQuantumInfo',
            'MagickSetImageRedPrimary',
-           'VerticalTileEdgeVirtualPixelMethod',
+           'VerticalTileEdgeVirtualPixelMethod', 'PeaksKernel',
            'GetXMLTreeAttribute', 'RectanglePrimitive',
            'FormatImagePropertyList', 'GetTypeList', 'funlockfile',
-           'UnsharpMaskImage', 'FilterError', 'GetImageListIndex',
-           'AcquireTokenInfo', 'DrawGetClipUnits',
+           'nrand48', 'UnsharpMaskImage', 'FilterError',
+           'GetImageListIndex', 'AcquireTokenInfo',
+           'AnnotateComponentGenesis', 'DivideDstCompositeOp',
            'MagickModuleOptions', 'FileToImage',
            'CopyGreenCompositeOp', 'WandEvent', 'DrawGradientImage',
-           'DespecklePreview', 'ModulateCompositeOp',
-           'PixelGetException', 'MagickSimilarityImage',
-           'AcquireQuantizeInfo', 'OpacityChannel',
-           'ParseMetaGeometry', 'DrawPushDefs', 'GetMagicList',
-           'ParseMagickOption', 'CompareOverlayLayer',
-           'DestroyQuantizeInfo', 'BlobInfo', 'DrawSetTextDecoration',
-           'GradientReference', 'DrawSetOpacity', 'GetCacheView',
-           'GetNextImage', 'ModuleComponentTerminus', 'BlobEvent',
-           'DeleteImages', 'StreamHandler', 'realpath',
+           'DespecklePreview', 'MagickGetPointsize',
+           'ModulateCompositeOp', 'PixelGetException',
+           'MagickSimilarityImage', 'AcquireQuantizeInfo',
+           'OpacityChannel', 'ParseMetaGeometry', 'DrawPushDefs',
+           'GetMagicList', 'GetWandViewException',
+           'CompareOverlayLayer', 'DestroyQuantizeInfo', 'BlobInfo',
+           'DrawSetTextDecoration', 'GradientReference',
+           'DrawSetOpacity', 'GetCacheView', 'GetNextImage',
+           'SmushImages', 'ModuleComponentTerminus', 'DeleteImages',
+           'UpdateImageViewIterator', 'StreamHandler',
+           'DrawSetFontResolution', 'LanczosSharpFilter', 'realpath',
            'SouthEastGravity', 'DrawImage', 'RandomWarning',
            'TimerInfo', 'GetOneVirtualMethodPixel',
            'PixelsPerInchResolution', 'GetImageVirtualPixelMethod',
            'MagickWandTerminus', 'MagickSpreadImage',
            'GetImageBoundingBox', 'TraceEvent', 'MagickAlignOptions',
-           'WandError', 'DrawPathCurveToSmoothAbsolute', 'MetricType',
+           'MagickGetImageIterations', 'WandError',
+           'DrawPathCurveToSmoothAbsolute', 'MetricType',
            'NoDecoration', 'MagickSetImageArtifact', 'strtold_l',
-           'SetPixelViewMethod', 'GetPolicyInfoList',
-           'AddChildToXMLTree', 'PixelsPerCentimeterResolution',
-           'PaletteBilevelMatteType', 'MagickPolicyDomainOptions',
-           'MagickGetImageIterations', 'obstack_vprintf',
-           'WandWarning', 'RGBColorspace', 'MagickQueryFonts',
-           'MagickGetImageFormat', 'ConfigureError',
-           'putchar_unlocked', 'ConfigureFileToStringInfo',
-           'GetXMLTreeSibling', 'CompareHashmapStringInfo',
-           'DilateMorphology', 'DirectClass', 'GetImageAlphaChannel',
+           'SetPixelViewMethod', 'Strip', 'AddChildToXMLTree',
+           'PixelsPerCentimeterResolution', 'PaletteBilevelMatteType',
+           'MagickPolicyDomainOptions', 'ThinningMorphology',
+           'obstack_vprintf', 'WandWarning', 'RGBColorspace',
+           'MagickQueryFonts', 'MagickGetImageFormat',
+           'MagickMethodOptions', 'nrand48_r',
+           'ConfigureFileToStringInfo', 'GetXMLTreeSibling',
+           'CompareHashmapStringInfo', 'DilateMorphology',
+           'DirectClass', 'GetImageAlphaChannel',
            'RegisterMagickInfo', 'PackbitsEncodeImage',
            'ConvertImageCommand', 'PreviewType', 'l64a',
            'MagickAdaptiveSharpenImage', 'SrcInCompositeOp',
            'GetImageOption', 'RadialBlurImageChannel',
            'MagickShearImage', 'MagickSetImageBluePrimary',
            'GetStringInfoDatum', 'MagickAddNoiseImageChannel',
-           'PasskeyEncipherImage', 'GetMagickThreadSupport',
+           'NonpeakStatistic', 'PasskeyEncipherImage',
+           'GetMagickThreadSupport', 'DestroyWandView',
            '_HashmapInfo', 'fileno', 'vdprintf', 'EvaluateImage',
            'MedianFilterImage', 'PixelClearException', 'CometKernel',
            'LiberateMemory', 'GetConfigurePaths',
            'LevelizeImageChannel', 'StripImage',
            'MagickAnimateImages', 'SharpenImageChannel',
-           'IsBlobTemporary', 'DrawGetVectorGraphics', 'ChiNegative',
-           'PixelGetColorAsString', 'SquareCap',
+           'IsBlobTemporary', 'DrawGetVectorGraphics',
+           'PixelGetColorAsString', 'CommandOption',
            'AdaptiveResizeImage', 'LevelImageChannel',
            'MissingDelegateFatalError', 'atol',
            'DrawPathLineToVerticalAbsolute', 'MagickSetFilename',
            'LightenCompositeOp', 'qgcvt', '__io_read_fn',
-           'CosineEvaluateOperator', 'lcong48',
+           'StatisticType', 'CosineEvaluateOperator', 'lcong48',
            'SubtractEvaluateOperator', 'SemiCondensedStretch',
            'GetPathComponents', 'RemapImage', 'MagickFormatOptions',
            'FormatMagickSize', 'MagickGetImageGreenPrimary',
-           'SigmaValue', 'MagickQueryFontMetrics', 'ldiv_t',
-           'DrawPathCurveToAbsolute', 'GetMagickPixelPacket',
+           'MagickQueryFontMetrics', 'ldiv_t',
+           'ModulusSubtractCompositeOp', 'GetMagickPixelPacket',
            'MeanAbsoluteErrorMetric', 'DrawGetTextKerning',
            'SyncImageProfiles', 'MagickFunctionImageChannel',
-           'IndexQuantum', 'MagickGetType', 'stime',
+           'IndexQuantum', 'MagickGetType', 'strtol_l', 'stime',
            'TransformColorspace', 'MagickMagicOptions',
-           'DrawSetTextEncoding', 'MagickInterlaceOptions',
-           'RegistryError', 'XYZColorspace',
+           'DestroyDrawingWand', 'DrawSetTextEncoding',
+           'AcquireMagickResource', 'RegistryError', 'XYZColorspace',
            'UndefinedInterpolatePixel', 'UndefinedFormatType',
            'AbsoluteIntent', 'GetImageRegistry', 'CoderPolicyDomain',
            'MagickSetResourceLimit', 'RegistryWarning',
            'ImageListToArray', 'AllocateString',
-           'MagickContrastStretchImageChannel',
-           'MagickOrientationOptions', 'DrawSetFillPatternURL',
-           'MagickStatusType', 'srandom', 'RandomComponentTerminus',
-           'tzset', '_PixelView', '_XImportInfo',
-           'MagickSetImageIterations', 'DeleteImageProperty',
-           'GetPixelViewMethod', 'MagickMetricOptions',
-           'BarrelInverseDistortion', 'DstInCompositeOp',
+           'MagickContrastStretchImageChannel', '_CoderInfo',
+           'DrawSetFillPatternURL', 'MagickStatusType', 'srandom',
+           'GetMagickAdjoin', 'RandomComponentTerminus', 'tzset',
+           '_PixelView', '_XImportInfo', 'MagickSetImageIterations',
+           'SobelKernel', 'DeleteImageProperty', 'GetPixelViewMethod',
+           'MagickMetricOptions', 'BarrelInverseDistortion',
+           'DstInCompositeOp', 'MagickSetImageRenderingIntent',
            'AcquireMemoryHandler', 'AddNoiseImage',
            'MagickSetImageOrientation', 'MagickSampleImage',
-           'ActivateAlphaChannel', 'clearerr_unlocked',
-           'SetImageStorageClass', 'AnimateImages', 'tmpnam_r',
-           'GetMagickMemoryMethods', 'fcvt_r', 'GetMimeInfoList',
-           'MagickSetFormat', 'LogColorspace', 'RecolorImage',
-           'ConvertRGBToHSB', 'PixelSetGreen', 'ReadPolicyRights',
-           'ConvertRGBToHSL', 'GetModuleInfoList', '_GradientInfo',
+           'ActivateAlphaChannel', 'ThrottleResource',
+           'clearerr_unlocked', 'SetImageStorageClass',
+           'AnimateImages', 'tmpnam_r', 'GetMagickMemoryMethods',
+           'fcvt_r', 'GetMimeInfoList', 'MagickSetFormat',
+           'LogColorspace', 'RecolorImage', 'ConvertRGBToHSB',
+           'PixelSetGreen', 'ParseAbsoluteGeometry',
+           'ConvertRGBToHSL', 'GetModuleInfoList', 'putc_unlocked',
            'FrameInfo', '_ChannelStatistics', 'SetGeometry',
            'ConvolveMorphology', 'DoublePixel', 'IsDrawingWand',
            'LaplacianNoise', 'qfcvt', 'GetLocaleOptions', 'initstate',
@@ -8276,42 +8575,46 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'VoronoiColorInterpolate', 'AllocateNextImage',
            'FatalErrorException', 'time_t', 'PrintStringInfo',
            'GetPixelViewWidth', 'GetMagickToken', '_CacheView',
-           'RoundRectanglePrimitive', 'qfcvt_r', 'DrawPopDefs',
-           'QueryColorDatabase', 'MagickGetResourceLimit', 'YValue',
-           'GetMagickResourceLimit', 'vsnprintf',
-           'DeleteImageAttribute', 'ShearImage',
+           'RoundRectanglePrimitive', 'FilterPolicyDomain',
+           'DrawPopDefs', 'QueryColorDatabase',
+           'MagickGetResourceLimit', 'GetMagickResourceLimit',
+           'vsnprintf', 'DeleteImageAttribute', 'ShearImage',
            'BlackThresholdImage', 'MagickShadeImage',
            'DrawSetStrokeDashArray', 'calloc',
            'AdaptiveSharpenImageChannel', 'MagickGetImageAttribute',
            'srand48_r', 'CloseMagickLog', 'GetColorList',
-           '_CoderInfo', 'RemapImages', 'fpos64_t',
-           'NorthWestGravity', 'fopen64', 'MagickSegmentImage',
-           'MitchellFilter', 'AcquireKernelBuiltIn', 'AllChannels',
-           'ObliqueStyle', 'MagickDistortOptions', 'AcquirePixels',
+           'MagickOrientationOptions', 'ThinSEKernel', 'RemapImages',
+           'fpos64_t', 'NorthWestGravity', 'fopen64',
+           'MagickSegmentImage', 'MitchellFilter', 'MontageMode',
+           'AcquireKernelBuiltIn', 'AllChannels', 'ObliqueStyle',
+           'MagickDistortOptions', 'AcquirePixels',
            'BilinearDistortion', 'SetMagickRegistry',
            'ColorSeparationType', 'MagickGetSamplingFactors',
            'MagickOilPaintImage', 'MagickGetReleaseDate',
            'MagickDebugOptions', 'FormatImageAttribute',
            'ParseGeometry', 'ImageLayerMethod',
-           'MagickGetImageProperty', 'MagickSizeType', 'timer_delete',
+           'MagickGetImageProperty', 'SincFastFilter',
+           'MagickSizeType', 'MagickModuleType', 'timer_delete',
            'ptsname', 'MagickGetImageClipMask', 'ZLIBEncodeImage',
-           'MagickGetImageBluePrimary', 'SplitStringInfo',
-           'GammaImageChannel', 'IsLinkedListEmpty', '_TimerInfo',
-           'GetExecutionPath', 'BilevelType', 'TrimBoundsLayer',
-           'PolynomialColorInterpolate', 'MagickGetFont', '_IO_sgetn',
-           'WhiteThresholdImage', 'UndefinedChannel', 'TokenInfo',
-           'srandom_r', 'PolygonPrimitive',
-           'MagickAffineTransformImage', 'UndefinedIntent',
-           'AppendImages', 'RandomInfo', 'DeleteImageRegistry',
-           'GradientImage', 'GetImageChannelDepth',
-           'ShapeAlphaChannel', 'GenerateDifferentialNoise',
-           'MagickWriteImageFile', 'DescribeImage', 'MimeInfo',
-           'AdaptiveBlurImageChannel', '_PixelWand',
-           'TransparentColorspace', 'CloneQuantizeInfo', 'lldiv',
-           'fgetc', 'MagickSetResolution', 'GetLastValueInLinkedList',
+           'MagickGetImageBluePrimary', 'UndefinedStatistic',
+           'SplitStringInfo', 'GammaImageChannel',
+           'IsLinkedListEmpty', '_TimerInfo', 'GetExecutionPath',
+           'BilevelType', 'TrimBoundsLayer',
+           'PolynomialColorInterpolate', 'CommandOptionToMnemonic',
+           'MagickGetFont', '_IO_sgetn', 'WhiteThresholdImage',
+           'UndefinedChannel', 'TokenInfo', 'srandom_r',
+           'PolygonPrimitive', 'MagickAffineTransformImage',
+           'UndefinedIntent', 'AppendImages', 'RandomInfo',
+           'DeleteImageRegistry', 'GradientImage',
+           'GetImageChannelDepth', 'ShapeAlphaChannel',
+           'GenerateDifferentialNoise', 'MagickWriteImageFile',
+           'DescribeImage', 'MimeInfo', 'AdaptiveBlurImageChannel',
+           '_PixelWand', 'TransparentColorspace', 'CloneQuantizeInfo',
+           'lldiv', 'fgetc', 'SetImageViewIterator',
+           'MagickSetResolution', 'MagickInterlaceOptions',
            'MagickSetFirstIterator', 'MagickMorphologyImage',
            'MagickSetImage', 'fgets', 'CatchImageException',
-           'SetCacheThreshold', 'DestroyString',
+           'SetCacheThreshold', 'CloneImageView', 'DestroyString',
            'GetPixelCacheVirtualMethod', 'RemoveLastImageFromList',
            'WhiteThresholdImageChannel', 'ftell', 'exit', 'mbstowcs',
            'CoderInfo', 'ResourceComponentTerminus',
@@ -8319,14 +8622,14 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'HueCompositeOp', '__io_close_fn', 'GetConfigureOptions',
            'SrcAtopCompositeOp', 'CompressImageColormap',
            'ZipSCompression', 'ModuleInfo', 'getsubopt',
-           'DrawGetTextInterlineSpacing', 'IsMagickColorSimilar',
+           'DrawGetTextInterlineSpacing', 'DestroyConstitute',
            'MissingDelegateError', 'CloneImages', 'UndefinedStretch',
            'DrawSetTextAlignment', 'MagickMergeImageLayers',
            'SetCacheViewPixels', '__compar_d_fn_t',
-           'ParseChannelOption', 'GaussianBlurImage', 'DrawComment',
-           'AcquireString', 'obstack', 'MagickGetColorspace',
-           'CacheComponentGenesis', 'obstack_printf',
-           'MagickSetImageIndex', 'QuantumType',
+           'ParseChannelOption', 'GaussianBlurImage',
+           'GaussianNoiseEvaluateOperator', 'AcquireString',
+           'obstack', 'MagickGetColorspace', 'CacheComponentGenesis',
+           'obstack_printf', 'MagickSetImageIndex', 'QuantumType',
            'GetOneVirtualMagickPixel', 'mkostemp64', 'vsscanf',
            'ClampImage', 'PixelSetIteratorRow', 'ConvertHWBToRGB',
            'ProfileInfo', 'JPEGPreview', 'WriteStream',
@@ -8337,40 +8640,42 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'CorrelateMorphology', 'PolicyEvent',
            'MagickGetImageArtifact', 'GetTypeMetrics',
            'AcquireOneCacheViewVirtualPixel', 'UndefinedAlphaChannel',
-           'EvaluateImages', 'XiValue', '__io_seek_fn',
+           'EvaluateImages', 'LocaleNCompare', '__io_seek_fn',
            'DrawPathCurveToQuadraticBezierAbsolute', 'TimerState',
-           'FlattenImages', 'SegmentPreview', 'NewXMLTree',
+           'ColorMatrixImage', 'SegmentPreview', 'NewXMLTree',
            'MagickIncarnate', 'AcquireAlignedMemory',
            'ThresholdCompositeOp', 'XImportImage',
            'MagickComponentGenesis', 'RaiseImage', 'GlobExpression',
            'SyncImage', 'TranslateText',
            'MagickBrightnessContrastImageChannel',
            'InterpretImageAttributes', 'CopyAlphaChannel',
-           '_IO_vfscanf', 'WaveImage', 'NewPixelWand',
+           'CrossKernel', '_IO_vfscanf', 'WaveImage', 'NewPixelWand',
            'PixelSetCyanQuantum', 'MogrifyImageList',
            'fileno_unlocked', 'PushImagePixels', 'BasePath',
            'DrawGetException', 'IsImagesEqual',
            'SetQuantumMinIsWhite', 'GetMagickBlobSupport',
-           'MagickOpaquePaintImage', 'SquareKernel', '_IO_seekpos',
-           'MagickKernelOptions', 'MagickSetImageResolution',
-           'DrawPathLineToHorizontalRelative', 'EllipsePrimitive',
-           'ReadImage', 'tmpnam', 'NonZeroRule', 'PixelIterator',
-           'AdaptiveBlurImage', 'MagickFontOptions', 'Base64Decode',
-           'ReadImages', 'mkstemp', 'vfscanf', 'AllCompliance',
-           'CompareAnyLayer', '__pid_t', 'ListConfigureInfo',
-           'GetImageClippingPathAttribute', 'MagickNoiseOptions',
-           'AffinityImages', 'AcquireOnePixel', 'ShadowImage',
-           'FileOpenWarning', 'GaussianNoise', 'TextPrimitive',
-           'AcquireQuantumInfo', 'LinearDodgeCompositeOp',
-           'MagickStripImage', 'RunningTimerState',
-           'MagickGetImageHeight', 'InsertValueInSortedLinkedList',
-           'DrawGetStrokeAlpha', 'MagickLogEventOptions',
-           'PsiNegative', 'GetImageAttribute',
-           'RelinquishMagickMatrix', 'ArctanFunction', '__underflow',
-           'ClutImageChannel', 'JPEGInterlace', 'MapImage',
-           'NormalizeValue', 'MotionBlurImageChannel',
-           'IdentityAffine', 'wctomb', 'ParseAbsoluteGeometry',
-           'GrayscaleType', 'DestroySplayTree',
+           'MagickOpaquePaintImage', 'FormatMagickCaption',
+           '_IO_seekpos', 'MagickKernelOptions',
+           'MagickSetImageResolution',
+           'DrawPathLineToHorizontalRelative', 'LoGKernel',
+           'EllipsePrimitive', 'ReadImage', 'tmpnam', 'NonZeroRule',
+           'PixelIterator', 'AdaptiveBlurImage', 'MagickFontOptions',
+           'Base64Decode', 'ReadImages', 'mkstemp', 'vfscanf',
+           'AllCompliance', 'CompareAnyLayer', '__pid_t',
+           'KernelInfoType', 'GetImageClippingPathAttribute',
+           'MagickNoiseOptions', 'AffinityImages', 'AcquireOnePixel',
+           'ShadowImage', 'FileOpenWarning', 'MinimumStatistic',
+           'MagickGetImageArtifacts', 'GaussianNoise',
+           'TextPrimitive', 'AcquireQuantumInfo',
+           'LinearDodgeCompositeOp', 'JBIG1Compression',
+           'RunningTimerState', 'MagickGetImageHeight',
+           'InsertValueInSortedLinkedList', 'DrawGetStrokeAlpha',
+           'MagickLogEventOptions', 'GetImageAttribute',
+           'RelinquishMagickMatrix', 'ArctanFunction',
+           'LeftToRightDirection', '__underflow', 'ClutImageChannel',
+           'JPEGInterlace', 'MapImage', 'GetImageMask',
+           'MotionBlurImageChannel', 'IdentityAffine', 'wctomb',
+           'ReadPolicyRights', 'GrayscaleType', 'DestroySplayTree',
            'CopyBlackCompositeOp', 'UndefinedException', 'ShaveImage',
            'fseeko64', 'SetXMLTreeAttribute',
            'RelinquishSemaphoreInfo', 'MagickExtentImage',
@@ -8379,66 +8684,70 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'mktime', 'tm', 'OrderedDitherImage', 'EnhanceImage',
            'RedQuantum', 'ZipCompression', 'HashStringType',
            'MinMaxStretchImage', 'LongPixel', 'mkstemps', 'vscanf',
-           'SyncCacheViewPixels', 'RandomError', 'ChopPathComponents',
-           'DrawSetStrokeColor', 'GetPseudoRandomValue', 'AnyStyle',
-           'QuantizationError', 'ConcatenateMode', 'ScaleImage',
-           'PlusCompositeOp', 'freopen64', 'ClonePixelView',
-           'MagickChopImage', 'StreamError', 'fputc_unlocked',
-           'FillToBorderMethod', 'MagickGetImageTicksPerSecond',
-           'ScreenCompositeOp', 'ModifyImage', 'SubimagePath',
-           'AutoGammaImage', 'TopHatMorphology',
-           'MagickGetImageChannelFeatures', 'SpreadPreview',
-           'MagickRollImage', 'MagickGetQuantumDepth',
-           'TransformImageColorspace', 'GetMagickReleaseDate',
-           'PixelSetIndex', 'BicubicInterpolatePixel', 'DrawLine',
-           'SpliceImageList', 'IsGeometry', 'abs',
-           'GetCacheViewException', 'MultiplicativeGaussianNoise',
-           'ChannelType', 'MagickEnhanceImage',
+           '_GradientInfo', 'MedianStatistic', 'SyncCacheViewPixels',
+           'RandomError', 'ChopPathComponents', 'DrawSetStrokeColor',
+           'GetPseudoRandomValue', 'AnyStyle', 'QuantizationError',
+           'ConcatenateMode', 'ScaleImage', 'PlusCompositeOp',
+           'freopen64', 'ClonePixelView', 'MagickChopImage',
+           'StreamError', 'fputc_unlocked', 'FillToBorderMethod',
+           'MagickGetImageTicksPerSecond', 'ScreenCompositeOp',
+           'ModifyImage', 'SubimagePath', 'AutoGammaImage',
+           'TopHatMorphology', 'MagickGetImageChannelFeatures',
+           'SpreadPreview', 'MagickRollImage',
+           'MagickGetQuantumDepth', 'TransformImageColorspace',
+           'GetMagickReleaseDate', 'PixelSetIndex',
+           'BicubicInterpolatePixel', 'DrawLine', 'SpliceImageList',
+           'IsGeometry', 'abs', 'GetCacheViewException',
+           'DrawPathCurveToAbsolute', 'MultiplicativeGaussianNoise',
+           'ChannelType', 'AddEvaluateOperator',
            'MagickSelectiveBlurImage', 'TransformImage',
            'SetQuantumImageType', 'ShadeImage', 'ResetTimer',
-           'GetImageList', 'GetMagickAdjoin', 'free', 'Ascii85Info',
-           'MagickDataTypeOptions', 'MagickSketchImage',
-           'BohmanFilter', 'OpenMagickStream', 'CycleColormapImage',
-           'LaplacianKernel', 'ExclusionCompositeOp', 'popen',
-           'GetCacheViewExtent', 'MagickTransposeImage',
-           'GetImageQuantumDepth', 'rename', '_DelegateInfo',
-           '_IO_ferror', 'NorthGravity', 'YIQColorspace',
-           'MagickLevelImageChannel', 'SetImageAlphaChannel',
-           'PixelGetFuzz', 'BlobError', 'SentinelDistortion',
-           'DestroyStringInfo', 'DrawColor', 'MagickEvaluateOptions',
-           'EncodeImageHandler', 'LoadMimeLists', 'RenderingIntent',
-           'qsort_r', 'ArcDistortion', 'MagickGetImageScene',
+           'GetWandViewExtent', 'GetImageList', 'CornersKernel',
+           'Quantum', 'free', 'Ascii85Info', 'MagickDataTypeOptions',
+           'MagickSketchImage', 'BohmanFilter', 'GetQuantumType',
+           'OpenMagickStream', 'CycleColormapImage',
+           'LaplacianKernel', 'ExclusionCompositeOp',
+           'NewWandViewExtent', 'GetCacheViewExtent',
+           'MagickTransposeImage', 'GetImageQuantumDepth', 'rename',
+           '_DelegateInfo', '_IO_ferror', 'NorthGravity',
+           'YIQColorspace', 'MagickLevelImageChannel',
+           'SetImageAlphaChannel', 'PixelGetFuzz', 'BlobError',
+           'SentinelDistortion', 'DestroyStringInfo', 'DrawColor',
+           'MagickEvaluateOptions', 'EncodeImageHandler',
+           'LoadMimeLists', 'RenderingIntent', 'qsort_r',
+           'ArcDistortion', 'MagickGetImageScene',
            'ConfigureFatalError', 'select', 'GetMagickRegistry',
-           'GetColorInfoList', 'SetMagickInfo', 'MagickLogOptions',
+           'IsMagickColorSimilar', 'GetColorInfoList',
+           'SetMagickInfo', 'DoGKernel', 'MagickLogOptions',
            'SetImageColorspace', 'MagickSetImageCompressionQuality',
            'GetMagickProperty', 'DrawSetStrokeLineJoin',
-           'MagickMatteFloodfillImage', 'srand', 'LocaleNCompare',
+           'MagickMatteFloodfillImage', 'srand', 'MagickScaleImage',
            'DrawPushClipPath', 'BezierPrimitive',
            'MagickResourceOptions', 'ColorBurnCompositeOp',
            'DstCompositeOp', 'MagickBlackThresholdImage',
            'CloseMorphology', 'BilevelImage', 'FrameMode',
-           'CMYKQuantum', 'QuantizeInfo', 'ColorDodgeCompositeOp',
-           'CoderComponentTerminus', 'fopencookie', 'pid_t',
-           'NewDrawingWand', 'MagickSetImageFilename',
-           'DefaultChannels', 'ResetHashmapIterator',
-           'BilinearInterpolatePixel', 'ConcatenateColorComponent',
-           'IsSubimage', 'BevelJoin', 'MathematicsCompositeOp',
-           'MagickFilterImageChannel', 'GetOneAuthenticPixel',
-           'SetRandomKey', 'PolicyDomain', 'MimeComponentTerminus',
-           'DOGKernel', 'DrawResetVectorGraphics', 'ContinueTimer',
-           'ResourceLimitError', 'PixelGetCurrentIteratorRow',
-           'FilterPolicyDomain', 'MagickSetImageCompose',
-           'SaturationPreview', 'GetConfigureBlob',
-           'MagickSetImageMatte', 'RemoveZeroLayer',
-           'PixelSetFirstIteratorRow', 'GetExceptionMessage',
-           'GetImageChannelDistortion', 'PreviousDispose',
-           'MagickColorDecisionListImage',
+           'CompositeChannels', 'QuantizeInfo',
+           'ColorDodgeCompositeOp', 'CoderComponentTerminus',
+           'fopencookie', 'pid_t', 'NewDrawingWand',
+           'MagickSetImageFilename', 'DefaultChannels',
+           'ResetHashmapIterator', 'BilinearInterpolatePixel',
+           'ConcatenateColorComponent', 'IsSubimage', 'BevelJoin',
+           'MathematicsCompositeOp', 'MagickFilterImageChannel',
+           'GetOneAuthenticPixel', 'SetRandomKey', 'PolicyDomain',
+           'MimeComponentTerminus', 'DrawResetVectorGraphics',
+           'ContinueTimer', 'ResourceLimitError',
+           'PixelGetCurrentIteratorRow', 'BilinearReverseDistortion',
+           'MagickSetImageCompose', 'SaturationPreview',
+           'GetConfigureBlob', 'MagickSetImageMatte',
+           'RemoveZeroLayer', 'PixelSetFirstIteratorRow',
+           'GetExceptionMessage', 'GetImageChannelDistortion',
+           'PreviousDispose', 'MagickColorDecisionListImage',
            'MagickCompositeImageChannel', 'GammaPreview',
            'LogEventType', 'RemoveImageFromList', 'ConstantString',
            'DestroyQuantumInfo', 'ScaleRotateTranslateDistortion',
            'AffineTransformImage', 'MagicComponentGenesis',
            'TintImage', 'ListModuleInfo', 'FxImageChannel',
-           'XPMCompliance', 'ExtractSubimageFromImage',
+           'XPMCompliance', 'EdgesKernel', 'ExtractSubimageFromImage',
            'XServerWarning', 'ColorPacket',
            'MagickRegionOfInterestImage',
            'RemoveElementByValueFromLinkedList',
@@ -8447,47 +8756,46 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'MagickAutoGammaImageChannel', 'GetAffineMatrix',
            'SplayTreeInfo', 'ColorSeparationMatteType',
            'AcquireDrawInfo', 'MagickSetImageScene', 'PointInfo',
-           'CoderComponentGenesis', 'GetMagickHomeURL',
-           'ferror_unlocked', '_ImageInfo', 'NewPixelView',
+           'CoderComponentGenesis', 'qfcvt_r', 'GetMagickHomeURL',
+           'ferror_unlocked', 'MontageInfo', 'NewPixelView',
            'DefineImageRegistry', 'GetMimeType', 'DelegateFatalError',
-           'DestroyDrawingWand', 'MagickWarning',
-           'MogrifyImageCommand', '_IO_ftrylockfile',
-           'DrawGetTextInterwordSpacing', 'MagickPingImage',
-           'AppendImageToList', 'mkostemps64',
+           'ModeStatistic', 'MagickWarning', 'MogrifyImageCommand',
+           '_IO_ftrylockfile', 'DrawGetTextInterwordSpacing',
+           'MagickPingImage', 'AppendImageToList', 'mkostemps64',
            'WhiteVirtualPixelMethod', 'feof_unlocked',
            'SetImageInfoProgressMonitor', 'MagickSetPage',
            'SelectiveBlurImage', 'SetQuantumQuantum',
            'GrayscalePreview', 'OptimizePlusLayer', 'PolarDistortion',
            'GetNextImageAttribute', 'MagickGetImagePage',
-           'NewPixelRegionIterator', 'WelshFilter',
+           'NewPixelRegionIterator', 'DirectionType', 'WelshFilter',
            'MagickAdaptiveBlurImageChannel', 'LiquidRescaleImage',
            'DeactivateAlphaChannel', 'DestroySemaphoreInfo',
            'MagickQueryConfigureOptions', 'MagickGaussianBlurImage',
            'DrawGetFontSize', 'ImageType', 'Rec601YCbCrColorspace',
-           'gets', 'SoftLightCompositeOp', 'NoCompression',
-           'MagickTintImage', 'UnsharpMaskImageChannel',
-           'DestroyImage', 'GetXMLTreeContent', 'vfprintf',
-           'ConvertHSLToRGB', 'GetDelegateInfoList',
-           'RootMeanSquaredErrorMetric', 'MagickTrimImage',
+           'SoftLightCompositeOp', 'NoCompression', 'MagickTintImage',
+           'UnsharpMaskImageChannel', 'DestroyImage',
+           'GetXMLTreeContent', 'vfprintf', 'ConvertHSLToRGB',
+           'GetDelegateInfoList', 'RootMeanSquaredErrorMetric',
+           'MagickTrimImage', 'TransferImageViewIterator',
            'AddValueToSplayTree', 'HammingFilter',
            'SetPixelCacheVirtualMethod', 'ThumbnailImage',
-           'MagickDeleteOption', 'MaximumImages',
-           'SeedPseudoRandomGenerator', 'KernelInfoType',
-           'MagickGetImageArtifacts', 'ScaleResampleFilter',
-           'PersistPixelCache', 'MagickSetImageGamma',
+           'ImageEvent', 'MagickDeleteOption', 'MaximumImages',
+           'SeedPseudoRandomGenerator', 'ListConfigureInfo',
+           'RingKernel', 'ScaleResampleFilter', 'PersistPixelCache',
+           'MagickSetImageGamma', 'GetImageViewException',
            '_SplayTreeInfo', 'OilPaintPreview',
            'DrawSetVectorGraphics', 'BlurPreview', 'DelegateError',
            'FillRule', 'GetPixels', 'MagickDitherOptions',
-           'IsMagickOption', 'MagickSetType', 'labs',
-           'GetPathComponent', 'GetNumberOfNodesInSplayTree',
-           'MagickTransformImage', 'MagickFxImage',
-           'MagickProgressMonitor', 'PixelGetMagentaQuantum',
-           'LocaleComponentGenesis', 'UserDefinedKernel', 'putchar',
-           'ImageInfo', 'AddNoiseImageChannel', 'ScaleKernelInfo',
-           'Pxr24Compression', 'GetAuthenticIndexQueue',
-           'AcquireTimerInfo', 'SetClientName', 'GetPixelViewWand',
-           'WriteImages', 'FloodfillMethod', 'MagickSetGravity',
-           'mrand48', 'DeprecateEvent', '__getdelim', 'BlobWarning',
+           'MagickSetType', 'labs', 'GetPathComponent',
+           'GetNumberOfNodesInSplayTree', 'MagickTransformImage',
+           'MagickFxImage', 'MagickProgressMonitor',
+           'PixelGetMagentaQuantum', 'LocaleComponentGenesis',
+           'UserDefinedKernel', 'putchar', 'ImageInfo',
+           'AddNoiseImageChannel', 'Pxr24Compression',
+           'GetAuthenticIndexQueue', 'tmpfile', 'AcquireTimerInfo',
+           'SetClientName', 'WriteImages', 'FloodfillMethod',
+           'MagickSetGravity', 'ConvexHullKernel', 'mrand48',
+           'DeprecateEvent', '__getdelim', 'BlobWarning',
            'GetPixelViewY', '_IO_seekoff', 'NoCompositeOp',
            'YellowQuantum', 'UndefinedSpread', 'strtoull_l',
            'MagickWandGenesis', 'AcquireUniqueSymbolicLink',
@@ -8498,9 +8806,10 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'GetOneVirtualPixel', 'MagickGetImageRenderingIntent',
            'LogComponentGenesis', 'MagickAdaptiveBlurImage',
            '_QuantizeInfo', 'PaintOpaqueImageChannel', '_MimeInfo',
-           'PixelSetBlack', '_Exit', 'DrawGetStrokeColor',
-           'GravityType', 'BlackVirtualPixelMethod',
-           'ExpandedStretch', 'GetLocaleMessage', 'DrawSetClipUnits',
+           'NormalizedCrossCorrelationErrorMetric', 'PixelSetBlack',
+           '_Exit', 'DrawGetStrokeColor', 'GravityType',
+           'BlackVirtualPixelMethod', 'ExpandedStretch',
+           'GetLocaleMessage', 'DrawSetClipUnits',
            'MagickResetIterator', 'CyanChannel',
            'GetNextValueInLinkedList', 'SteganoImage',
            'MagickGammaImageChannel', 'StyleType', '_StringInfo',
@@ -8510,24 +8819,25 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            '__ctype_get_mb_cur_max', 'MagickGetImageDispose',
            'GetCacheViewStorageClass', 'UnshiftImageList',
            'RelinquishMagickMemory', 'SetCacheViewVirtualPixelMethod',
-           'UndefinedNoise', 'MagickSharpenImageChannel', 'AllEvents',
+           'UndefinedNoise', 'strtoul_l', 'MagickSharpenImageChannel',
            'GetImageChannelDistortions', 'CacheView', '__sigset_t',
            'RegistryComponentGenesis', 'timeval',
-           'DrawSetStrokePatternURL', 'DullPreview',
-           'ChromaticityInfo', 'SpiffPreview', 'DrawAnnotation',
-           'MagickGetImageChannelExtrema', 'AutoLevelImage',
-           'GetNumberColors', 'SampleImage', 'MagickModulateImage',
-           'SentinelFilter', 'DrawSetFillColor', 'HSLColorspace',
-           'ErrorHandler', 'IsMagickInstantiated', 'SetImagePixels',
+           'DrawSetStrokePatternURL', 'AnnotateComponentTerminus',
+           'DullPreview', 'ChromaticityInfo', 'SpiffPreview',
+           'DrawAnnotation', 'MagickGetImageChannelExtrema',
+           'AutoLevelImage', 'GetNumberColors', 'SampleImage',
+           'MagickModulateImage', 'SentinelFilter',
+           'DrawSetFillColor', 'HSLColorspace', 'ErrorHandler',
+           'IsMagickInstantiated', 'SetImagePixels',
            'CloseIntensityMorphology', 'YCbCrColorspace',
-           'RightBottomOrientation', 'MagickTypeOptions',
+           'RightBottomOrientation', 'DespeckleImage',
            'MagickLayerOptions', 'CloneImageProfiles',
-           'SetCacheViewStorageClass', 'DrawPopPattern', 'LevelImage',
-           'AtopCompositeOp', '_StopInfo', 'RemoveImageRegistry',
-           'ThrowMagickException', 'MagickDescribeImage',
-           'MagickVignetteImage', 'InverseFourierTransformImage',
-           'InvokeDynamicImageFilter', 'UpdatePixelViewMethod',
-           'DestroyPixelView', 'GetImageTotalInkDensity',
+           'GetLastValueInLinkedList', 'SetCacheViewStorageClass',
+           'DrawPopPattern', 'LevelImage', 'AtopCompositeOp',
+           '_StopInfo', 'RemoveImageRegistry', 'ThrowMagickException',
+           'MagickDescribeImage', 'MagickVignetteImage',
+           'InverseFourierTransformImage', 'InvokeDynamicImageFilter',
+           'DrawPathCurveToSmoothRelative', 'GetImageTotalInkDensity',
            'MagickSetImageCompression', 'ResetImageOptions',
            'RGBQuantum', 'ExtraExpandedStretch',
            'MagickBrightnessContrastImage', 'PlasmaImage',
@@ -8535,24 +8845,26 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'PaintTransparentImage', 'MagickNormalizeImage',
            'CanonicalXMLContent', 'PixelSetRedQuantum',
            'PixelSetBlue', 'fputs', 'lrand48_r', 'PolynomialFunction',
-           'MultiplicativeNoiseEvaluateOperator',
-           'ForwardFourierTransformImage', 'MagickRadialBlurImage',
-           'ExcerptImage', 'MagickSetSizeOffset', 'PixelView',
-           'SetImageProperty', 'MagickReadImageFile',
-           'MagickFloodfillPaintImage', 'PixelGetRed', 'strtod_l',
-           'YellowChannel', 'CompareSplayTreeStringInfo',
-           'MagickGetImageChannelKurtosis', 'FileToString',
+           'MultiplicativeNoiseEvaluateOperator', 'GetImageViewImage',
+           'MagickRadialBlurImage', 'ExcerptImage',
+           'MagickSetSizeOffset', 'PixelView', 'SetImageProperty',
+           'MagickReadImageFile', 'MagickFloodfillPaintImage',
+           'PixelGetRed', 'strtod_l', 'YellowChannel',
+           'CompareSplayTreeStringInfo',
+           'MagickGetImageChannelKurtosis',
+           'InterpolateMagickPixelPacket', 'FileToString',
            'MagickGetPage', 'PaintFloodfillImage', 'PlaneInterlace',
-           'ConvolveImageChannel', 'AcquireMagickResource', 'remove',
-           'MatteChannel', 'DrawRectangle', 'LinePrimitive', 'mbtowc',
+           'ConvolveImageChannel', 'remove', 'MatteChannel',
+           'DrawRectangle', 'LinePrimitive', 'mbtowc',
            'XGetImportInfo', 'DeleteImageFromList', 'quick_exit',
-           'MagickBooleanType', 'GetBlobStreamHandler',
+           'MagickOpaquePaintImageChannel', 'MagickBooleanType',
+           'GetBlobStreamHandler', '__locale_data',
            'FormatMagickString', 'jrand48', 'GaussJordanElimination',
-           'DestroyBlob', '_AffineMatrix', 'GetVirtualPixelQueue',
-           'PerceptualIntent', 'ConstituteComponentGenesis',
-           'ArcsinFunction', 'MagickSeparateImageChannel',
-           'GetImageType', 'DrawSetStrokeLineCap', 'clock_getres',
-           'StretchType', 'MagickThresholdOptions',
+           'DestroyBlob', 'MagickSetImageColor', '_AffineMatrix',
+           'GetVirtualPixelQueue', 'PerceptualIntent',
+           'ConstituteComponentGenesis', 'ArcsinFunction',
+           'MagickSeparateImageChannel', 'GetImageType',
+           'DrawSetStrokeLineCap', 'clock_getres', 'StretchType',
            'SystemPolicyDomain', 'MagickGetImageColors',
            'DestroyTimerInfo', 'ClipPathImage', 'NorthEastGravity',
            'BlurKernel', 'OHTAColorspace', 'TypeError',
@@ -8560,26 +8872,27 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'UndefinedPrimitive', 'MagickTransformImageColorspace',
            'UndefinedPolicyRights', 'DrawGetBorderColor',
            'CMYColorspace', 'timer_settime', 'AnnotateImage',
-           '_MagickPixelPacket', '_IO_flockfile', 'XValue',
+           '_MagickPixelPacket', '_IO_flockfile',
            'MagickGetImageOrientation', 'fflush_unlocked',
            'SouthWestGravity', '_IO_peekc_locked',
            'DrawSetFontWeight', 'HaldClutImageChannel',
            'PosterizeImage', 'MagickMorphImages', 'BGRAQuantum',
            'UndefinedQuantum', 'N11__mbstate_t3DOT_2E',
            'MagickRandomThresholdImage', 'MagickSetImageClipMask',
-           'ConvolveImage', 'AndEvaluateOperator', 'srand48',
-           'GetImageMean', 'LinearLightCompositeOp', 'ImageToBlob',
-           'SetImageList', 'GetImageChannelKurtosis',
+           'ConvolveImage', 'GetWandViewMethod',
+           'AndEvaluateOperator', 'srand48', 'GetImageMean',
+           'LinearLightCompositeOp', 'ImageToBlob', 'SetImageList',
+           'GetImageChannelKurtosis',
            'MagickGetImageCompressionQuality', 'BlueQuantum',
            'MagickRandomThresholdImageChannel', 'LocaleInfo',
            'BarycentricColorInterpolate', 'ClassType',
            'DestroyDrawInfo', 'ReplaceCompositeOp', 'itimerspec',
            'DestroyImagePixels', 'DisassociatedQuantumAlpha',
-           'ImpulseNoiseEvaluateOperator', 'MagickSetImageType',
-           'MogrifyImage', 'DrawEllipse',
+           'NewImageViewRegion', 'ImpulseNoiseEvaluateOperator',
+           'MagickSetImageType', 'MogrifyImage', 'DrawEllipse',
            'ResetImageArtifactIterator', 'IndexChannel',
            'MagickNegateImageChannel', 'NewSplayTree',
-           'MagickMontageImage', 'MagickOptionToMnemonic',
+           'MagickMontageImage', 'MagickDirectionOptions',
            'ConvertHSBToRGB', 'MagickWand', 'MagickGetImageSize',
            'EndianType', 'MagickGetImageChannelRange',
            'MagickBlueShiftImage', 'SetBlobExempt', 'FloatPixel',
@@ -8588,20 +8901,21 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'ImplodeImage', 'GetImageIndexInList', 'ReadStream',
            'ExplicitFormatType', 'MagickAdaptiveResizeImage',
            'GetImageListLength', 'MagickGetImageProfiles',
-           'RandomThresholdImage', 'CbYCrAQuantum', '__io_write_fn',
-           'DrawSetTextUnderColor', 'RemoveImageOption',
-           'SetStringInfo', 'MagickEndianOptions', 'LocaleEvent',
+           'RandomThresholdImage', 'CbYCrAQuantum',
+           'QueryColorCompliance', 'DrawSetTextUnderColor',
+           'RemoveImageOption', 'SetStringInfo',
+           'MagickEndianOptions', 'LocaleEvent',
            'MagickGetImageChannelMean', 'RandomComponentGenesis',
-           'DrawGetTextEncoding', 'GetPixelViewPixels',
-           'GetNextXMLTreeTag',
+           'PushImageList', 'DrawGetTextEncoding',
+           'GetPixelViewPixels', 'GetNextXMLTreeTag',
            'DrawPathCurveToQuadraticBezierSmoothAbsolute',
            'MagickCoderOptions', 'MagickSetInterpolateMethod',
            'GetPreviousImageInList', 'OpenModule', 'GetDelegateList',
-           'PeakSignalToNoiseRatioMetric', 'DivideCompositeOp',
+           'PeakSignalToNoiseRatioMetric', 'DestroyPixelWand',
            'AcquireSemaphoreInfo', 'MagickHasPreviousImage', 'ldiv',
            'MagickComponentTerminus', 'MagickHaldClutImage',
            'MagickLiquidRescaleImage', 'GetLocaleInfo_',
-           'DestroyResampleFilter', 'ButtCap', 'LessValue',
+           'DestroyResampleFilter', 'PrewittKernel', 'ButtCap',
            'MagickSwirlImage', 'SyncChannels', 'strptime_l',
            'ClipImage', 'PolicyRights', 'IsOpacitySimilar',
            'GetOptimalKernelWidth1D', 'DrawPathStart',
@@ -8615,12 +8929,12 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'PathPrimitive', 'MagickInterpolateOptions',
            'MagickGetHomeURL', 'ThrowException',
            'MagickWriteImageBlob', 'GreenChannel',
-           'GetCacheViewAuthenticPixels', '_Timer', 'DrawCircle',
-           'BrightnessPreview', 'MagickRaiseImage',
-           'DrawSetStrokeWidth', 'HWBColorspace', 'timer_getoverrun',
-           'ThrowMagickExceptionList', 'DestroyImageInfo',
-           'LuminizeCompositeOp', '_TokenInfo', '_PrimaryInfo',
-           'PixelSetColorCount', '_ResampleFilter',
+           'GetWandViewPixels', 'GetCacheViewAuthenticPixels',
+           '_Timer', 'DrawCircle', 'BrightnessPreview',
+           'MagickRaiseImage', 'DrawSetStrokeWidth', 'HWBColorspace',
+           'timer_getoverrun', 'ThrowMagickExceptionList',
+           'DestroyImageInfo', 'LuminizeCompositeOp', '_TokenInfo',
+           '_PrimaryInfo', 'PixelSetColorCount', '_ResampleFilter',
            'PixelGetIteratorExceptionType', 'ClampImageChannel',
            'GetMagicInfo', 'fsetpos', 'PseudoClass',
            'SeparateImageChannel', '_LinkedListInfo', 'PolaroidImage',
@@ -8630,52 +8944,55 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'GetClientPath', 'DrawSetFontStyle',
            'AssociatedQuantumAlpha', 'MagickMimeOptions',
            'MagickGetImageMatte', 'MagickGetImageFilename',
-           'GetConfigureValue', 'ResourcePolicyDomain', 'bsearch',
+           'MotionBlurImage', 'GetConfigureValue',
+           'ResourcePolicyDomain', 'bsearch', 'ClonePixelWand',
            'SetImageMask', 'MagickGetCopyright', 'ConfigureEvent',
            'MagickColorOptions', 'LeftShiftEvaluateOperator',
            'AlignType', 'CompareImageChannels', 'CompressionType',
            'MemoryResource', 'RadialBlurImage', 'SubstituteString',
+           'DuplexTransferImageViewIterator', 'UnityKernel',
            'AcquireCacheViewIndexes', '_ImageAttribute',
            'MagickGetImageRange', 'fopen',
-           'RegistryComponentTerminus', 'DespeckleImage',
+           'RegistryComponentTerminus', 'MagickTypeOptions',
            'IsMagickConflict', 'ColorspaceType', 'GetModuleList',
            'ExtensionPath', 'FormatMagickTime', 'IsGrayImage',
            'ModuleWarning', 'MagickEvaluateImageChannel',
            'AdaptiveThresholdImage', 'PathPolicyDomain',
            'InjectImageBlob', 'AutoGammaImageChannel',
-           'SetMonitorHandler', 'vprintf', 'MagickTransparentImage',
-           'DisposeImages', 'PostscriptGeometry', 'DitherMethod',
-           'DrawSkewY', 'DrawSkewX', 'atoi', 'MagickWriteImage',
-           'ConfigureInfo', 'AddPathToXMLTree', 'CompareStringInfo',
-           'MagickMethodOptions', 'MagickComposeOptions', 'atof',
-           'KernelInfo', 'OptimizeImageLayers', 'erand48',
-           'DeleteImageArtifact', 'DistortImageMethod',
-           'AffineProjectionDistortion', 'MagickGetQuantumRange',
-           'MagickClampImage', '_MagickWand',
+           'PosterizeImageChannel', 'SetMonitorHandler', 'vprintf',
+           'MagickTransparentImage', 'DisposeImages',
+           'PostscriptGeometry', 'DitherMethod', 'DrawSkewY',
+           'DrawSkewX', 'atoi', 'MagickWriteImage', 'ConfigureInfo',
+           'AddPathToXMLTree', 'CompareStringInfo', 'ConfigureError',
+           'MagickComposeOptions', 'atof', 'KernelInfo',
+           'OptimizeImageLayers', 'erand48', 'DeleteImageArtifact',
+           'DistortImageMethod', 'AffineProjectionDistortion',
+           'MagickGetQuantumRange', 'MagickClampImage', '_MagickWand',
            'BackgroundAlphaChannel', 'ungetc', 'OptimizeImageLayer',
            'SetQuantumAlphaType', 'ReplaceImageInList',
            'MagickSetAntialias', 'GetMagickInfoList',
            'MagickFilterImage', 'FxImage', 'DrawPushPattern',
            'DrawPathMoveToRelative', 'DrawPathEllipticArcRelative',
            'DrawSetStrokeAntialias', 'MagickGetImage',
-           'PerspectiveProjectionDistortion', 'PixelSetAlphaQuantum',
-           'TransferPixelViewIterator', 'SetImageChannelDepth',
-           'GetMagicName', 'SinusoidFunction',
+           'GetImageViewExtent', 'PerspectiveProjectionDistortion',
+           'PixelSetAlphaQuantum', 'TransferPixelViewIterator',
+           'SetImageChannelDepth', 'GetMagicName', 'SinusoidFunction',
            'MagickGetImageCompose', 'ItalicStyle',
            'DrawGetStrokeMiterLimit', 'setenv', 'BilevelImageChannel',
-           'CbYCrQuantum', 'ListMagickOptions', 'BlurCompositeOp',
-           'SetImageProgressMonitor', 'GetImageRange', 'AspectValue',
-           'SetEvaluateOperator', 'PixelSetColor', 'QuantizeImage',
-           'DrawArc', 'setlinebuf', 'MagickCompositeImage',
-           'GetQuantumExtent', 'InCompositeOp', 'PixelSetMagickColor',
-           'UndefinedPath', 'ReadInlineImage', 'LevelColorsImage',
+           'CbYCrQuantum', 'BlurCompositeOp',
+           'SetImageProgressMonitor', 'GetImageRange',
+           'MaximumStatistic', 'SetEvaluateOperator', 'PixelSetColor',
+           'QuantizeImage', 'DrawArc', 'setlinebuf',
+           'MagickCompositeImage', 'GetQuantumExtent',
+           'InCompositeOp', 'PixelSetMagickColor', 'UndefinedPath',
+           'ReadInlineImage', 'LevelColorsImage',
            'PixelGetOpacityQuantum', 'MagickTrue',
            'DestroyPixelWands', 'CompareSplayTreeString',
            '_SegmentInfo', 'AlphaQuantum', 'fclose',
-           'MagickGetImageBackgroundColor', 'BlurImage',
+           'MagickGetImageBackgroundColor', 'GetPolicyValue',
            'ResetSplayTree', 'GetMagickResource',
            'MagickGetImageWidth', 'ConfigureComponentTerminus',
-           'NoiseType', 'GetQuantumType', 'fpos_t',
+           'NoiseType', 'LineJunctionsKernel', 'fpos_t',
            'ResizeMemoryHandler', 'CorruptImageError',
            'ExtractAlphaChannel', 'MagickClampImageChannel',
            'ExtentImage', 'QueueCacheViewAuthenticPixels',
@@ -8683,42 +9000,45 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'MagentaChannel', 'getline', 'random', 'CopyCompositeOp',
            'ExceptionInfo', 'YUVColorspace', 'MagickGetImageDepth',
            'MagickSetLastIterator', 'GetCacheViewVirtualPixelQueue',
-           'SketchImage', 'GetMagickQuantumRange',
+           'SketchImage', 'GetMagickQuantumRange', 'MagickModeImage',
            'MagickGetCompressionQuality', 'MagickEvaluateImage',
            'MagickReadImageBlob', 'SyncAuthenticPixels', 'BlobToFile',
            'GetNextKeyInSplayTree', 'DestroyThresholdMap',
            'RelativeIntent', 'MagickAppendImages',
            'ResetImageAttributeIterator', 'snprintf',
-           'ConfigureWarning', 'MagickQuantizeImage',
-           'MagickRelinquishMemory', 'MagickAlphaOptions',
-           'GetEnvironmentValue', 'MagickFlipImage',
-           'DestroyPixelIterator', 'MaskVirtualPixelMethod',
+           'ConfigureWarning', 'MagickStatisticImage',
+           'MagickQuantizeImage', 'MagickRelinquishMemory',
+           'MagickAlphaOptions', 'GetEnvironmentValue',
+           'MagickFlipImage', 'DestroyPixelIterator',
+           'MaskVirtualPixelMethod', 'MinusSrcCompositeOp',
            'IndexAlphaQuantum', 'mktemp', 'ListLocaleInfo',
            'MagickCommand', 'PrimaryInfo', 'AllocateImage',
            'MagickEqualizeImage', 'grantpt', 'SetImageExtent',
            'GetMagickVersion', 'XMLTreeInfoToXML', 'GetImageProperty',
            '_G_fpos_t', 'DrawSetTextAntialias', 'CondensedStretch',
            'MonitorFatalError', 'ListColorInfo',
-           'StringInfoToHexString', 'ParzenFilter', 'MapImages',
-           'PixelSetOpacityQuantum', 'PixelGetRedQuantum',
-           'ParsePageGeometry', 'UndefinedOrientation',
-           'ListPolicyInfo', 'PsiValue', 'X11Event',
+           'StringInfoToHexString', 'ParzenFilter',
+           'MagickSparseColorOptions', 'PixelSetOpacityQuantum',
+           'PixelGetRedQuantum', 'ParsePageGeometry',
+           'UndefinedOrientation', 'ListPolicyInfo',
+           'MagickThresholdOptions', 'X11Event',
            'UnlockSemaphoreInfo', 'ResetMethod',
            'PixelSetYellowQuantum', 'GetValueFromHashmap',
            'MagickDeconstructImages', 'MagickGetImageLength',
            'DrawMatte', 'GetLocaleExceptionMessage',
-           'MagickUndefinedOptions', 'ctime', 'SemiExpandedStretch',
+           'MagickUndefinedOptions', 'SemiExpandedStretch',
            'DestroyModuleList', 'MontageImageList', '__locale_struct',
-           'LineInterlace', 'GetDelegateInfo', 'DeleteImageOption',
-           'AcquireMagickMemory', 'realloc', 'LSBEndian',
-           'Base64Encode', 'fmemopen', 'MagickFatalError',
-           'MagickGetImageColorspace', 'MagickGetException',
-           'MotionBlurImage', 'ExecutePolicyRights', 'CompareImages',
-           'RLECompression', 'DecipherImage', 'BlobFatalError',
-           'MagickProfileImage', 'SetImageProfile', 'strtof_l',
-           'DXT5Compression', 'MagickAnnotateImage',
-           'AbsoluteErrorMetric', 'MagickDestroyImage',
-           'IntegerPixel', 'ListDelegateInfo', 'MagickStorageOptions',
+           'LineInterlace', 'GetDelegateInfo', 'Lanczos2Filter',
+           'DeleteImageOption', 'AcquireMagickMemory', 'realloc',
+           'SetImageColor', 'LSBEndian', 'Base64Encode', 'fmemopen',
+           'MagickFatalError', 'MagickGetImageColorspace',
+           'MagickGetException', 'GetImageViewVirtualPixels',
+           'ExecutePolicyRights', 'CompareImages', 'RLECompression',
+           'DecipherImage', 'BlobFatalError', 'MagickProfileImage',
+           'SetImageProfile', 'strtof_l', 'DXT5Compression',
+           'LightenIntensityCompositeOp', 'AbsoluteErrorMetric',
+           'MagickDestroyImage', 'IntegerPixel', 'ListDelegateInfo',
+           'ForwardFourierTransformImage', 'MagickStorageOptions',
            'AlphaChannel', 'erand48_r', 'MagickCommentImage',
            'NoEvents', 'strftime_l', 'timer_t',
            'MagickNormalizeImageChannel', 'mkostemps',
@@ -8726,13 +9046,13 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'MagickSetInterlaceScheme', 'CompositeImageCommand',
            'DrawGetFillColor', 'MagickRecolorImage', 'QuantumPixel',
            'MagickSelectiveBlurImageChannel', 'MagickGetFormat',
-           'BesselFilter', 'GetPixelViewException', 'ZoomImage',
-           'MiterJoin', 'SparseColorImage', 'PixelSetQuantumColor',
+           'GetPixelViewException', 'ZoomImage', 'MiterJoin',
+           'SparseColorImage', 'PixelSetQuantumColor',
            'RemoveNodeByValueFromSplayTree', 'GetImageExtrema',
            'BlendCompositeOp', 'SetImageVirtualPixelMethod',
-           'MergeLayer', 'GetThresholdMap', 'DistortImage',
-           'SincFilter', 'MagickCombineImages', 'on_exit',
-           'GetPageGeometry', 'StringRegistryType',
+           'SetImageViewDescription', 'GetThresholdMap',
+           'DistortImage', 'SincFilter', 'MagickCombineImages',
+           'on_exit', 'GetPageGeometry', 'StringRegistryType',
            'MagickConvolveImage', 'DestroyLocaleOptions',
            'MagickSetIteratorIndex', 'vasprintf',
            '_IO_free_backup_area', 'CompositeLayer',
@@ -8740,17 +9060,17 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'RightShiftEvaluateOperator', 'DrawGetGravity',
            'DrawPathEllipticArcAbsolute', 'ColorInfo',
            'OpaqueAlphaChannel', 'FuzzyColorCompare',
-           'AddCompositeOp', 'SrcCompositeOp',
-           'InterpretImageFilename', 'LogMagickEventList',
-           'UndefinedPolicyDomain', 'UndefinedEvaluateOperator',
-           'MagickGetImageChannelDepth', 'ReduceNoisePreview',
-           'CMYKAQuantum', '_ChannelFeatures',
-           'MagickGetImageTotalInkDensity', 'QueryColorname',
-           'GetRandomKey', 'MagickSetPointsize', 'LeftAlign',
-           'MagickConfigureOptions', 'MagickDeleteImageArtifact',
-           'PruneTagFromXMLTree', 'MagickMapImage',
-           'DrawPeekGraphicWand', 'BlobToImage', 'DuplicateBlob',
-           'EuclideanKernel', 'UndefinedColorInterpolate',
+           'SrcCompositeOp', 'InterpretImageFilename', '_WandView',
+           'LogMagickEventList', 'UndefinedPolicyDomain',
+           'UndefinedEvaluateOperator', 'MagickGetImageChannelDepth',
+           'ssize_t', 'MergeLayer', 'CMYKAQuantum',
+           '_ChannelFeatures', 'MagickGetImageTotalInkDensity',
+           'QueryColorname', 'GetRandomKey', 'MagickSetPointsize',
+           'LeftAlign', 'MagickConfigureOptions',
+           'MagickDeleteImageArtifact', 'PruneTagFromXMLTree',
+           'MagickMapImage', 'DrawPeekGraphicWand', 'BlobToImage',
+           'DuplicateBlob', 'EuclideanKernel',
+           'UndefinedColorInterpolate', 'MagickPolaroidImage',
            'MagickDespeckleImage', 'TransparentImage',
            'Rec601LumaColorspace', 'EdgeImage', 'IsPaletteImage',
            'DuplexTransferPixelViewMethod', 'B44Compression',
@@ -8758,35 +9078,38 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'BackgroundDispose', 'MagickQueryConfigureOption',
            'ImageFatalError', 'ValidateColormapIndex',
            'MagickSetImageBorderColor', 'MagickFormatType',
-           'ListFiles', 'MSBEndian', '_ChromaticityInfo',
-           'MagickChannelOptions', 'MagickGetImageBlob',
+           'ListFiles', 'MSBEndian', 'StatisticImageChannel',
+           'MagickChannelOptions', 'JincFilter',
            'MagickAutoGammaImage', 'DrawAffine', 'GrayPadQuantum',
            'LevelizeImage', 'AsynchronousResourceComponentTerminus',
            'DrawSetGravity', 'GetNextValueInHashmap', 'DrawComposite',
            'StoppedTimerState', 'IsImageObject', 'LogInfo',
-           'DiskKernel', 'UndefinedCompression', 'GetBlobError',
-           'DrawPatternPath', 'PartitionInterlace', 'PingImages',
-           'clock_t', 'DrawPathCurveToQuadraticBezierSmoothRelative',
+           'DiskKernel', 'GetImageViewAuthenticIndexes',
+           'UndefinedCompression', 'GetBlobError', 'DrawPatternPath',
+           'PartitionInterlace', 'PingImages', 'clock_t',
+           'DrawPathCurveToQuadraticBezierSmoothRelative',
            '_TypeInfo', 'MagickClipPathOptions',
            'MagickCharcoalImage', 'OverCompositeOp',
-           'VividLightCompositeOp', 'WidthValue',
-           'MagickClutImageChannel', 'ExpandFilename',
-           'MagickPosterizeImage', '_IO_funlockfile', 'RotateImage',
-           'GetMimeDescription', 'dysize', 'GetImageProfile',
-           'PointPrimitive', 'MagickStereoImage',
-           'ChannelThresholdImage', 'EvenOddRule',
-           'GetXMLTreeProcessingInstructions', 'CanonicalPath',
-           'JPEGCompression', 'MagickGetExceptionType',
+           'VividLightCompositeOp', 'MagickClutImageChannel',
+           'ExpandFilename', 'MagickPosterizeImage',
+           '_IO_funlockfile', 'RotateImage', 'GetMimeDescription',
+           'dysize', 'GetImageProfile', 'PointPrimitive',
+           'MagickStereoImage', 'ChannelThresholdImage',
+           'EvenOddRule', 'GetXMLTreeProcessingInstructions',
+           'CanonicalPath', 'JPEGCompression',
+           'MagickGetExceptionType', 'OctagonalKernel',
            'CloseCacheView', 'CompareImageCommand',
-           'MagickSetImageProperty', 'fseeko', 'DrawSetBorderColor',
-           'RemoveZeroDelayLayers', 'SetGeometryInfo', 'random_r',
+           'MagickSetImageProperty', 'fseeko', 'UndefinedDirection',
+           'DrawSetBorderColor', 'RemoveZeroDelayLayers',
+           'SetGeometryInfo', 'random_r', 'GradientStatistic',
            'IsGlob', 'ImplicitFormatType', 'HaldClutImage',
            'UndefinedAlign', 'CharcoalDrawingPreview',
-           'OrderedDitherImageChannel', 'RectangleInfo',
-           'DestroyMontageInfo', 'MagickCoreGenesis', 'ChiValue',
-           'PolicyError', 'RaisePreview', 'ListTypeInfo',
-           'MagickCompareImageLayers', 'OpaquePaintImageChannel',
-           'PNGInterlace', 'DrawGetFillOpacity', 'MagickDisplayImage',
+           'OrderedDitherImageChannel', 'ListCommandOptions',
+           'RectangleInfo', 'DestroyMontageInfo', 'MagickCoreGenesis',
+           'QuantizeImages', 'PolicyError', 'RaisePreview',
+           'ListTypeInfo', 'MagickCompareImageLayers',
+           'OpaquePaintImageChannel', 'PNGInterlace',
+           'DrawGetFillOpacity', 'MagickDisplayImage',
            'IsOpaqueImage', 'MagickSetSize', 'DXT3Compression',
            'MagickPingImageBlob', 'GetVirtualPixels',
            'ThresholdPreview', 'ResetStringInfo', 'scanf',
@@ -8796,27 +9119,27 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'ResetAlphaChannel', 'mkstemp64', 'SemaphoreInfo',
            'RemoveElementFromLinkedList', 'GetImageArtifact',
            'ListMagickInfo', 'ResamplePixelColor', 'MagickFlopImage',
-           'DrawEvent', 'setstate', 'feof', 'ResourceEvent',
-           'ImportQuantumPixels', 'PolicyWarning',
+           'DrawEvent', 'setstate', 'feof', 'SmoothMorphology',
+           'ResourceEvent', 'ImportQuantumPixels', 'PolicyWarning',
            'RemoveImageArtifact', 'PinLightCompositeOp', 'fscanf',
            'NoDitherMethod', 'GetCacheViewAuthenticPixelQueue',
            'MagickGetImageUnits', 'RemoveFirstImageFromList',
-           'MagickGetImageExtrema', 'ManhattenKernel',
-           'BrightnessContrastImageChannel', 'SystemCommand',
-           'ReplaceMethod', 'SetMagickResourceLimit',
+           'SetWandViewDescription', 'MagickGetImageExtrema',
+           'BrightnessContrastImageChannel', 'MagickCoalesceImages',
+           'SystemCommand', 'ReplaceMethod', 'SetMagickResourceLimit',
            'GetCacheViewColorspace', 'MagickSetImageProgressMonitor',
            'DestroyRandomInfo', 'SetImage', 'BumpmapCompositeOp',
            'CompareHashmapString', 'GetQuantizeInfo',
            'SetStringInfoDatum', 'GetImageListSize',
-           'RectangleKernel', 'CorrelateNormalizeValue',
-           'UndefinedMorphology', 'IsBlobSeekable',
+           'RectangleKernel', 'UndefinedMorphology', 'IsBlobSeekable',
            'MagickSetImageAttribute', 'MinEvaluateOperator',
            'GetUserTime', 'DrawPolyline', 'CloneString',
            'MagickConstituteImage', 'PrimitiveInfo', 'timegm',
            'MagickOffsetType', 'MagickSetImageGravity',
-           'SetExceptionInfo', 'AcquireUniqueFileResource',
-           'MagickFunction', 'ClipPathUnits', 'PointMethod',
-           'SetImageInfo', 'CloneImageList', 'GetMagickInfo',
+           'SetExceptionInfo', 'VoronoiMorphology',
+           'SetImageViewMethod', 'DuplicateImages',
+           'GetImageViewIterator', 'ClipPathUnits', 'PointMethod',
+           'SetImageInfo', 'CloneImageList', 'ReduceNoisePreview',
            'FormatImageProperty', 'PixelSetCyan',
            'AcquireQuantumMemory', 'MagickShadowImage',
            'SpreadMethod', 'TransparentAlphaChannel',
@@ -8824,46 +9147,51 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'ClipImagePath', 'GetNextImageArtifact', 'SimilarityImage',
            'XImportInfo', 'DrawClearException', 'GetColorInfo',
            'MagickContrastImage', 'GetImageFromList',
-           'PowEvaluateOperator', 'ConjureImageCommand',
-           'PolicyComponentTerminus', 'ClonePixelWand',
-           'MagickValidateOptions', 'MagickReadImage',
-           'ElementReference', 'NegateImageChannel',
-           'MagickGetImageCompression', 'MagickContrastStretchImage',
-           'PixelSetLastIteratorRow', 'GetDrawInfo', 'CbYCrYQuantum',
-           'ConcatenateMagickString', 'LinearGradient',
-           'MagickHasNextImage', 'UniqueImageColors',
-           'Group4Compression', 'EdgeVirtualPixelMethod', 'strtod',
-           'GetConfigureInfo', 'strtof',
-           'MagickForwardFourierTransformImage', 'CharcoalImage',
-           'GetMagickRawSupport', 'DrawRotate', 'OptionFatalError',
-           'CloneImageOptions', 'LZWEncodeImage', 'posix_memalign',
-           'getdate', 'UndefinedStyle', 'FilterInterpolatePixel',
+           'PowEvaluateOperator', 'InverseColorInterpolate',
+           'PolicyComponentTerminus', 'FlattenImages',
+           'ThickenMorphology', 'MagickReadImage', 'ElementReference',
+           'NegateImageChannel', 'SetWandViewMethod',
+           'TransparentPaintImageChroma', 'MagickGetImageCompression',
+           'MagickContrastStretchImage', 'PixelSetLastIteratorRow',
+           'GetDrawInfo', 'CbYCrYQuantum', 'ConcatenateMagickString',
+           'LinearGradient', 'MagickHasNextImage',
+           'UniqueImageColors', 'Group4Compression',
+           'EdgeVirtualPixelMethod', 'strtod', 'GetConfigureInfo',
+           'strtof', 'MagickForwardFourierTransformImage',
+           'CharcoalImage', 'GetMagickRawSupport', 'DrawRotate',
+           'OptionFatalError', 'CloneImageOptions', 'LZWEncodeImage',
+           'posix_memalign', 'getdate', 'UndefinedStyle',
+           'DestroyImageView', 'FilterInterpolatePixel',
            'SwirlPreview', 'CopyOpacityCompositeOp',
-           'AcquireOneMagickPixel', 'DrawPathFinish',
+           'MagickGetResolution', 'AcquireOneMagickPixel',
+           'DrawPathFinish', 'DivideSrcCompositeOp',
            'MagickGetImageFuzz', 'CloneDrawInfo',
-           'ColorFloodfillImage', 'OptionError', 'SyncImageList',
-           'GetMagickPackageName', 'GetXMLTreeOrdered',
-           'GetImageEncoder', 'MagickClipImagePath',
-           'NewPixelIterator', 'ThresholdEvaluateOperator',
-           'DestroyLinkedList', 'MagickGaussianBlurImageChannel',
+           'ColorFloodfillImage', 'TransferWandViewMethod',
+           'OptionError', 'SyncImageList', 'GetMagickPackageName',
+           'GetXMLTreeOrdered', 'GetImageEncoder',
+           'MagickClipImagePath', 'NewPixelIterator',
+           'ThresholdEvaluateOperator', 'DestroyLinkedList',
+           'OctagonKernel', 'MagickGaussianBlurImageChannel',
            'GetMagickGeometry', 'MagickGetImageDelay',
-           'GetImageReferenceCount', 'getchar_unlocked',
+           'GetImageReferenceCount', 'DrawSetFillAlpha',
            'AcquireNextImage', 'CompareClearLayer', '_BlobInfo',
-           'ContrastStretchImage', 'LosslessJPEGCompression',
-           'lcong48_r', 'MagickGetPointsize', 'ClearMagickException',
-           'AddModulusEvaluateOperator', 'MagickGetOrientation',
-           'UltraExpandedStretch', 'TransformEvent', '__overflow',
-           '_GeometryInfo', 'BilinearForwardDistortion',
-           'GetOptimalKernelWidth2D', 'MagickRotateImage',
+           'ContrastStretchImage', 'StringToList', 'DrawPopClipPath',
+           'lcong48_r', 'GetImageChannels', 'ClearMagickException',
+           'AddModulusEvaluateOperator', 'MagickAnnotateImage',
+           'MagickGetOrientation', 'UltraExpandedStretch',
+           'TransformEvent', '__overflow', '_GeometryInfo',
+           'BilinearForwardDistortion', 'GetOptimalKernelWidth2D',
+           'MagickRotateImage', 'DrawGetFontResolution',
            'MagickFxImageChannel', 'MagickGetPackageName',
            'LineThroughDecoration', 'MagickPaintFloodfillImage',
            'MagickCompareImages', 'timelocal', 'PopImagePixels',
-           'DelegateWarning', 'MultiplyCompositeOp',
-           'MagickGetImageAlphaChannel', 'DrawGetTextAntialias',
-           'AcquireResampleFilter', 'GetColorTuple',
-           'GaussianBlurImageChannel', 'clockid_t',
+           'UpdateWandViewIterator', 'DelegateWarning',
+           'MultiplyCompositeOp', 'MagickGetImageAlphaChannel',
+           'DrawGetTextAntialias', 'AcquireResampleFilter',
+           'GetColorTuple', 'GaussianBlurImageChannel', 'clockid_t',
            'ConstantVirtualPixelMethod', 'ShearPreview',
-           'OptimizeTransLayer', 'strftime', 'MagickAddImage',
+           'OptimizeTransLayer', 'strftime',
+           'PixelGetNextIteratorRow', 'MagickAddImage',
            'GetMonitorHandler', 'ExtraCondensedStretch',
            'MagickPaintTransparentImage', 'tmpfile64',
            'GetDelegateCommands', 'MagickResetImagePage',
@@ -8878,59 +9206,60 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'GetImageInfo', 'NewXMLTreeTag',
            'MagickGetImageDistortion', 'CacheError', 'TimeResource',
            '_DrawingWand', 'SrcOutCompositeOp',
-           'MimeComponentGenesis', 'AcquireUniqueFilename',
-           'LZWCompression', 'RollPreview', 'WarningHandler',
-           'DXT1Compression', 'GetImageQuantizeError', 'MagnifyImage',
-           'TrimImage', 'PizCompression', 'DrawGetTextUnderColor',
-           'drand48', 'jrand48_r', 'GetImageChannelMean',
-           'RegistryType', 'GetRandomValue', 'ClonePixelIterator',
-           '_ColorPacket', 'LogMagickEvent', 'vsprintf',
-           '_PixelPacket', 'ExpandFilenames', 'DestroyMemoryHandler',
-           'cfree', 'DrawSetStrokeOpacity',
-           'DilateIntensityMorphology', 'MagickSetImageAlphaChannel',
+           'DuplexTransferWandViewMethod', 'MimeComponentGenesis',
+           'AcquireUniqueFilename', 'LZWCompression', 'RollPreview',
+           'OilPaintImage', 'DXT1Compression',
+           'GetImageQuantizeError', 'MagnifyImage', 'TrimImage',
+           'PizCompression', 'DrawGetTextUnderColor', 'drand48',
+           'jrand48_r', 'GetImageChannelMean', 'RegistryType',
+           'GetRandomValue', 'ClonePixelIterator', '_ColorPacket',
+           'LogMagickEvent', 'vsprintf', '_PixelPacket',
+           'ExpandFilenames', 'DestroyMemoryHandler', 'cfree',
+           'DrawSetStrokeOpacity', 'DilateIntensityMorphology',
+           'MagickSetImageAlphaChannel',
            'MagickUnsharpMaskImageChannel', 'fwrite_unlocked',
            'ListMimeInfo', 'GetTypeInfo', 'MagickClipImage',
-           'PixelSetBlueQuantum', 'MosaicImages',
+           'PixelSetBlueQuantum', 'MosaicImages', 'CloneWandView',
            'MagickFilterOptions', 'ImportImageCommand',
            'GetBlobFileHandle', 'MagickWaveImage', 'getc',
            'SetErrorHandler', 'SetResampleFilter', 'ImageWarning',
-           'TailPath', 'MagickAverageImages', 'MinimumValue',
-           'SemaphoreComponentGenesis', 'getw',
+           'TailPath', 'gets', 'SemaphoreComponentGenesis', 'getw',
            'AutoLevelImageChannel', 'LinkedListInfo',
            'DefineImageOption', 'DestroyConfigureOptions',
            'PixelGetAlpha', 'GetImageChannelExtrema', 'DisplayImages',
            'UserSpace', 'GetValueFromSplayTree', 'TrueAlphaChannel',
            'setbuf', 'MagentaQuantum', 'MagickSetImageWhitePoint',
            'RandomVirtualPixelMethod', 'WavePreview',
-           'GetConfigureOption', 'MagickDrawImage', 'drand48_r',
-           'IsImageSimilar', 'MagickQueryFormats', 'ImpulseNoise',
-           'MonitorHandler', 'MinifyImage',
-           'PixelIteratorGetException', 'LocaleCompare',
-           'MagickOrderedPosterizeImage', 'MagickOption',
+           'SetWandViewThreads', 'GetConfigureOption',
+           'MagickDrawImage', 'drand48_r', 'IsImageSimilar',
+           'MagickQueryFormats', 'ImpulseNoise', 'MonitorHandler',
+           'MinifyImage', 'PixelIteratorGetException',
+           'LocaleCompare', 'MagickOrderedPosterizeImage',
            'DrawSetStrokeDashOffset', 'PixelGetExceptionType',
-           'fread', 'BlueChannel', 'DisplayImageCommand',
-           'IndexPacket', 'random_data', 'atoll', 'UndefinedMode',
-           'NewMagickWandFromImage', 'CopyYellowCompositeOp',
-           'LeftTopOrientation', 'RegisterStaticModules',
-           'GetConfigureList', 'MagickGetResource',
-           'MagickFunctionOptions', 'FilterFatalError',
-           'DestroyImageAttributes', 'VirtualPixelMethod',
-           'ListThresholdMaps', 'NormalizeImageChannel',
-           'PaintMethod', 'UndefinedTimerState', 'TransposeImage',
-           'EdgeMorphology', 'GetImageMagick', 'InterlaceType',
-           'timespec', 'AlphaChannelType',
-           'MagickAutoLevelImageChannel', 'MagickColorizeImage',
-           '_G_fpos64_t', 'IsEventLogging', '_ConfigureInfo',
-           'timer_create', '__compar_fn_t', 'MagickPreviewOptions',
-           'RGBPadQuantum', 'QuadraticFilter', 'pclose', 'llabs',
-           'seed48', 'PixelGetOpacity', 'MatteFloodfillImage',
+           'fread', 'BlueChannel', '_ChromaticityInfo',
+           'DisplayImageCommand', 'IndexPacket', 'random_data',
+           'atoll', 'UndefinedMode', 'NewMagickWandFromImage',
+           'CopyYellowCompositeOp', 'LeftTopOrientation',
+           'RegisterStaticModules', 'GetConfigureList',
+           'MagickGetResource', 'MagickFunctionOptions',
+           'FilterFatalError', 'DestroyImageAttributes',
+           'VirtualPixelMethod', 'ListThresholdMaps',
+           'NormalizeImageChannel', 'UndefinedTimerState',
+           'TransposeImage', 'EdgeMorphology', 'WandView',
+           'GetImageMagick', 'InterlaceType', 'timespec',
+           'AlphaChannelType', 'MagickAutoLevelImageChannel',
+           'MagickColorizeImage', '_G_fpos64_t', 'IsEventLogging',
+           '_ConfigureInfo', 'timer_create', '__compar_fn_t',
+           'MagickPreviewOptions', 'RGBPadQuantum', 'QuadraticFilter',
+           'pclose', 'llabs', 'seed48', 'BGRQuantum',
+           'PixelGetOpacity', 'MatteFloodfillImage',
            'MagickSetImageDispose', 'NewLinkedList', 'UndefinedClass',
            'GetStringInfoLength', 'MagickGetImageProfile',
            'DrawError', 'MagickMonitor', 'DrawGetStrokeWidth',
            'fgetc_unlocked', 'HuffmanDecodeImage',
-           'MagickWriteImages', 'ConfigureComponentGenesis',
-           'UndefinedReference', 'PixelGetIteratorException',
-           'XServerError', 'asctime',
+           'MagickWriteImages', 'SetImageChannels',
+           'ConfigureComponentGenesis', 'UndefinedReference',
+           'PixelGetIteratorException', 'XServerError', 'asctime',
            'MagickGetImageInterpolateMethod', 'LinkedListToArray',
            'MagickLineCapOptions', 'StringToken', 'ClearMagickWand',
            'HeadPath', 'MagickPreviousImage', 'DrawGetFontStretch',
@@ -8940,38 +9269,38 @@ __all__ = ['RGBOQuantum', 'OpaqueImage', 'LocaleLower',
            'RadialGradient', 'MagickEncipherImage', 'DestroyImages',
            'UnframeMode', 'puts', 'CloneMagickWand',
            'DeleteNodeByValueFromSplayTree', 'MagickMaximumImages',
-           'TopLeftOrientation', 'MagickGetCompression',
+           'TopLeftOrientation', 'MagickGetCompression', 'ModeImage',
            'GetDelegateThreadSupport', 'MagickRemapImage',
            'UndefinedResource', 'PixelResetIterator', 'fcvt',
            'UndefinedCap', 'CloneStringInfo', 'UndefinedType',
            'ColorDecisionListImage', 'AcquireMemory', 'NoInterlace',
-           'fgets_unlocked', 'FileOpenError', 'IsTaintImage',
-           'UndefinedLayer', 'GetPixelCachePixels', 'TypeMetric',
-           'GetImageChannelStatistics', 'GreaterValue',
-           'gnu_dev_major', 'AcquireCacheView', 'WandFatalError',
-           'IsSceneGeometry', 'MagickSetImageVirtualPixelMethod',
-           'HorizontalTileVirtualPixelMethod', 'MagickEvaluateImages',
+           'fgets_unlocked', 'NewWandView', 'FileOpenError',
+           'IsTaintImage', 'UndefinedLayer', 'GetPixelCachePixels',
+           'TypeMetric', 'GetImageChannelStatistics', 'gnu_dev_major',
+           'AcquireCacheView', 'WandFatalError', 'IsSceneGeometry',
+           'MagickStripImage', 'HorizontalTileVirtualPixelMethod',
+           'QueryMagickColorCompliance', 'MagickEvaluateImages',
            'getenv', 'ResampleFilter', 'MagickSetDepth',
            'ThresholdImage', 'wcstombs', 'DrawGetFontWeight',
            'DrawSetFontSize', '_RandomInfo', 'MagickDisplayImages',
-           '_IO_getc', 'locale_data', 'DrawSetFillAlpha',
-           'StringToList', 'DrawSetClipPath', 'HermiteFilter',
+           '_IO_getc', 'Lanczos2SharpFilter', 'DiagonalsKernel',
+           'DrawSetClipPath', 'MagickEnhanceImage', 'HermiteFilter',
            'DisposeLayer', 'localtime_r', 'difftime',
-           'MagickGetImagePixels', 'PixelGetNextIteratorRow',
+           'MagickGetImagePixels', 'BGROQuantum',
            'IsPixelWandSimilar', 'sscanf', 'StaticGravity',
            'SetImageOption', 'LocaleComponentTerminus',
-           'LaplacianNoiseEvaluateOperator', 'OilPaintImage',
+           'LaplacianNoiseEvaluateOperator', 'WarningHandler',
            'MorphologyImageChannel', 'HashStringInfoType',
-           'YNegative', 'MagickGetInterpolateMethod',
-           'OptimizeImageTransparency',
+           'MagickGetInterpolateMethod', 'OptimizeImageTransparency',
            'SetResampleFilterInterpolateMethod', 'FormatStringList',
            'UndefinedCompositeOp', 'MagickQuantizeImages',
            'MapResource', 'MagickColorspaceOptions',
-           'ThresholdImageChannel', 'PixelGetMagenta',
-           'MagickAutoLevelImage', 'CoderEvent', 'VignetteImage',
-           'StringInfo', 'UndefinedGravity', 'DstOverCompositeOp',
-           'SineEvaluateOperator', 'DefineImageProperty',
-           'HeightValue', 'BottomHatMorphology',
+           'ThresholdImageChannel', 'ParseCommandOption',
+           'PixelGetMagenta', 'MagickAutoLevelImage',
+           'DuplexTransferWandViewIterator', 'CoderEvent',
+           'VignetteImage', 'StringInfo', 'UndefinedGravity',
+           'DstOverCompositeOp', 'SineEvaluateOperator',
+           'DefineImageProperty', 'BottomHatMorphology',
            'ShepardsColorInterpolate', 'ConstituteComponentTerminus',
-           'CloneCacheView', 'ModuleEvent', 'PixelGetNextRow',
-           'IsColorSimilar']
+           'CloneCacheView', 'GetCacheViewChannels', 'ModuleEvent',
+           'PixelGetNextRow', 'IsColorSimilar']

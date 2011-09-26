@@ -1,0 +1,20 @@
+*** /usr/share/pyshared/ctypeslib/codegen/codegenerator.old	2011-09-26 22:25:45.980003107 +0200
+--- /usr/share/pyshared/ctypeslib/codegen/codegenerator.py	2011-09-26 22:26:00.316000004 +0200
+***************
+*** 65,71 ****
+  
+  def storage(t):
+      # return the size and alignment of a type
+!     if isinstance(t, typedesc.Typedef):
+          return storage(t.typ)
+      elif isinstance(t, typedesc.ArrayType):
+          s, a = storage(t.typ)
+--- 65,72 ----
+  
+  def storage(t):
+      # return the size and alignment of a type
+!     #if isinstance(t, typedesc.Typedef):
+!     if isinstance(t, typedesc.Typedef) or isinstance(t, typedesc.CvQualifiedType):
+          return storage(t.typ)
+      elif isinstance(t, typedesc.ArrayType):
+          s, a = storage(t.typ)
