@@ -31,10 +31,10 @@ The MagickWand API is available in various versions:
 
 <table>
 <tr><td><b>ImageMagick</b></td><td><b>MagickWand</b></td><td><b>Status</b></td></tr>
-<tr><td>6.4</td><td>1</td><td>obsolete</td></tr>
-<tr><td>6.5</td><td>2</td><td>obsolete</td></tr>
+<tr><td>6.4</td><td>1</td><td>bindings not generated</td></tr>
+<tr><td>6.5</td><td>2</td><td>bindings not generated</td></tr>
 <tr><td>6.6</td><td>3</td><td>supported</td></tr>
-<tr><td>6.7</td><td>4</td><td>incomplete</td></tr>
+<tr><td>6.7</td><td>4</td><td>supported</td></tr>
 </table>
 
 GraphicsMagick
@@ -53,5 +53,5 @@ Authors
 
 Todo
 ====
-- complete support for higher API levels (see API Versions above)
+- tests and tweaks on platforms other than Linux
 - we should add exhaustive unit tests
