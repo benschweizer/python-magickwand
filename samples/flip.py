@@ -1,6 +1,9 @@
-from magickwand.image import Image
+from magickwand import *
 
-image = Image('foo.jpg')
-image.format = 'PNG'
-image.flip()
-image.save('flip.png')
+magick_wand = NewMagickWand()
+MagickReadImage(magick_wand, 'rose.jpg')
+if not MagickFlipImage(magick_wand):
+    severity = ExceptionType()
+    description = MagickGetException(magick_wand, severity)
+    raise Exception(description)
+MagickWriteImage(magick_wand, "result.jpg")

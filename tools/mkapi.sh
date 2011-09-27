@@ -1,9 +1,12 @@
 #/bin/sh
 #
-h2xml -I /usr/include/ImageMagick/ /usr/include/ImageMagick/wand/MagickWand.h /usr/include/ImageMagick/wand/*h -o api.xml -q -c
-xml2py api.xml -l /usr/lib/libMagickWand.so.3 -k f -o api.py
+# requires ctypeslib + xml2py patch
+#
+h2xml -I /usr/include/ImageMagick/ /usr/include/ImageMagick/wand/MagickWand.h /usr/include/ImageMagick/wand/*h -o magickwand3.xml -q -c
+xml2py magickwand3.xml -l /usr/lib/libMagickWand.so.3 -k f -o magickwand3.py    # needs patched xml2py
 
-# Notes on API generation:
+#
+# Notes on API generation by Ian Stevens, https://trac.assembla.com/pythonmagickwand/ticket/9:
 #
 # * h2xml.py generates XML for primitive C types. These definitions are contained
 #   in ctypes and should be removed. If not, the resulting api.py will be twice
@@ -20,5 +23,3 @@ xml2py api.xml -l /usr/lib/libMagickWand.so.3 -k f -o api.py
 #   cause an exception when api.py is parsed, regardless of whether the missing
 #   method is actually used. 
 #
-
-# eof.
