@@ -1,6 +1,7 @@
 python-magickwand
 =================
 These are Python bindings for the ImageMagick [MagickWand C-API](http://www.imagemagick.org/api/magick-wand.php).
+This will become the old branch - use the [new native-api](https://github.com/gopher/python-magickwand/tree/native-api) if possible.
 
 Examples
 ========
@@ -31,10 +32,10 @@ The MagickWand API is available in various versions:
 
 <table>
 <tr><td><b>ImageMagick</b></td><td><b>MagickWand</b></td><td><b>Status</b></td></tr>
-<tr><td>6.4</td><td>1</td><td>bindings not generated</td></tr>
-<tr><td>6.5</td><td>2</td><td>bindings not generated</td></tr>
+<tr><td>6.4</td><td>1</td><td>supported</td></tr>
+<tr><td>6.5</td><td>2</td><td>supported</td></tr>
 <tr><td>6.6</td><td>3</td><td>supported</td></tr>
-<tr><td>6.7</td><td>4</td><td>supported</td></tr>
+<tr><td>6.7</td><td>4</td><td>not supported</td></tr>
 </table>
 
 GraphicsMagick
@@ -53,5 +54,5 @@ Authors
 
 Todo
 ====
-- tests and tweaks on platforms other than Linux
-- we should add exhaustive unit tests
+- switch to the native MagickWand API
+- possibly add Ian's API as an option
