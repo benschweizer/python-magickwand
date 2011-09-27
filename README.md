@@ -1,6 +1,6 @@
 python-magickwand
 =================
-Python bindings for the [MagickWand API][1].
+Python bindings for the ImageMagick [MagickWand API][1].
 
 About
 -----
@@ -45,7 +45,7 @@ MagickWriteImage(magick_wand, "result.jpg")
 
 More samples are available in [the samples directory][2].
 
-[2]: https://github.com/gopher/python-magickwand/tree/master/samples
+[2]: samples/
 
 Compatibility
 =============
@@ -67,7 +67,7 @@ The [GraphicsMagick Wand API][3] was forked from ImageMagick in August 2003.
 It lacks features that are available in newer versions and therefore, it is
 currently not supported here.
 Though, as GraphicsMagick focuses on a stable API, it would be nice to have
-support for it here. Support is highly welcome.
+support for it here. Your contrubition is highly welcome.
 
 [3]: http://www.graphicsmagick.org/wand/wand.html
 
@@ -83,13 +83,13 @@ PythonMagickWand by Achim Donna
 
 PythonMagickWand by Ian Stevens
 -------------------------------
-PythonMagickWand[7] is an implementation of the MagickWand API with focus on
+[PythonMagickWand][7] is an implementation of the MagickWand API with focus on
 a pythonic interface. It provides an object-oriented API on top of the
 MagickWand API.
 
 python-magickwand by Benjamin Schweizer
 ---------------------------------------
-[This was][8] an updated version if Ian Stevens' bindings; they ended up here.
+[This was][8] an updated version if Ian Stevens' bindings; it finally ended up here.
 
 [4]: http://www.imagemagick.org/download/python/
 [5]: http://www.boost.org/
