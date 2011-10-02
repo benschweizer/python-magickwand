@@ -1,4 +1,4 @@
-from magickwand import api
+import magickwand as api
 
 class Color(object):
     ''' Represents a color, supported by a PixelWand. '''

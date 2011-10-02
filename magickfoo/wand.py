@@ -1,5 +1,5 @@
 import ctypes
-from magickwand import api
+import magickwand as api
 
 # Pixel resolutions
 PIXELS_PER_INCH = api.PixelsPerInchResolution
