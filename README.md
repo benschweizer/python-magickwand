@@ -41,7 +41,7 @@ MagickWriteImage(magick_wand, "result.jpg")
 
 More samples are available in [the samples directory][2].
 
-[2]: https://github.com/gopher/python-magickwand/samples
+[2]: https://github.com/gopher/python-magickwand/tree/master/samples
 
 Compatibility
 =============
@@ -54,7 +54,7 @@ The MagickWand API is available in various versions:
 <tr><td>6.4</td><td>1</td><td>not generated</td></tr>
 <tr><td>6.5</td><td>2</td><td>not generated</td></tr>
 <tr><td>6.6</td><td>3</td><td>supported</td></tr>
-<tr><td>6.7</td><td>4</td><td>not supported</td></tr>
+<tr><td>6.7</td><td>4</td><td>supported</td></tr>
 </table>
 
 GraphicsMagick
