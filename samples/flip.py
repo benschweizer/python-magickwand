@@ -3,7 +3,5 @@ from magickwand import *
 magick_wand = NewMagickWand()
 MagickReadImage(magick_wand, 'rose.jpg')
 if not MagickFlipImage(magick_wand):
-    severity = ExceptionType()
-    description = MagickGetException(magick_wand, severity)
-    raise Exception(description)
+    raise WandException(magick_wand)
 MagickWriteImage(magick_wand, "result.jpg")

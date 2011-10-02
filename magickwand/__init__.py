@@ -24,4 +24,12 @@ elif wand_lib in ['libMagickWand.so.4']:
 else:
     raise ImportError('API level could be mapped, found ' + wand_lib)
 
+class WandException(Exception):
+    def __init__(self, wand):
+        self.severity = ExceptionType()
+        self.description = MagickGetException(wand, self.severity)
+
+    def __str__(self):
+        return repr(self.description)
+
 # eof.

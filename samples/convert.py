@@ -25,9 +25,7 @@ def convert(wand, width, height, depth):
 
     # iii) fall back to scaling
     if not MagickScaleImage(wand, width, height):
-        severity = ExceptionType()
-        description = MagickGetException(magick_wand, severity)
-        raise Exception(description)
+        raise WandException(wand)
     return wand
 
 magick_wand = NewMagickWand()

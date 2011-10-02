@@ -10,7 +10,5 @@ pixel_wand = NewPixelWand()
 PixelSetColor(pixel_wand, "white")
 DrawSetFillColor(drawing_wand, pixel_wand)
 if not MagickAnnotateImage(magick_wand, drawing_wand, 0, 0, 0, "Rose") != 0:
-    severity = ExceptionType()
-    description = MagickGetException(magick_wand, severity)
-    raise Exception(description)
+    raise WandException(wand)
 MagickWriteImage(magick_wand, "result.jpg")
