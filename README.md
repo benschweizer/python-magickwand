@@ -39,9 +39,9 @@ if not MagickAnnotateImage(magick_wand, drawing_wand, 0, 0, 0, "Rose") != 0:
 MagickWriteImage(magick_wand, "result.jpg")
 ```
 
-More samples are available in [the samples directory][1].
+More samples are available in [the samples directory][2].
 
-[1]: samples/
+[2]: samples/
 
 Compatibility
 =============
@@ -59,84 +59,83 @@ The MagickWand API is available in various versions:
 
 GraphicsMagick
 --------------
-The [GraphicsMagick Wand API][1] was forked from ImageMagick in August 2003.
+The [GraphicsMagick Wand API][3] was forked from ImageMagick in August 2003.
 It lacks features that are available in newer versions and therefore, it is
 currently not supported here.
 Though, as GraphicsMagick focuses on a stable API, it would be nice to have
 support for it. Your contribution is highly welcome.
 
-[1]: http://www.graphicsmagick.org/wand/wand.html
+[3]: http://www.graphicsmagick.org/wand/wand.html
 
 Alternatives
 ============
 There are various other bindings and abstractions for ImageMagick, here is an onverview:
 
 <pre>
-PythonMagick ---------------- 0.3 - 0.4 - 0.5 ------------- 0.7 ------ 0.8 -------- 0.9.7
-                                       \
-PythonMagickWand/Achim Domma             ------------------ 0.2 - r107
+PythonMagick ------- 0.3 -- 0.4 -- 0.5 ---------------- 0.7 --------- 0.8 --------- 0.9.7
+                               \
+PythonMagickWand/Achim Domma     ---------------------- 0.2 --------- r107
 
-PythonMagickWand/Ian Stevens                               ? ----- r42 - r53
+PythonMagickWand/Ian Stevens                                   * ---- r42 -- r53
                                                                         \
-python-magickwand/Benjamin Schweizer                                     2009 ------ 2011
-                                                                              \
-python-magickwand/Oliver Berger                                                0.2 (gone)
+python-magickwand/Benjamin Schweizer                                  2009 -------- 2011
+                                                                            \
+python-magickwand/Oliver Berger                                              0.2
 
-Wand                                                                                 0.1
+Wand                                                                                0.1
 
-1997  1998  1999  2000  2001  2002  2003  2004  2005  2006  2007  2008  2009  2010  2011
+                     2002   2003   2004   2005   2006   2007   2008   2009   2010   2011
 </pre>
 
 PythonMagick
 ------------
-[PythonMagick][1] is the oldest wrapper for the ImageMagick API. It is a
-C++ extension based on the [Boost Library][2] and thus, requires compilation on
+[PythonMagick][4] is the oldest wrapper for the ImageMagick API. It is a
+C++ extension based on the [Boost Library][5] and thus, requires compilation on
 OS-level.
 
-[1]: http://www.imagemagick.org/download/python/
-r
+[4]: http://www.imagemagick.org/download/python/
 [5]: http://www.boost.org/
 
 PythonMagickWand/Achim Domma
 ----------------------------
 Achim Domma stated on PythonMagick that is is too hard to maintain and started
-a CDLL-based re-implementation of the MagickWand API. [This version][1] includes
-a custom API generator based on [gccxml][2]. Though, it was abandoned in 2008.
+a CDLL-based re-implementation of the MagickWand API. [This version][6] includes
+a custom API generator based on [gccxml][7]. Though, it was abandoned in 2008.
 
-[1]: http://public.procoders.net/PythonMagickWand/docs/html/index.html
-[2]: http://www.gccxml.org/HTML/Index.html
+[6]: http://public.procoders.net/PythonMagickWand/docs/html/index.html
+[7]: http://www.gccxml.org/HTML/Index.html
 
 PythonMagickWand/Ian Stevens
 ----------------------------
-Ian Stevens and Victor Ng started [PythonMagickWand][1]. PythonMagickWand aims
+Ian Stevens and Victor Ng started [PythonMagickWand][8]. PythonMagickWand aims
 to provide an object-oriented API that is structured to be more pythonic.
-Their implementation uses [h2xml and xml2py][2] for MagickWand API generation.
+Their implementation uses [h2xml and xml2py][9] for MagickWand API generation.
 It introduced the Image, Color and MagickWand classes that later influened the
 MagickFoo and Wand APIs.
 
-There are two forks, one by Benjamin Schweizer named [python-magickwand][3] and
-a fork thereof by Oliver Berger named [python-magickwand-0.2][4]. The first is
+There are two forks, one by Benjamin Schweizer named [python-magickwand][10] and
+a fork thereof by Oliver Berger named [python-magickwand-0.2][11]. The first is
 a direct predecessor of this source tree, the latter was abandoned in 2010.
 
-[1]: https://www.assembla.com/wiki/show/pythonmagickwand
-[2]: http://svn.python.org/projects/ctypes/trunk/ctypeslib/
-[3]: http://hg.sickos.org/python-magickwand/
-[4]: http://pypi.python.org/pypi/magickwand/
+[8]: https://www.assembla.com/wiki/show/pythonmagickwand
+[9]: http://svn.python.org/projects/ctypes/trunk/ctypeslib/
+[10]: http://hg.sickos.org/python-magickwand/
+[11]: http://pypi.python.org/pypi/magickwand/
 
 MagickFoo
 ---------
-[MagickFoo][1] is an updated version of Ian Steven's PythonMagickWand API. It is
-included in [python-magickwand][2].
+[MagickFoo][12] is an updated version of Ian Steven's PythonMagickWand API. It is
+included in [python-magickwand][13].
 
-[1]: https://github.com/gopher/python-magickwand/tree/native-api/magickfoo
-[2]: https://github.com/gopher/python-magickwand/tree/native-api
+[12]: https://github.com/gopher/python-magickwand/tree/native-api/magickfoo
+[13]: https://github.com/gopher/python-magickwand/tree/native-api
 
 Wand/Hong Minhee
 ----------------
-[Wand][1] is a new CDLL-based abstraction by Hong Minhee. It was inspired by
+[Wand][14] is a new CDLL-based abstraction by Hong Minhee. It was inspired by
 Ian Steven's PythonMagickWand API.
 
-[1]: http://styleshare.github.com/wand/
+[14]: http://styleshare.github.com/wand/
 
 Authors
 =======
