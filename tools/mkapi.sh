@@ -2,6 +2,7 @@
 #
 # requires ctypeslib + xml2py patch
 #
+
 h2xml -I /usr/include/ImageMagick/ /usr/include/ImageMagick/wand/MagickWand.h /usr/include/ImageMagick/wand/*h -o magickwand3.xml -q -c
 xml2py magickwand3.xml -l /usr/lib/libMagickWand.so.3 -k f -o magickwand3.py    # needs patched xml2py
 
@@ -22,4 +23,11 @@ xml2py magickwand3.xml -l /usr/lib/libMagickWand.so.3 -k f -o magickwand3.py    
 #   contained within it will not be present in older versions. As such, they may
 #   cause an exception when api.py is parsed, regardless of whether the missing
 #   method is actually used. 
+#
+#
+# Notes by Oliver Berger:
+#
+# regexp performed on all definition from Ian Stevens (http://www.assembla.com/wiki/show/pythonmagickwand)          
+# ^\w*\s=\_lib\.(\w*)$\n\w*\.restype\s=\s(.*)$\n\w*\.argtypes\s=\s(.*)$                                             
+# ('$1', $2, $3),                                                                                                   
 #
