@@ -23,7 +23,7 @@ elif wand_lib in ['libMagickWand.so.4']:
     from magickwand4 import *
 elif wand_lib in ['libMagickWand.so.5']:
     wand_version = 5
-    from magickwand4 import *
+    from magickwand5 import *
 else:
     raise ImportError('API level could be mapped, found ' + wand_lib)
 
