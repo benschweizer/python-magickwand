@@ -54,7 +54,8 @@ The MagickWand API is available in various versions:
 <tr><td>6.4</td><td>1</td><td>not generated</td></tr>
 <tr><td>6.5</td><td>2</td><td>not generated</td></tr>
 <tr><td>6.6</td><td>3</td><td>supported</td></tr>
-<tr><td>6.7</td><td>4</td><td>supported</td></tr>
+<tr><td>6.7.0</td><td>4</td><td>supported</td></tr>
+<tr><td>6.7.2</td><td>5</td><td>supported</td></tr>
 </table>
 
 GraphicsMagick
@@ -78,13 +79,13 @@ PythonMagickWand/Achim Domma     ---------------------- 0.2 --------- r107
 
 PythonMagickWand/Ian Stevens                                   * ---- r42 -- r53
                                                                         \
-python-magickwand/Benjamin Schweizer                                  2009 -------- 2011
+python-magickwand/Benjamin Schweizer                                  2009 -------- 2011 - 2012
                                                                             \
 python-magickwand/Oliver Berger                                              0.2
 
-Wand                                                                                0.1
+Wand                                                                                0.1 -- 0.1.9
 
-                     2002   2003   2004   2005   2006   2007   2008   2009   2010   2011
+                     2002   2003   2004   2005   2006   2007   2008   2009   2010   2011   2012
 </pre>
 
 PythonMagick
@@ -133,7 +134,8 @@ included in [python-magickwand][13].
 Wand/Hong Minhee
 ----------------
 [Wand][14] is a new CDLL-based abstraction by Hong Minhee. It was inspired by
-Ian Steven's PythonMagickWand API.
+Ian Steven's PythonMagickWand API. As of 2012, the project is in active develop
+ment with regular github commits.
 
 [14]: http://styleshare.github.com/wand/
 

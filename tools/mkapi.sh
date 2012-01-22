@@ -1,11 +1,19 @@
 #/bin/sh
 #
-# requires ctypeslib + xml2py patch
+# requires:
+# - python-ctypeslib (apply included xml2py patch)
+#   - gccxml
+#   - gcc-c++
+# - magickwand-devel
 #
 
 h2xml -I /usr/include/ImageMagick/ /usr/include/ImageMagick/wand/MagickWand.h /usr/include/ImageMagick/wand/*h -o magickwand3.xml -q -c
 xml2py magickwand3.xml -l /usr/lib/libMagickWand.so.3 -k f -o magickwand3.py    # needs patched xml2py
 
+# remove fixed paths from loader (edit first few lines of code).
+#
+# finally, strip global glibc symbols.
+# todo: howto
 #
 # Notes on API generation by Ian Stevens, https://trac.assembla.com/pythonmagickwand/ticket/9:
 #
